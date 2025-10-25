@@ -11,8 +11,10 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import GeminiService from '../services/GeminiService';
 
 const { width, height } = Dimensions.get('window');
 
@@ -55,7 +57,7 @@ const FloatingChatbot = () => {
   };
 
   const sendMessage = async () => {
-    if (!inputText.trim()) return;
+    if (!inputText.trim() || !currentExpert) return;
 
     const userMessage = {
       id: Date.now(),
@@ -68,26 +70,44 @@ const FloatingChatbot = () => {
     setInputText('');
     setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const responses = [
-        "That's a great question! Let me help you with that.",
-        "I understand what you're looking for. Here's my advice:",
-        "Based on your question, I'd recommend:",
-        "Excellent point! Here's what I suggest:",
-        "I've got some great tips for you on that topic."
-      ];
-      
-      const botMessage = {
+    try {
+      // Send message to Gemini AI
+      const response = await GeminiService.sendMessage(
+        currentExpert.name,
+        inputText.trim(),
+        currentExpert
+      );
+
+      if (response.success) {
+        const aiMessage = {
+          id: Date.now() + 1,
+          text: response.message,
+          isUser: false,
+          timestamp: new Date(),
+        };
+        setMessages(prev => [...prev, aiMessage]);
+      } else {
+        // Fallback response if Gemini fails
+        const fallbackMessage = {
+          id: Date.now() + 1,
+          text: "I'm having trouble connecting right now. Please try again in a moment.",
+          isUser: false,
+          timestamp: new Date(),
+        };
+        setMessages(prev => [...prev, fallbackMessage]);
+      }
+    } catch (error) {
+      console.error('Chat error:', error);
+      const errorMessage = {
         id: Date.now() + 1,
-        text: responses[Math.floor(Math.random() * responses.length)] + " This is a simulated response. In a real app, this would connect to an AI service.",
+        text: "Sorry, I encountered an error. Please try again.",
         isUser: false,
         timestamp: new Date(),
       };
-      
-      setMessages(prev => [...prev, botMessage]);
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const renderMessage = (message) => (
@@ -217,7 +237,11 @@ const FloatingChatbot = () => {
                       onPress={sendMessage}
                       disabled={isLoading || !inputText.trim()}
                     >
-                      <Ionicons name="send" size={20} color="#ffffff" />
+                      {isLoading ? (
+                        <ActivityIndicator size="small" color="#ffffff" />
+                      ) : (
+                        <Ionicons name="send" size={20} color="#ffffff" />
+                      )}
                     </TouchableOpacity>
                   </View>
                 </KeyboardAvoidingView>

@@ -1,0 +1,101 @@
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+const API_KEY = 'AIzaSyBxcxji-GxXQlkRtsljCJk2IFGl_q43_GU';
+const genAI = new GoogleGenerativeAI(API_KEY);
+
+class GeminiService {
+  constructor() {
+    this.model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    this.chatHistory = new Map(); // Store chat history per expert
+  }
+
+  // Get or create chat session for a specific expert
+  getChatSession(expertId) {
+    if (!this.chatHistory.has(expertId)) {
+      this.chatHistory.set(expertId, []);
+    }
+    return this.chatHistory.get(expertId);
+  }
+
+  // Send message to Gemini AI
+  async sendMessage(expertId, userMessage, expertContext) {
+    try {
+      const chatHistory = this.getChatSession(expertId);
+      
+      // Create system prompt based on expert context
+      const systemPrompt = this.createSystemPrompt(expertContext);
+      
+      // Prepare messages for Gemini
+      const messages = [
+        { role: 'user', parts: [{ text: systemPrompt }] },
+        ...chatHistory,
+        { role: 'user', parts: [{ text: userMessage }] }
+      ];
+
+      // Start chat session
+      const chat = this.model.startChat({
+        history: messages.slice(0, -1), // All messages except the last one
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 1024,
+        },
+      });
+
+      // Send the user message
+      const result = await chat.sendMessage(userMessage);
+      const response = await result.response;
+      const aiResponse = response.text();
+
+      // Update chat history
+      chatHistory.push(
+        { role: 'user', parts: [{ text: userMessage }] },
+        { role: 'model', parts: [{ text: aiResponse }] }
+      );
+
+      return {
+        success: true,
+        message: aiResponse,
+        timestamp: new Date().toISOString()
+      };
+
+    } catch (error) {
+      console.error('Gemini API Error:', error);
+      return {
+        success: false,
+        message: "I'm having trouble connecting right now. Please try again in a moment.",
+        error: error.message
+      };
+    }
+  }
+
+  // Create system prompt based on expert context
+  createSystemPrompt(expertContext) {
+    const { name, specialty, prompt } = expertContext;
+    
+    return `You are ${name}, a ${specialty} expert. ${prompt}
+
+Your role is to provide helpful, accurate, and encouraging advice related to ${specialty.toLowerCase()}. Keep your responses concise but informative, and maintain a supportive and professional tone. Always prioritize user safety and recommend consulting healthcare professionals when appropriate.
+
+Guidelines:
+- Provide practical, actionable advice
+- Use encouraging and motivating language
+- Keep responses under 200 words when possible
+- Ask follow-up questions to better understand the user's needs
+- Suggest specific exercises, techniques, or strategies when relevant
+- Always emphasize proper form and safety`;
+  }
+
+  // Clear chat history for a specific expert
+  clearChatHistory(expertId) {
+    this.chatHistory.delete(expertId);
+  }
+
+  // Clear all chat history
+  clearAllChatHistory() {
+    this.chatHistory.clear();
+  }
+}
+
+export default new GeminiService();
