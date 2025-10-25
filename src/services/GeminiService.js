@@ -5,7 +5,7 @@ const genAI = new GoogleGenerativeAI(API_KEY);
 
 class GeminiService {
   constructor() {
-    this.model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    this.model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
     this.chatHistory = new Map(); // Store chat history per expert
   }
 
@@ -25,26 +25,24 @@ class GeminiService {
       // Create system prompt based on expert context
       const systemPrompt = this.createSystemPrompt(expertContext);
       
-      // Prepare messages for Gemini
-      const messages = [
-        { role: 'user', parts: [{ text: systemPrompt }] },
-        ...chatHistory,
-        { role: 'user', parts: [{ text: userMessage }] }
-      ];
+      // Build conversation context
+      let conversationContext = systemPrompt + "\n\n";
+      
+      // Add recent chat history (last 6 messages to keep context manageable)
+      const recentHistory = chatHistory.slice(-6);
+      for (const msg of recentHistory) {
+        if (msg.role === 'user') {
+          conversationContext += `User: ${msg.parts[0].text}\n`;
+        } else if (msg.role === 'model') {
+          conversationContext += `Assistant: ${msg.parts[0].text}\n`;
+        }
+      }
+      
+      // Add current user message
+      conversationContext += `User: ${userMessage}\nAssistant:`;
 
-      // Start chat session
-      const chat = this.model.startChat({
-        history: messages.slice(0, -1), // All messages except the last one
-        generationConfig: {
-          temperature: 0.7,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 1024,
-        },
-      });
-
-      // Send the user message
-      const result = await chat.sendMessage(userMessage);
+      // Generate response using generateContent
+      const result = await this.model.generateContent(conversationContext);
       const response = await result.response;
       const aiResponse = response.text();
 
