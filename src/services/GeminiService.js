@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GEMINI_API_KEY } from '@env';
 
-const API_KEY = 'AIzaSyBxcxji-GxXQlkRtsljCJk2IFGl_q43_GU';
-const genAI = new GoogleGenerativeAI(API_KEY);
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 class GeminiService {
   constructor() {
