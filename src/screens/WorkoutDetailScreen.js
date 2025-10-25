@@ -195,6 +195,7 @@ const styles = StyleSheet.create({
   muscleGroups: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    justifyContent: 'flex-start',
   },
   muscleGroup: {
     backgroundColor: 'rgba(0, 212, 255, 0.2)',

@@ -29,6 +29,9 @@
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
         "android.permission.WRITE_EXTERNAL_STORAGE"
       ]
     },
@@ -42,6 +45,17 @@
           "cameraPermission": "Allow GymGuard to access your camera to analyze workout form and detect hand gestures."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "cff0deb5-2d14-4760-8188-43ef1cc6736d"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/cff0deb5-2d14-4760-8188-43ef1cc6736d"
+    }
   }
 }

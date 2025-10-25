@@ -279,7 +279,7 @@ const ProgressScreen = ({ navigation }) => {
           <Text style={styles.chartTitle}>{metrics.find(m => m.key === selectedMetric)?.label} Progress</Text>
           <LineChart
             data={prepareChartData()}
-            width={width - 60}
+            width={width - 40}
             height={220}
             chartConfig={chartConfig}
             bezier
@@ -324,7 +324,7 @@ const ProgressScreen = ({ navigation }) => {
                 data: [45, 60, 0, 75, 0, 90, 50]
               }]
             }}
-            width={width - 60}
+            width={width - 40}
             height={220}
             chartConfig={chartConfig}
             style={styles.chart}
@@ -423,11 +423,11 @@ const styles = StyleSheet.create({
   metricsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    justifyContent: 'space-between',
     marginBottom: 20,
   },
   metricCard: {
-    width: (width - 50) / 2,
+    width: (width - 40) / 2,
     backgroundColor: '#2d2d2d',
     borderRadius: 15,
     padding: 15,
@@ -515,12 +515,13 @@ const styles = StyleSheet.create({
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
   },
   statItem: {
-    width: (width - 80) / 2,
+    width: (width - 60) / 2,
     alignItems: 'center',
     marginBottom: 15,
+    paddingHorizontal: 5,
   },
   statValue: {
     fontSize: 20,
@@ -597,12 +598,13 @@ const styles = StyleSheet.create({
   measurementsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
   },
   measurementItem: {
-    width: (width - 80) / 2,
+    width: (width - 60) / 2,
     alignItems: 'center',
     marginBottom: 15,
+    paddingHorizontal: 5,
   },
   measurementLabel: {
     fontSize: 12,

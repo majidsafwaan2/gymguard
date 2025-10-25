@@ -78,7 +78,7 @@ const HomeScreen = ({ navigation }) => {
         avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50&h=50&fit=crop&crop=face",
         isFriend: false
       },
-      content: "New PR on deadlifts today! 315lbs 💪 Consistency is key, keep grinding everyone!",
+      content: "New PR on deadlifts today! 315lbs Consistency is key, keep grinding everyone!",
       time: "4 hours ago",
       likes: 45,
       comments: 12,
@@ -91,7 +91,7 @@ const HomeScreen = ({ navigation }) => {
         avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop&crop=face",
         isFriend: false
       },
-      content: "Meal prep Sunday! 🥗 Here's my healthy lunch for the week. Recipe in comments!",
+      content: "Meal prep Sunday! Here's my healthy lunch for the week. Recipe in comments!",
       time: "6 hours ago",
       likes: 18,
       comments: 5,
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 50,
+    paddingTop: 30,
     paddingBottom: 20,
   },
   headerLeft: {

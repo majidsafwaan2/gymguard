@@ -1,6 +1,11 @@
 import * as tf from '@tensorflow/tfjs';
 import * as poseDetection from '@tensorflow-models/pose-detection';
 
+// Add fetch polyfill for React Native
+if (typeof global.fetch === 'undefined') {
+  global.fetch = require('node-fetch');
+}
+
 class PoseAnalyzer {
   constructor() {
     this.detector = null;
@@ -10,6 +15,11 @@ class PoseAnalyzer {
   async initialize() {
     try {
       console.log('🤖 Initializing pose detection...');
+      
+      // Skip TensorFlow initialization for now to avoid fetch errors
+      console.log('⚠️ Skipping TensorFlow initialization to avoid fetch errors');
+      this.isInitialized = false;
+      return false;
       
       // Initialize TensorFlow.js backend
       await tf.ready();

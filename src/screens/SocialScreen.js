@@ -99,7 +99,7 @@ const SocialScreen = ({ navigation }) => {
         name: "FitnessFan123",
         avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=50&h=50&fit=crop&crop=face"
       },
-      content: "Just completed my first 5K run! 🏃‍♀️ The training really paid off. Thanks to everyone who encouraged me!",
+      content: "Just completed my first 5K run! The training really paid off. Thanks to everyone who encouraged me!",
       time: "2 hours ago",
       likes: 24,
       comments: 8,
@@ -111,7 +111,7 @@ const SocialScreen = ({ navigation }) => {
         name: "GymGuru",
         avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face"
       },
-      content: "New PR on deadlifts today! 315lbs 💪 Consistency is key, keep grinding everyone!",
+      content: "New PR on deadlifts today! 315lbs Consistency is key, keep grinding everyone!",
       time: "4 hours ago",
       likes: 45,
       comments: 12,
@@ -123,7 +123,7 @@ const SocialScreen = ({ navigation }) => {
         name: "HealthyEats",
         avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=50&h=50&fit=crop&crop=face"
       },
-      content: "Meal prep Sunday! 🥗 Here's my healthy lunch for the week. Recipe in comments!",
+      content: "Meal prep Sunday! Here's my healthy lunch for the week. Recipe in comments!",
       time: "6 hours ago",
       likes: 18,
       comments: 5,

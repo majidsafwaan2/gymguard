@@ -125,7 +125,7 @@ export default function AnalysisResultsScreen({ navigation, route }) {
                   <Text style={styles.feedbackMessage}>{item.message}</Text>
                   {item.correction && (
                     <View style={styles.correctionBox}>
-                      <Text style={styles.correctionLabel}>💡 Correction:</Text>
+                      <Text style={styles.correctionLabel}>Correction:</Text>
                       <Text style={styles.correctionText}>{item.correction}</Text>
                     </View>
                   )}

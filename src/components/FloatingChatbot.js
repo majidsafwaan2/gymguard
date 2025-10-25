@@ -18,23 +18,41 @@ const { width, height } = Dimensions.get('window');
 
 const FloatingChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      text: "Hey! I'm your AI Gym Buddy! 💪 I can help you with workout plans, nutrition advice, form tips, and answer any fitness questions. What would you like to know?",
-      isUser: false,
-      timestamp: new Date(),
-    }
-  ]);
+  const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [currentExpert, setCurrentExpert] = useState('Coach Mike');
+  const [currentExpert, setCurrentExpert] = useState(null);
 
   const experts = [
-    { name: 'Coach Mike', specialty: 'Strength Training', avatar: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=50&h=50&fit=crop&crop=face" },
-    { name: 'Dr. Sarah', specialty: 'Nutrition & Recovery', avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=50&h=50&fit=crop&crop=face" },
-    { name: 'Trainer Alex', specialty: 'Cardio & HIIT', avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face" }
+    { 
+      name: 'Coach Mike', 
+      specialty: 'Strength Training', 
+      avatar: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=50&h=50&fit=crop&crop=face",
+      prompt: "Hey! I'm Coach Mike, your strength training expert! I can help you with proper form, progressive overload, and building muscle. What's your strength training goal?"
+    },
+    { 
+      name: 'Dr. Sarah', 
+      specialty: 'Nutrition & Recovery', 
+      avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=50&h=50&fit=crop&crop=face",
+      prompt: "Hi! I'm Dr. Sarah, your nutrition and recovery specialist! I can help you with meal planning, supplements, sleep optimization, and injury prevention. How can I help you recover better?"
+    },
+    { 
+      name: 'Trainer Alex', 
+      specialty: 'Cardio & HIIT', 
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face",
+      prompt: "What's up! I'm Alex, your cardio and HIIT coach! I can help you with fat loss, endurance training, and high-intensity workouts. Ready to get your heart pumping?"
+    }
   ];
+
+  const selectExpert = (expert) => {
+    setCurrentExpert(expert);
+    setMessages([{
+      id: Date.now(),
+      text: expert.prompt,
+      isUser: false,
+      timestamp: new Date(),
+    }]);
+  };
 
   const sendMessage = async () => {
     if (!inputText.trim()) return;
@@ -50,62 +68,35 @@ const FloatingChatbot = () => {
     setInputText('');
     setIsLoading(true);
 
-    try {
-      // Simulate AI response
-      const aiResponse = await generateAIResponse(inputText.trim(), currentExpert);
+    // Simulate AI response
+    setTimeout(() => {
+      const responses = [
+        "That's a great question! Let me help you with that.",
+        "I understand what you're looking for. Here's my advice:",
+        "Based on your question, I'd recommend:",
+        "Excellent point! Here's what I suggest:",
+        "I've got some great tips for you on that topic."
+      ];
       
       const botMessage = {
         id: Date.now() + 1,
-        text: aiResponse,
+        text: responses[Math.floor(Math.random() * responses.length)] + " This is a simulated response. In a real app, this would connect to an AI service.",
         isUser: false,
         timestamp: new Date(),
       };
-
-      setTimeout(() => {
-        setMessages(prev => [...prev, botMessage]);
-        setIsLoading(false);
-      }, 1500);
-    } catch (error) {
-      console.error('Error sending message:', error);
+      
+      setMessages(prev => [...prev, botMessage]);
       setIsLoading(false);
-    }
-  };
-
-  const generateAIResponse = async (userInput, expert) => {
-    const responses = {
-      "Coach Mike": [
-        "For strength training, focus on compound movements like squats, deadlifts, and bench press. Start with 3-4 sets of 6-8 reps for maximum strength gains! 💪",
-        "Progressive overload is key! Increase weight by 2.5-5lbs each week. Your muscles need constant challenge to grow stronger.",
-        "Keep your core tight and maintain a neutral spine throughout the movement. This prevents injury and maximizes muscle engagement."
-      ],
-      "Dr. Sarah": [
-        "Focus on whole foods: lean proteins, complex carbs, healthy fats, and plenty of vegetables. Aim for 5-7 servings of fruits/veggies daily.",
-        "Sleep 7-9 hours nightly. This is when your body repairs and builds muscle tissue.",
-        "Eat 1g of protein per lb of bodyweight daily. Chicken, fish, eggs, and Greek yogurt are excellent sources."
-      ],
-      "Trainer Alex": [
-        "HIIT workouts burn more calories in less time! Try 30 seconds work, 30 seconds rest for 15-20 minutes.",
-        "Consistency beats perfection! Even 20 minutes of exercise is better than nothing.",
-        "Mix up your cardio! Running, cycling, rowing, and swimming all work different muscle groups."
-      ]
-    };
-
-    const expertResponses = responses[expert] || responses["Coach Mike"];
-    return expertResponses[Math.floor(Math.random() * expertResponses.length)];
+    }, 1500);
   };
 
   const renderMessage = (message) => (
-    <View key={message.id} style={[
-      styles.messageContainer,
-      message.isUser ? styles.userMessage : styles.botMessage
-    ]}>
+    <View key={message.id} style={styles.messageContainer}>
       {!message.isUser && (
-        <View style={styles.avatarContainer}>
-          <Image 
-            source={{ uri: experts.find(e => e.name === currentExpert)?.avatar }} 
-            style={styles.avatar} 
-          />
-        </View>
+        <Image 
+          source={{ uri: currentExpert?.avatar }} 
+          style={styles.messageAvatar} 
+        />
       )}
       <View style={[
         styles.messageBubble,
@@ -116,9 +107,6 @@ const FloatingChatbot = () => {
           message.isUser ? styles.userText : styles.botText
         ]}>
           {message.text}
-        </Text>
-        <Text style={styles.timestamp}>
-          {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </Text>
       </View>
     </View>
@@ -145,77 +133,96 @@ const FloatingChatbot = () => {
           <View style={styles.chatContainer}>
             {/* Header */}
             <View style={styles.chatHeader}>
-              <View style={styles.headerLeft}>
-                <Image 
-                  source={{ uri: experts.find(e => e.name === currentExpert)?.avatar }} 
-                  style={styles.headerAvatar} 
-                />
-                <View>
-                  <Text style={styles.headerName}>{currentExpert}</Text>
-                  <Text style={styles.headerSpecialty}>
-                    {experts.find(e => e.name === currentExpert)?.specialty}
-                  </Text>
-                </View>
-              </View>
-              <TouchableOpacity
-                style={styles.closeButton}
-                onPress={() => setIsOpen(false)}
-              >
+              <Text style={styles.headerTitle}>Gym Buddy</Text>
+              <TouchableOpacity onPress={() => setIsOpen(false)}>
                 <Ionicons name="close" size={24} color="#ffffff" />
               </TouchableOpacity>
             </View>
 
-            {/* Expert Selector */}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.expertSelector}>
-              {experts.map((expert) => (
-                <TouchableOpacity
-                  key={expert.name}
-                  style={[
-                    styles.expertCard,
-                    currentExpert === expert.name && styles.selectedExpert
-                  ]}
-                  onPress={() => setCurrentExpert(expert.name)}
-                >
-                  <Image source={{ uri: expert.avatar }} style={styles.expertAvatar} />
-                  <Text style={styles.expertName}>{expert.name}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
+            {/* Expert Selection */}
+            {!currentExpert && (
+              <View style={styles.expertSelector}>
+                <Text style={styles.selectorTitle}>Choose Your Expert</Text>
+                <Text style={styles.selectorSubtitle}>Select a fitness expert to help you reach your goals</Text>
+                <View style={styles.expertList}>
+                  {experts.map((expert) => (
+                    <TouchableOpacity
+                      key={expert.name}
+                      style={styles.expertCard}
+                      onPress={() => selectExpert(expert)}
+                    >
+                      <View style={styles.expertCardContent}>
+                        <Image source={{ uri: expert.avatar }} style={styles.expertAvatar} />
+                        <View style={styles.expertInfo}>
+                          <Text style={styles.expertCardName}>{expert.name}</Text>
+                          <Text style={styles.expertCardSpecialty}>{expert.specialty}</Text>
+                        </View>
+                        <View style={styles.selectButton}>
+                          <Ionicons name="arrow-forward" size={16} color="#00d4ff" />
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            )}
 
             {/* Messages */}
-            <ScrollView style={styles.messagesContainer} contentContainerStyle={styles.messagesContent}>
-              {messages.map(renderMessage)}
-              {isLoading && (
-                <View style={styles.loadingContainer}>
-                  <Text style={styles.loadingText}>AI is thinking...</Text>
+            {currentExpert && (
+              <>
+                <View style={styles.currentExpertHeader}>
+                  <TouchableOpacity 
+                    style={styles.backButton}
+                    onPress={() => setCurrentExpert(null)}
+                  >
+                    <Ionicons name="arrow-back" size={20} color="#ffffff" />
+                  </TouchableOpacity>
+                  <Image 
+                    source={{ uri: currentExpert.avatar }} 
+                    style={styles.currentExpertAvatar} 
+                  />
+                  <View style={styles.expertHeaderInfo}>
+                    <Text style={styles.currentExpertName}>{currentExpert.name}</Text>
+                    <Text style={styles.currentExpertSpecialty}>{currentExpert.specialty}</Text>
+                  </View>
                 </View>
-              )}
-            </ScrollView>
+                
+                <ScrollView style={styles.messagesContainer}>
+                  <View style={styles.messagesContent}>
+                    {messages.map((message) => renderMessage(message))}
+                    {isLoading && (
+                      <View style={styles.loadingContainer}>
+                        <Text style={styles.loadingText}>Typing...</Text>
+                      </View>
+                    )}
+                  </View>
+                </ScrollView>
 
-            {/* Input */}
-            <KeyboardAvoidingView
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-              style={styles.inputContainer}
-            >
-              <View style={styles.inputWrapper}>
-                <TextInput
-                  style={styles.textInput}
-                  value={inputText}
-                  onChangeText={setInputText}
-                  placeholder={`Ask ${currentExpert} anything...`}
-                  placeholderTextColor="#999999"
-                  multiline
-                  maxLength={500}
-                />
-                <TouchableOpacity
-                  style={[styles.sendButton, !inputText.trim() && styles.sendButtonDisabled]}
-                  onPress={sendMessage}
-                  disabled={!inputText.trim() || isLoading}
+                {/* Input */}
+                <KeyboardAvoidingView 
+                  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                  style={styles.inputContainer}
                 >
-                  <Ionicons name="send" size={20} color="#ffffff" />
-                </TouchableOpacity>
-              </View>
-            </KeyboardAvoidingView>
+                  <View style={styles.inputRow}>
+                    <TextInput
+                      style={styles.textInput}
+                      value={inputText}
+                      onChangeText={setInputText}
+                      placeholder="Ask your expert..."
+                      placeholderTextColor="#666666"
+                      multiline
+                    />
+                    <TouchableOpacity
+                      style={styles.sendButton}
+                      onPress={sendMessage}
+                      disabled={isLoading || !inputText.trim()}
+                    >
+                      <Ionicons name="send" size={20} color="#ffffff" />
+                    </TouchableOpacity>
+                  </View>
+                </KeyboardAvoidingView>
+              </>
+            )}
           </View>
         </View>
       </Modal>
@@ -226,7 +233,7 @@ const FloatingChatbot = () => {
 const styles = StyleSheet.create({
   floatingButton: {
     position: 'absolute',
-    bottom: 80,
+    bottom: 120,
     right: 20,
     width: 60,
     height: 60,
@@ -244,122 +251,156 @@ const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   chatContainer: {
-    height: height * 0.6,
     backgroundColor: '#1a1a1a',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    height: height * 0.55,
+    width: width * 0.9,
+    borderRadius: 25,
+    paddingTop: 20,
+    paddingBottom: 100,
+    position: 'relative',
   },
   chatHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 8,
+    paddingBottom: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#333333',
   },
-  headerLeft: {
+  headerTitle: {
+    color: '#ffffff',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  expertSelector: {
+    padding: 20,
+    flex: 1,
+  },
+  selectorTitle: {
+    color: '#ffffff',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  selectorSubtitle: {
+    color: '#cccccc',
+    fontSize: 14,
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  expertList: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  expertCard: {
+    backgroundColor: '#2d2d2d',
+    borderRadius: 15,
+    marginBottom: 15,
+    width: '100%',
+    minHeight: 80,
+  },
+  expertCardContent: {
+    padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
   },
-  headerAvatar: {
+  expertAvatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 15,
+  },
+  expertInfo: {
+    flex: 1,
+  },
+  expertCardName: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  expertCardSpecialty: {
+    color: '#cccccc',
+    fontSize: 12,
+  },
+  selectButton: {
+    backgroundColor: '#333333',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  currentExpertHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333333',
+  },
+  backButton: {
+    marginRight: 15,
+    padding: 5,
+  },
+  currentExpertAvatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
     marginRight: 12,
   },
-  headerName: {
+  expertHeaderInfo: {
+    flex: 1,
+  },
+  currentExpertName: {
+    color: '#ffffff',
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#ffffff',
   },
-  headerSpecialty: {
-    fontSize: 12,
+  currentExpertSpecialty: {
     color: '#cccccc',
-  },
-  closeButton: {
-    padding: 5,
-  },
-  expertSelector: {
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    marginBottom: 0,
-  },
-  expertCard: {
-    alignItems: 'center',
-    marginRight: 15,
-    padding: 8,
-    borderRadius: 12,
-    backgroundColor: '#2d2d2d',
-    minWidth: 100,
-    height: 70,
-    justifyContent: 'center',
-  },
-  selectedExpert: {
-    backgroundColor: '#00d4ff',
-  },
-  expertAvatar: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    marginBottom: 4,
-  },
-  expertName: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    textAlign: 'center',
+    fontSize: 12,
   },
   messagesContainer: {
-    flex: 1,
+    height: height * 0.25,
     paddingHorizontal: 20,
-    paddingTop: 0,
-    marginTop: -20,
   },
   messagesContent: {
-    paddingBottom: 20,
-    paddingTop: -15,
+    paddingVertical: 5,
   },
   messageContainer: {
     flexDirection: 'row',
-    marginVertical: 2,
-    alignItems: 'center',
+    marginBottom: 5,
+    alignItems: 'flex-start',
   },
-  userMessage: {
-    justifyContent: 'flex-end',
-  },
-  botMessage: {
-    justifyContent: 'flex-start',
-  },
-  avatarContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  avatar: {
+  messageAvatar: {
     width: 30,
     height: 30,
     borderRadius: 15,
+    marginRight: 10,
   },
   messageBubble: {
-    maxWidth: '80%',
-    padding: 12,
-    borderRadius: 20,
+    maxWidth: width * 0.7,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 15,
   },
   userBubble: {
     backgroundColor: '#00d4ff',
-    borderBottomRightRadius: 5,
+    alignSelf: 'flex-end',
   },
   botBubble: {
     backgroundColor: '#2d2d2d',
-    borderBottomLeftRadius: 5,
   },
   messageText: {
     fontSize: 14,
-    lineHeight: 18,
+    lineHeight: 20,
   },
   userText: {
     color: '#ffffff',
@@ -367,37 +408,40 @@ const styles = StyleSheet.create({
   botText: {
     color: '#ffffff',
   },
-  timestamp: {
-    fontSize: 10,
-    color: '#999999',
-    marginTop: 5,
-    textAlign: 'right',
-  },
   loadingContainer: {
     alignItems: 'center',
-    padding: 20,
+    paddingVertical: 10,
   },
   loadingText: {
     color: '#cccccc',
     fontSize: 14,
+    fontStyle: 'italic',
   },
   inputContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingVertical: 15,
+    backgroundColor: '#1a1a1a',
+    borderTopWidth: 1,
+    borderTopColor: '#333333',
   },
-  inputWrapper: {
+  inputRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    backgroundColor: '#2d2d2d',
-    borderRadius: 25,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
   },
   textInput: {
     flex: 1,
+    backgroundColor: '#2d2d2d',
+    borderRadius: 20,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    color: '#ffffff',
     fontSize: 14,
     maxHeight: 100,
-    color: '#ffffff',
+    marginRight: 10,
   },
   sendButton: {
     backgroundColor: '#00d4ff',
@@ -406,10 +450,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 10,
-  },
-  sendButtonDisabled: {
-    backgroundColor: '#666666',
   },
 });
 

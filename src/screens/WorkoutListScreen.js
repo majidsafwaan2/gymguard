@@ -201,16 +201,21 @@ const styles = StyleSheet.create({
     color: '#ffffff',
   },
   listContainer: {
-    padding: 15,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
   },
-  row: {
-    justifyContent: 'space-between',
-  },
+      row: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        marginBottom: 15,
+        paddingLeft: 0,
+        paddingRight: 20,
+      },
   workoutCard: {
-    width: (width - 45) / 2,
-    marginBottom: 15,
+    width: (width - 80) / 2,
     borderRadius: 15,
     overflow: 'hidden',
+    marginRight: 15,
   },
   cardGradient: {
     padding: 15,

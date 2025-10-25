@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Text, Image } from 'react-native';
+import { StyleSheet, View, Text, Image, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 // Import screens
@@ -110,13 +110,13 @@ function MainTabs() {
         },
         tabBarActiveTintColor: '#00d4ff',
         tabBarInactiveTintColor: '#666666',
-        tabBarStyle: {
-          backgroundColor: '#1a1a1a',
-          borderTopColor: '#333333',
-          paddingTop: 8,
-          paddingBottom: 8,
-          height: 70,
-        },
+            tabBarStyle: {
+              backgroundColor: '#1a1a1a',
+              borderTopColor: '#333333',
+              paddingTop: Platform.OS === 'ios' ? 5 : 3,
+              paddingBottom: Platform.OS === 'ios' ? 5 : 3,
+              height: Platform.OS === 'ios' ? 60 : 50,
+            },
         headerShown: false,
       })}
     >
@@ -144,11 +144,22 @@ export default function App() {
 
   return (
     <WorkoutProvider>
-      <NavigationContainer>
-        <StatusBar style="light" backgroundColor="#1a1a1a" />
-        <MainTabs />
-        <FloatingChatbot />
-      </NavigationContainer>
+      <View style={styles.container}>
+        <NavigationContainer>
+          <StatusBar style="light" backgroundColor="#1a1a1a" />
+          <MainTabs />
+          <FloatingChatbot />
+        </NavigationContainer>
+      </View>
     </WorkoutProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#1a1a1a',
+    paddingTop: Platform.OS === 'ios' ? 50 : 0,
+    paddingBottom: Platform.OS === 'ios' ? 40 : 0,
+  },
+});
