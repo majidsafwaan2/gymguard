@@ -46,7 +46,7 @@ const FloatingChatbot = () => {
     }
   ];
 
-  const selectExpert = (expert) => {
+  const selectExpert = async (expert) => {
     setCurrentExpert(expert);
     setMessages([{
       id: Date.now(),
@@ -54,6 +54,12 @@ const FloatingChatbot = () => {
       isUser: false,
       timestamp: new Date(),
     }]);
+    
+    // Test Gemini connection
+    const testResult = await GeminiService.testConnection();
+    if (!testResult.success) {
+      console.log('Gemini test failed:', testResult.error);
+    }
   };
 
   const sendMessage = async () => {

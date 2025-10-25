@@ -5,7 +5,16 @@ const genAI = new GoogleGenerativeAI(API_KEY);
 
 class GeminiService {
   constructor() {
-    this.model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    // Use the stable Gemini 2.5 Flash model
+    this.model = genAI.getGenerativeModel({ 
+      model: 'gemini-2.5-flash',
+      generationConfig: {
+        temperature: 0.7,
+        topK: 40,
+        topP: 0.95,
+        maxOutputTokens: 1024,
+      }
+    });
     this.chatHistory = new Map(); // Store chat history per expert
   }
 
@@ -15,6 +24,24 @@ class GeminiService {
       this.chatHistory.set(expertId, []);
     }
     return this.chatHistory.get(expertId);
+  }
+
+  // Test API connection and list available models
+  async testConnection() {
+    try {
+      console.log('Testing Gemini API connection...');
+      
+      // Try a simple test request
+      const result = await this.model.generateContent('Hello, are you working?');
+      const response = await result.response;
+      const text = response.text();
+      
+      console.log('Gemini API test successful:', text);
+      return { success: true, message: text };
+    } catch (error) {
+      console.error('Gemini API test failed:', error);
+      return { success: false, error: error.message };
+    }
   }
 
   // Send message to Gemini AI
