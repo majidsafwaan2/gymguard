@@ -323,7 +323,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 3,
+    id: 13,
     name: "Deadlift",
     targetMuscles: ["Hamstrings", "Glutes", "Back", "Traps"],
     difficulty: "Advanced",
@@ -350,7 +350,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 4,
+    id: 14,
     name: "Shoulder Press",
     targetMuscles: ["Shoulders", "Triceps"],
     difficulty: "Beginner",
@@ -377,7 +377,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 5,
+    id: 15,
     name: "Lat Pulldown",
     targetMuscles: ["Lats", "Rhomboids", "Biceps"],
     difficulty: "Beginner",
@@ -404,7 +404,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 6,
+    id: 16,
     name: "Bicep Curl",
     targetMuscles: ["Biceps"],
     difficulty: "Beginner",
@@ -431,7 +431,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 7,
+    id: 17,
     name: "Tricep Dips",
     targetMuscles: ["Triceps", "Chest"],
     difficulty: "Intermediate",
@@ -458,7 +458,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 8,
+    id: 18,
     name: "Lunges",
     targetMuscles: ["Quadriceps", "Glutes", "Hamstrings"],
     difficulty: "Beginner",
@@ -485,7 +485,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 9,
+    id: 19,
     name: "Push-ups",
     targetMuscles: ["Chest", "Shoulders", "Triceps"],
     difficulty: "Beginner",
@@ -512,7 +512,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 10,
+    id: 20,
     name: "Pull-ups",
     targetMuscles: ["Lats", "Rhomboids", "Biceps"],
     difficulty: "Advanced",
@@ -539,7 +539,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 11,
+    id: 21,
     name: "Romanian Deadlift",
     targetMuscles: ["Hamstrings", "Glutes"],
     difficulty: "Intermediate",
@@ -566,7 +566,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 12,
+    id: 22,
     name: "Overhead Press",
     targetMuscles: ["Shoulders", "Triceps", "Core"],
     difficulty: "Intermediate",
@@ -593,7 +593,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 13,
+    id: 23,
     name: "Bent-Over Row",
     targetMuscles: ["Lats", "Rhomboids", "Rear Delts"],
     difficulty: "Intermediate",
@@ -620,7 +620,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 14,
+    id: 24,
     name: "Calf Raises",
     targetMuscles: ["Calves"],
     difficulty: "Beginner",
@@ -647,7 +647,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 15,
+    id: 25,
     name: "Plank",
     targetMuscles: ["Core", "Shoulders"],
     difficulty: "Beginner",
@@ -674,7 +674,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 16,
+    id: 26,
     name: "Mountain Climbers",
     targetMuscles: ["Core", "Shoulders", "Legs"],
     difficulty: "Intermediate",
@@ -701,7 +701,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 17,
+    id: 27,
     name: "Burpees",
     targetMuscles: ["Full Body"],
     difficulty: "Advanced",
@@ -728,7 +728,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 18,
+    id: 28,
     name: "Russian Twists",
     targetMuscles: ["Obliques", "Core"],
     difficulty: "Beginner",
@@ -755,7 +755,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 19,
+    id: 29,
     name: "Leg Press",
     targetMuscles: ["Quadriceps", "Glutes"],
     difficulty: "Beginner",
@@ -782,7 +782,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 20,
+    id: 30,
     name: "Chest Fly",
     targetMuscles: ["Chest", "Anterior Delts"],
     difficulty: "Intermediate",
@@ -809,7 +809,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 21,
+    id: 31,
     name: "Hammer Curls",
     targetMuscles: ["Biceps", "Forearms"],
     difficulty: "Beginner",
@@ -836,7 +836,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 22,
+    id: 32,
     name: "Lateral Raises",
     targetMuscles: ["Shoulders"],
     difficulty: "Beginner",
@@ -863,7 +863,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 23,
+    id: 33,
     name: "Face Pulls",
     targetMuscles: ["Rear Delts", "Rhomboids"],
     difficulty: "Beginner",
@@ -890,7 +890,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 24,
+    id: 34,
     name: "Leg Curls",
     targetMuscles: ["Hamstrings"],
     difficulty: "Beginner",
@@ -917,7 +917,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 25,
+    id: 35,
     name: "Leg Extensions",
     targetMuscles: ["Quadriceps"],
     difficulty: "Beginner",
@@ -944,7 +944,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 26,
+    id: 36,
     name: "Cable Rows",
     targetMuscles: ["Lats", "Rhomboids", "Biceps"],
     difficulty: "Intermediate",
@@ -971,7 +971,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 27,
+    id: 37,
     name: "Chest Press Machine",
     targetMuscles: ["Chest", "Shoulders", "Triceps"],
     difficulty: "Beginner",
@@ -998,7 +998,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 28,
+    id: 38,
     name: "Seated Row",
     targetMuscles: ["Lats", "Rhomboids", "Biceps"],
     difficulty: "Beginner",
@@ -1025,7 +1025,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 29,
+    id: 39,
     name: "Hip Thrusts",
     targetMuscles: ["Glutes", "Hamstrings"],
     difficulty: "Intermediate",
@@ -1052,7 +1052,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 30,
+    id: 40,
     name: "Bulgarian Split Squats",
     targetMuscles: ["Quadriceps", "Glutes"],
     difficulty: "Advanced",
@@ -1079,7 +1079,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 31,
+    id: 41,
     name: "Incline Bench Press",
     targetMuscles: ["Upper Chest", "Shoulders", "Triceps"],
     difficulty: "Intermediate",
@@ -1106,7 +1106,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 32,
+    id: 42,
     name: "Decline Bench Press",
     targetMuscles: ["Lower Chest", "Shoulders", "Triceps"],
     difficulty: "Intermediate",
@@ -1133,7 +1133,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 33,
+    id: 43,
     name: "Dumbbell Flyes",
     targetMuscles: ["Chest", "Anterior Delts"],
     difficulty: "Intermediate",
@@ -1160,7 +1160,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 34,
+    id: 44,
     name: "Preacher Curls",
     targetMuscles: ["Biceps"],
     difficulty: "Intermediate",
@@ -1187,7 +1187,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 35,
+    id: 45,
     name: "Skull Crushers",
     targetMuscles: ["Triceps"],
     difficulty: "Intermediate",
@@ -1214,7 +1214,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 36,
+    id: 46,
     name: "Close-Grip Bench Press",
     targetMuscles: ["Triceps", "Chest"],
     difficulty: "Intermediate",
@@ -1241,7 +1241,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 37,
+    id: 47,
     name: "Wide-Grip Pull-ups",
     targetMuscles: ["Lats", "Rhomboids"],
     difficulty: "Advanced",
@@ -1268,7 +1268,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 38,
+    id: 48,
     name: "Chin-ups",
     targetMuscles: ["Lats", "Biceps"],
     difficulty: "Advanced",
@@ -1295,7 +1295,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 39,
+    id: 49,
     name: "Dips",
     targetMuscles: ["Triceps", "Chest"],
     difficulty: "Advanced",
@@ -1322,7 +1322,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 40,
+    id: 50,
     name: "Pike Push-ups",
     targetMuscles: ["Shoulders", "Triceps"],
     difficulty: "Advanced",
@@ -1349,7 +1349,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 41,
+    id: 51,
     name: "Handstand Push-ups",
     targetMuscles: ["Shoulders", "Triceps", "Core"],
     difficulty: "Advanced",
@@ -1376,7 +1376,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 42,
+    id: 52,
     name: "Muscle-ups",
     targetMuscles: ["Lats", "Triceps", "Chest"],
     difficulty: "Advanced",
@@ -1403,7 +1403,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 43,
+    id: 53,
     name: "Front Squats",
     targetMuscles: ["Quadriceps", "Glutes", "Core"],
     difficulty: "Advanced",
@@ -1430,7 +1430,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 44,
+    id: 54,
     name: "Overhead Squats",
     targetMuscles: ["Quadriceps", "Glutes", "Shoulders", "Core"],
     difficulty: "Advanced",
@@ -1457,7 +1457,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 45,
+    id: 55,
     name: "Goblet Squats",
     targetMuscles: ["Quadriceps", "Glutes"],
     difficulty: "Beginner",
@@ -1484,7 +1484,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 46,
+    id: 56,
     name: "Sumo Squats",
     targetMuscles: ["Quadriceps", "Glutes", "Inner Thighs"],
     difficulty: "Beginner",
@@ -1511,7 +1511,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 47,
+    id: 57,
     name: "Jump Squats",
     targetMuscles: ["Quadriceps", "Glutes", "Calves"],
     difficulty: "Intermediate",
@@ -1538,7 +1538,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 48,
+    id: 58,
     name: "Pistol Squats",
     targetMuscles: ["Quadriceps", "Glutes", "Core"],
     difficulty: "Advanced",
@@ -1565,7 +1565,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 49,
+    id: 59,
     name: "Wall Sits",
     targetMuscles: ["Quadriceps", "Glutes"],
     difficulty: "Beginner",
@@ -1592,7 +1592,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 50,
+    id: 60,
     name: "Step-ups",
     targetMuscles: ["Quadriceps", "Glutes"],
     difficulty: "Beginner",
@@ -1619,7 +1619,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 51,
+    id: 61,
     name: "Box Jumps",
     targetMuscles: ["Quadriceps", "Glutes", "Calves"],
     difficulty: "Intermediate",
@@ -1646,7 +1646,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 52,
+    id: 62,
     name: "Single-Leg Deadlifts",
     targetMuscles: ["Hamstrings", "Glutes", "Core"],
     difficulty: "Advanced",
@@ -1673,7 +1673,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 53,
+    id: 63,
     name: "Good Mornings",
     targetMuscles: ["Hamstrings", "Glutes", "Lower Back"],
     difficulty: "Intermediate",
@@ -1700,7 +1700,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 54,
+    id: 64,
     name: "Stiff-Leg Deadlifts",
     targetMuscles: ["Hamstrings", "Glutes"],
     difficulty: "Intermediate",
@@ -1727,7 +1727,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 55,
+    id: 65,
     name: "Kettlebell Swings",
     targetMuscles: ["Hamstrings", "Glutes", "Core"],
     difficulty: "Intermediate",
@@ -1754,7 +1754,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 56,
+    id: 66,
     name: "Turkish Get-ups",
     targetMuscles: ["Full Body"],
     difficulty: "Advanced",
@@ -1781,7 +1781,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 57,
+    id: 67,
     name: "Farmer's Walk",
     targetMuscles: ["Grip", "Core", "Traps"],
     difficulty: "Intermediate",
@@ -1808,7 +1808,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 58,
+    id: 68,
     name: "Battle Ropes",
     targetMuscles: ["Core", "Shoulders", "Arms"],
     difficulty: "Intermediate",
@@ -1835,7 +1835,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 59,
+    id: 69,
     name: "Sled Pushes",
     targetMuscles: ["Legs", "Core", "Cardio"],
     difficulty: "Intermediate",
@@ -1862,7 +1862,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 60,
+    id: 70,
     name: "Sled Pulls",
     targetMuscles: ["Legs", "Core", "Cardio"],
     difficulty: "Intermediate",

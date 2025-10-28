@@ -245,6 +245,31 @@ const HomeScreen = ({ navigation }) => {
           </View>
         </View>
 
+        {/* Doctor Assigned Workouts */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Doctor Assigned Workouts</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('DoctorAssignedWorkouts')}>
+              <Ionicons name="arrow-forward" size={20} color="#00d4ff" />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity 
+            style={styles.doctorWorkoutCard}
+            onPress={() => navigation.navigate('DoctorAssignedWorkouts')}
+          >
+            <View style={styles.doctorWorkoutIcon}>
+              <Ionicons name="medical" size={32} color="#00d4ff" />
+            </View>
+            <View style={styles.doctorWorkoutInfo}>
+              <Text style={styles.doctorWorkoutTitle}>View Your Prescribed Exercises</Text>
+              <Text style={styles.doctorWorkoutSubtitle}>
+                Personalized workouts from your physical therapist
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color="#cccccc" />
+          </TouchableOpacity>
+        </View>
+
         {/* Today's Workout */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Today's Workout</Text>
@@ -414,6 +439,43 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#ffffff',
     marginBottom: 15,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  doctorWorkoutCard: {
+    backgroundColor: '#2d2d2d',
+    borderRadius: 15,
+    padding: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 212, 255, 0.3)',
+  },
+  doctorWorkoutIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'rgba(0, 212, 255, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 15,
+  },
+  doctorWorkoutInfo: {
+    flex: 1,
+  },
+  doctorWorkoutTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 4,
+  },
+  doctorWorkoutSubtitle: {
+    fontSize: 14,
+    color: '#cccccc',
   },
   quickActionsScroll: {
     marginHorizontal: -5,

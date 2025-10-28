@@ -27,6 +27,7 @@ import DoctorDashboardScreen from './src/screens/DoctorDashboardScreen';
 import DoctorInboxScreen from './src/screens/DoctorInboxScreen';
 import WorkoutAssignmentScreen from './src/screens/WorkoutAssignmentScreen';
 import InjuryTimelineScreen from './src/screens/InjuryTimelineScreen';
+import DoctorAssignedWorkoutsScreen from './src/screens/DoctorAssignedWorkoutsScreen';
 import FloatingChatbot from './src/components/FloatingChatbot';
 
 // Import context
@@ -257,6 +258,27 @@ function MainApp() {
       <Stack.Screen 
         name="InjuryTimeline" 
         component={InjuryTimelineScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen 
+        name="DoctorAssignedWorkouts" 
+        component={DoctorAssignedWorkoutsScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen 
+        name="WorkoutDetail" 
+        component={WorkoutDetailScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen 
+        name="WorkoutTimer" 
+        component={WorkoutTimerScreen}
         options={{
           headerShown: false,
         }}

@@ -1,0 +1,67 @@
+[debug] [2025-10-28T14:11:31.411Z] ----------------------------------------------------------------------
+[debug] [2025-10-28T14:11:31.415Z] Command:       /opt/homebrew/Cellar/node/24.7.0/bin/node /opt/homebrew/bin/firebase deploy --only firestore:indexes
+[debug] [2025-10-28T14:11:31.415Z] CLI Version:   14.22.0
+[debug] [2025-10-28T14:11:31.415Z] Platform:      darwin
+[debug] [2025-10-28T14:11:31.416Z] Node Version:  v24.7.0
+[debug] [2025-10-28T14:11:31.416Z] Time:          Tue Oct 28 2025 10:11:31 GMT-0400 (Eastern Daylight Time)
+[debug] [2025-10-28T14:11:31.416Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-10-28T14:11:31.417Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2025-10-28T14:11:31.572Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-10-28T14:11:31.572Z] > authorizing via signed-in user (gymguard0@gmail.com)
+[debug] [2025-10-28T14:11:31.572Z] [iam] checking project gymguard-ii for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]
+[debug] [2025-10-28T14:11:31.573Z] Checked if tokens are valid: false, expires at: 1761460314268
+[debug] [2025-10-28T14:11:31.573Z] Checked if tokens are valid: false, expires at: 1761460314268
+[debug] [2025-10-28T14:11:31.573Z] > refreshing access token with scopes: []
+[debug] [2025-10-28T14:11:31.574Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-10-28T14:11:31.574Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2025-10-28T14:11:31.689Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2025-10-28T14:11:31.689Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[warn] ⚠  Unable to fetch the CLI MOTD and remote config. This is not a fatal error, but may indicate an issue with your network connection. 
+[debug] [2025-10-28T14:11:31.690Z] Failed to fetch MOTD Error: EPERM: operation not permitted, open '/Users/sakethnandam/.config/configstore/firebase-tools.json.1408228414'
+[debug] [2025-10-28T14:11:31.693Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2025-10-28T14:11:31.693Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[error] Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[debug] [2025-10-28T14:11:31.694Z] [iam] error while checking permissions, command may fail: Authentication Error: Your credentials are no longer valid. Please run firebase login --reauth
+
+For CI servers and headless environments, generate a new token with firebase login:ci
+[info] 
+[info] === Deploying to 'gymguard-ii'...
+[info] 
+[info] i  deploying firestore 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[debug] [2025-10-28T14:11:31.695Z] Checked if tokens are valid: true, expires at: 1761664290693
+[debug] [2025-10-28T14:11:31.695Z] Checked if tokens are valid: true, expires at: 1761664290693
+[debug] [2025-10-28T14:11:31.695Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/gymguard-ii/services/firestore.googleapis.com [none]
+[debug] [2025-10-28T14:11:31.695Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/gymguard-ii/services/firestore.googleapis.com x-goog-quota-user=projects/gymguard-ii
+[debug] [2025-10-28T14:11:32.030Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/gymguard-ii/services/firestore.googleapis.com 200
+[debug] [2025-10-28T14:11:32.030Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/gymguard-ii/services/firestore.googleapis.com [omitted]
+[info] ✔  firestore: required API firestore.googleapis.com is enabled 
+[debug] [2025-10-28T14:11:32.032Z] Error: EPERM: operation not permitted, open '/Users/sakethnandam/.config/configstore/firebase-tools.json.3410931682'
+    at Object.openSync (node:fs:560:18)
+    at writeFile.writeFileSync [as sync] (/opt/homebrew/lib/node_modules/firebase-tools/node_modules/write-file-atomic/index.js:205:13)
+    at set all (/opt/homebrew/lib/node_modules/firebase-tools/node_modules/configstore/index.js:61:20)
+    at Configstore.set (/opt/homebrew/lib/node_modules/firebase-tools/node_modules/configstore/index.js:91:12)
+    at cacheEnabledAPI (/opt/homebrew/lib/node_modules/firebase-tools/lib/ensureApiEnabled.js:143:31)
+    at check (/opt/homebrew/lib/node_modules/firebase-tools/lib/ensureApiEnabled.js:34:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ensure (/opt/homebrew/lib/node_modules/firebase-tools/lib/ensureApiEnabled.js:108:23)
+    at async default_1 (/opt/homebrew/lib/node_modules/firebase-tools/lib/deploy/firestore/prepare.js:76:5)
+    at async chain (/opt/homebrew/lib/node_modules/firebase-tools/lib/deploy/index.js:43:9)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2025-10-28T14:11:32.294Z] Error: EPERM: operation not permitted, open '/Users/sakethnandam/.config/configstore/firebase-tools.json.2621450769'
+    at Object.openSync (node:fs:560:18)
+    at writeFile.writeFileSync [as sync] (/opt/homebrew/lib/node_modules/firebase-tools/node_modules/write-file-atomic/index.js:205:13)
+    at set all (/opt/homebrew/lib/node_modules/firebase-tools/node_modules/configstore/index.js:61:20)
+    at Configstore.delete (/opt/homebrew/lib/node_modules/firebase-tools/node_modules/configstore/index.js:101:12)
+    at process.<anonymous> (/opt/homebrew/lib/node_modules/firebase-tools/lib/bin/cli.js:65:45)
+    at process.emit (node:events:520:35)
+    at process.exit (node:internal/process/per_thread:236:15)
+    at Timeout._onTimeout (/opt/homebrew/lib/node_modules/firebase-tools/lib/errorOut.js:20:17)
+    at listOnTimeout (node:internal/timers:608:17)
+    at process.processTimers (node:internal/timers:543:7)
+[error] 
+[error] Error: An unexpected error has occurred.
