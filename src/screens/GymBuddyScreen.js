@@ -19,7 +19,7 @@ const GymBuddyScreen = ({ navigation }) => {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Hey! I'm your AI Gym Buddy! 💪 I can help you with workout plans, nutrition advice, form tips, and answer any fitness questions. What would you like to know?",
+      text: "Hello! I'm your AI Physical Therapist! 🏥 I can help you with rehabilitation exercises, pain management, mobility improvement, and answer questions about your recovery. How can I assist you today?",
       isUser: false,
       timestamp: new Date(),
     }
@@ -30,22 +30,22 @@ const GymBuddyScreen = ({ navigation }) => {
 
   const gymExperts = [
     {
-      name: "Coach Mike",
-      specialty: "Strength Training",
+      name: "Dr. James",
+      specialty: "Orthopedic PT",
       avatar: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=150&h=150&fit=crop&crop=face",
-      personality: "Motivational and technical"
+      personality: "Clinical and supportive"
     },
     {
-      name: "Dr. Sarah",
-      specialty: "Nutrition & Recovery",
+      name: "Dr. Maria",
+      specialty: "Sports Rehab",
       avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=150&h=150&fit=crop&crop=face",
-      personality: "Scientific and supportive"
+      personality: "Encouraging and precise"
     },
     {
-      name: "Trainer Alex",
-      specialty: "Cardio & HIIT",
+      name: "Dr. Kevin",
+      specialty: "Movement Therapy",
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-      personality: "Energetic and encouraging"
+      personality: "Holistic and patient"
     }
   ];
 
@@ -100,77 +100,81 @@ const GymBuddyScreen = ({ navigation }) => {
   const generateAIResponse = async (userInput, expert) => {
     // Simulate different responses based on expert and input
     const responses = {
-      "Coach Mike": {
-        workout: [
-          "For strength training, focus on compound movements like squats, deadlifts, and bench press. Start with 3-4 sets of 6-8 reps for maximum strength gains! 💪",
-          "Progressive overload is key! Increase weight by 2.5-5lbs each week. Your muscles need constant challenge to grow stronger.",
-          "Rest 2-3 minutes between heavy sets. Your nervous system needs time to recover for optimal performance."
+      "Dr. James": {
+        exercises: [
+          "For orthopedic recovery, focus on controlled movements that don't cause sharp pain. Start with 2-3 sets of 10-15 reps, prioritizing quality over quantity. 🏥",
+          "Range of motion exercises should be done slowly and deliberately. Don't push through sharp pain, but mild discomfort is normal during recovery.",
+          "Strengthen the muscles around your injury site to provide better support. This helps prevent re-injury and speeds up recovery."
         ],
-        form: [
-          "Keep your core tight and maintain a neutral spine throughout the movement. This prevents injury and maximizes muscle engagement.",
-          "Control the eccentric (lowering) phase for 2-3 seconds. This builds more muscle than explosive movements.",
-          "Full range of motion is crucial! Don't sacrifice form for heavier weights."
-        ],
-        nutrition: [
-          "Eat 1g of protein per lb of bodyweight daily. Chicken, fish, eggs, and Greek yogurt are excellent sources.",
-          "Carbs fuel your workouts! Eat complex carbs like oats, sweet potatoes, and brown rice 2-3 hours before training.",
-          "Stay hydrated! Drink 0.5-1oz of water per lb of bodyweight daily."
-        ]
-      },
-      "Dr. Sarah": {
-        nutrition: [
-          "Focus on whole foods: lean proteins, complex carbs, healthy fats, and plenty of vegetables. Aim for 5-7 servings of fruits/veggies daily.",
-          "Meal timing matters! Eat protein within 30 minutes post-workout to maximize muscle protein synthesis.",
-          "Track your macros: 40% carbs, 30% protein, 30% fat is a good starting point for most people."
+        pain: [
+          "Ice for acute pain (first 48-72 hours), heat for chronic stiffness. 15-20 minutes at a time, with breaks in between.",
+          "Pain that increases during or after exercise needs attention. Use the pain scale - keep activities between 0-3 out of 10.",
+          "Take prescribed anti-inflammatories with food. They reduce swelling and make exercises more comfortable."
         ],
         recovery: [
-          "Sleep 7-9 hours nightly. This is when your body repairs and builds muscle tissue.",
-          "Active recovery is important! Light walks, yoga, or stretching on rest days improves circulation.",
-          "Listen to your body. If you're constantly sore or fatigued, you might be overtraining."
-        ],
-        supplements: [
-          "Creatine monohydrate (3-5g daily) is the most researched supplement for strength and muscle gains.",
-          "Whey protein is convenient, but whole foods should be your primary protein source.",
-          "Omega-3s reduce inflammation and support joint health. Consider fish oil if you don't eat fish regularly."
+          "Rest is crucial, but complete inactivity can delay healing. Gentle movement promotes blood flow and prevents stiffness.",
+          "Follow your prescribed exercise schedule consistently. Skipping sessions or overdoing it both slow recovery.",
+          "Expect gradual improvement. Healing takes time - weeks for soft tissue, months for bones and tendons."
         ]
       },
-      "Trainer Alex": {
-        cardio: [
-          "HIIT workouts burn more calories in less time! Try 30 seconds work, 30 seconds rest for 15-20 minutes.",
-          "Mix up your cardio! Running, cycling, rowing, and swimming all work different muscle groups.",
-          "Zone 2 training (conversational pace) improves your aerobic base and fat burning capacity."
+      "Dr. Maria": {
+        rehab: [
+          "Sport-specific rehab builds on basic strength. Start with fundamental movements before progressing to athletic drills.",
+          "Balance and proprioception training prevents re-injury. Single-leg exercises and stability work are essential.",
+          "Return to sport gradually. Use the 10% rule - increase intensity/volume by no more than 10% per week."
         ],
-        motivation: [
-          "Consistency beats perfection! Even 20 minutes of exercise is better than nothing.",
-          "Find activities you enjoy! You're more likely to stick with workouts you actually like doing.",
-          "Track your progress! Take photos, measurements, and note how you feel. Small wins add up!"
+        exercises: [
+          "Eccentric exercises (controlling the lowering phase) rebuild tendon strength effectively. 3 seconds down, 1 second up.",
+          "Plyometric training should only begin after pain-free strength is restored. Start with low-impact before progressing.",
+          "Core stability is fundamental to all movement. Include planks, bird-dogs, and dead bugs in your routine."
         ],
-        beginner: [
-          "Start with bodyweight exercises: push-ups, squats, lunges, and planks. Master these before adding weights.",
-          "Begin with 2-3 workouts per week. Your body needs time to adapt to new stress.",
-          "Focus on learning proper form first. Bad habits are hard to break later!"
+        prevention: [
+          "Warm up properly before activity. 5-10 minutes of light cardio and dynamic stretching prepares your body.",
+          "Listen to early warning signs. Persistent soreness, reduced range of motion, or subtle pain shouldn't be ignored.",
+          "Cross-training reduces overuse injuries by varying movement patterns and stress distribution."
+        ]
+      },
+      "Dr. Kevin": {
+        mobility: [
+          "Gentle stretching improves flexibility. Hold each stretch 30-60 seconds, breathing deeply. Never bounce.",
+          "Yoga and tai chi enhance mind-body connection while building functional strength and balance.",
+          "Daily movement is better than occasional intensive stretching. Even 5 minutes makes a difference."
+        ],
+        posture: [
+          "Ergonomics matter! Ensure your workspace supports neutral spine alignment to prevent chronic pain.",
+          "Postural exercises strengthen muscles that fight gravity. Wall angels, chin tucks, and scapular squeezes help.",
+          "Take frequent breaks from static positions. Move every 30 minutes to prevent muscle tightness."
+        ],
+        breathing: [
+          "Diaphragmatic breathing reduces tension and improves core stability. Practice: breathe in for 4, hold for 4, out for 6.",
+          "Breath control during exercises maintains stability. Exhale during exertion, inhale during release.",
+          "Stress affects physical recovery. Mindfulness and breathing exercises support both mental and physical healing."
         ]
       }
     };
 
-    const expertResponses = responses[expert.name] || responses["Coach Mike"];
+    const expertResponses = responses[expert.name] || responses["Dr. James"];
     const categories = Object.keys(expertResponses);
     
     // Simple keyword matching to determine category
-    let category = "workout";
-    if (userInput.toLowerCase().includes("nutrition") || userInput.toLowerCase().includes("diet") || userInput.toLowerCase().includes("food")) {
-      category = "nutrition";
-    } else if (userInput.toLowerCase().includes("cardio") || userInput.toLowerCase().includes("running") || userInput.toLowerCase().includes("hiit")) {
-      category = "cardio";
-    } else if (userInput.toLowerCase().includes("form") || userInput.toLowerCase().includes("technique")) {
-      category = "form";
-    } else if (userInput.toLowerCase().includes("recovery") || userInput.toLowerCase().includes("rest")) {
+    let category = "exercises";
+    if (userInput.toLowerCase().includes("pain") || userInput.toLowerCase().includes("hurt") || userInput.toLowerCase().includes("sore")) {
+      category = "pain";
+    } else if (userInput.toLowerCase().includes("recovery") || userInput.toLowerCase().includes("heal") || userInput.toLowerCase().includes("rest")) {
       category = "recovery";
-    } else if (userInput.toLowerCase().includes("beginner") || userInput.toLowerCase().includes("start")) {
-      category = "beginner";
+    } else if (userInput.toLowerCase().includes("exercise") || userInput.toLowerCase().includes("workout") || userInput.toLowerCase().includes("rehab")) {
+      category = "exercises";
+    } else if (userInput.toLowerCase().includes("mobility") || userInput.toLowerCase().includes("flexibility") || userInput.toLowerCase().includes("stretch")) {
+      category = "mobility";
+    } else if (userInput.toLowerCase().includes("posture") || userInput.toLowerCase().includes("alignment")) {
+      category = "posture";
+    } else if (userInput.toLowerCase().includes("breathing") || userInput.toLowerCase().includes("breath") || userInput.toLowerCase().includes("stress")) {
+      category = "breathing";
+    } else if (userInput.toLowerCase().includes("prevent") || userInput.toLowerCase().includes("avoid")) {
+      category = "prevention";
     }
 
-    const categoryResponses = expertResponses[category] || expertResponses["workout"];
+    const categoryResponses = expertResponses[category] || expertResponses["exercises"];
     const randomResponse = categoryResponses[Math.floor(Math.random() * categoryResponses.length)];
     
     return randomResponse;
@@ -210,7 +214,7 @@ const GymBuddyScreen = ({ navigation }) => {
         >
           <Ionicons name="arrow-back" size={24} color="#ffffff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Gym Buddy AI</Text>
+        <Text style={styles.headerTitle}>AI Physical Therapist</Text>
         <TouchableOpacity style={styles.settingsButton}>
           <Ionicons name="settings-outline" size={24} color="#ffffff" />
         </TouchableOpacity>

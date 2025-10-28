@@ -1,10 +1,278 @@
 export const workoutDatabase = [
+  // ===== PHYSICAL THERAPY EXERCISES =====
   {
     id: 1,
+    name: "Knee Flexion Stretch",
+    targetMuscles: ["Hamstrings", "Knee Joint"],
+    difficulty: "Beginner",
+    thumbnail: "🦵",
+    category: "Physical Therapy",
+    description: "A gentle rehabilitation exercise for improving knee range of motion after injury or surgery.",
+    tips: [
+      "Sit on the edge of a chair or bed",
+      "Slowly bend your knee as far as comfortable",
+      "Hold the stretch for 5-10 seconds",
+      "Return to starting position slowly"
+    ],
+    commonMistakes: [
+      "Moving too quickly",
+      "Forcing the knee beyond comfortable range",
+      "Not breathing properly during the stretch",
+      "Skipping warm-up"
+    ],
+    safetyTips: "Pain scale should be 0-3/10. Sharp pain means stop immediately.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      kneeAngle: { min: 90, max: 120 }
+    }
+  },
+  {
+    id: 2,
+    name: "Shoulder Pendulum",
+    targetMuscles: ["Shoulder Joint", "Rotator Cuff"],
+    difficulty: "Beginner",
+    thumbnail: "💪",
+    category: "Physical Therapy",
+    description: "A passive range of motion exercise for shoulder rehabilitation, especially after injury or surgery.",
+    tips: [
+      "Lean forward supporting yourself with good arm",
+      "Let injured arm hang down relaxed",
+      "Gently swing arm in small circles",
+      "Gradually increase circle size as tolerated"
+    ],
+    commonMistakes: [
+      "Using muscles to swing (should be gravity-driven)",
+      "Making circles too large too soon",
+      "Tensing the shoulder",
+      "Moving too fast"
+    ],
+    safetyTips: "This should be pain-free. If you feel pain, reduce the range of motion.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      shoulderAngle: { min: 85, max: 100 }
+    }
+  },
+  {
+    id: 3,
+    name: "Ankle Alphabet",
+    targetMuscles: ["Ankle Joint", "Calf"],
+    difficulty: "Beginner",
+    thumbnail: "🦶",
+    category: "Physical Therapy",
+    description: "Range of motion exercise for ankle rehabilitation, improving flexibility and strength.",
+    tips: [
+      "Sit comfortably with leg extended",
+      "Use your big toe to 'write' letters A-Z in the air",
+      "Move only from the ankle joint",
+      "Keep movements slow and controlled"
+    ],
+    commonMistakes: [
+      "Moving from the knee instead of ankle",
+      "Making letters too small",
+      "Moving too quickly",
+      "Not completing full alphabet"
+    ],
+    safetyTips: "Should feel gentle stretch, not pain. Start with capital letters.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      ankleAngle: { min: 70, max: 110 }
+    }
+  },
+  {
+    id: 4,
+    name: "Quad Sets",
+    targetMuscles: ["Quadriceps"],
+    difficulty: "Beginner",
+    thumbnail: "🦵",
+    category: "Physical Therapy",
+    description: "Isometric strengthening exercise for the quadriceps, often first exercise after knee injury/surgery.",
+    tips: [
+      "Sit or lie with leg extended",
+      "Tighten thigh muscle pushing knee down",
+      "Hold contraction for 5 seconds",
+      "Relax and repeat"
+    ],
+    commonMistakes: [
+      "Not fully contracting the muscle",
+      "Holding breath during contraction",
+      "Lifting the leg",
+      "Rushing through repetitions"
+    ],
+    safetyTips: "Place small towel roll under knee if extension is uncomfortable.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      kneeAngle: { min: 175, max: 180 }
+    }
+  },
+  {
+    id: 5,
+    name: "Wall Slides",
+    targetMuscles: ["Shoulders", "Upper Back", "Posture Muscles"],
+    difficulty: "Beginner",
+    thumbnail: "🧍",
+    category: "Physical Therapy",
+    description: "Postural exercise that strengthens shoulder blade muscles and improves upper body alignment.",
+    tips: [
+      "Stand with back against wall",
+      "Arms in 'goalpost' position against wall",
+      "Slide arms up while maintaining contact with wall",
+      "Lower back down slowly"
+    ],
+    commonMistakes: [
+      "Lower back arching away from wall",
+      "Losing arm contact with wall",
+      "Shoulders shrugging up",
+      "Moving too fast"
+    ],
+    safetyTips: "Keep movements slow and controlled. Should feel muscle work, not joint pain.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      shoulderAngle: { min: 90, max: 170 },
+      elbowAngle: { min: 85, max: 90 }
+    }
+  },
+  {
+    id: 6,
+    name: "Hip Bridges",
+    targetMuscles: ["Glutes", "Hamstrings", "Lower Back"],
+    difficulty: "Beginner",
+    thumbnail: "🏋️",
+    category: "Physical Therapy",
+    description: "Strengthening exercise for lower back pain and hip stability.",
+    tips: [
+      "Lie on back with knees bent, feet flat",
+      "Squeeze glutes and lift hips up",
+      "Form straight line from knees to shoulders",
+      "Lower down slowly with control"
+    ],
+    commonMistakes: [
+      "Lifting too high (hyperextending back)",
+      "Not engaging glutes",
+      "Pushing through toes instead of heels",
+      "Moving too quickly"
+    ],
+    safetyTips: "Stop if you feel lower back pain. Focus on glute engagement, not height.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      hipAngle: { min: 170, max: 180 },
+      kneeAngle: { min: 85, max: 95 }
+    }
+  },
+  {
+    id: 7,
+    name: "Seated Row (Resistance Band)",
+    targetMuscles: ["Upper Back", "Rhomboids", "Biceps"],
+    difficulty: "Intermediate",
+    thumbnail: "💪",
+    category: "Physical Therapy",
+    description: "Strengthening exercise for upper back and posture correction using resistance band.",
+    tips: [
+      "Sit with legs extended, band around feet",
+      "Pull band toward waist keeping elbows close",
+      "Squeeze shoulder blades together",
+      "Return to start with control"
+    ],
+    commonMistakes: [
+      "Using momentum instead of muscle",
+      "Rounding shoulders forward",
+      "Pulling with arms instead of back",
+      "Not maintaining upright posture"
+    ],
+    safetyTips: "Start with light resistance. Breathe out during pull, in during release.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      elbowAngle: { min: 70, max: 90 },
+      shoulderAngle: { min: 85, max: 95 }
+    }
+  },
+  {
+    id: 8,
+    name: "Calf Raises",
+    targetMuscles: ["Calves", "Achilles Tendon"],
+    difficulty: "Beginner",
+    thumbnail: "🦶",
+    category: "Physical Therapy",
+    description: "Strengthening exercise for calf muscles and Achilles tendon rehabilitation.",
+    tips: [
+      "Stand with feet hip-width apart",
+      "Rise up onto balls of feet",
+      "Hold at top for 2 seconds",
+      "Lower down slowly with control"
+    ],
+    commonMistakes: [
+      "Using momentum to bounce",
+      "Not lifting high enough",
+      "Lowering too quickly",
+      "Leaning forward or backward"
+    ],
+    safetyTips: "Hold onto support for balance if needed. Progress to single leg when ready.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      ankleAngle: { min: 110, max: 130 }
+    }
+  },
+  {
+    id: 9,
+    name: "Bird Dog",
+    targetMuscles: ["Core", "Lower Back", "Glutes"],
+    difficulty: "Intermediate",
+    thumbnail: "🐕",
+    category: "Physical Therapy",
+    description: "Core stabilization exercise that improves balance and spinal stability.",
+    tips: [
+      "Start on hands and knees (tabletop position)",
+      "Extend opposite arm and leg simultaneously",
+      "Keep hips level and spine neutral",
+      "Hold for 5 seconds then switch"
+    ],
+    commonMistakes: [
+      "Rotating hips or shoulders",
+      "Arching or rounding back",
+      "Looking up (neck hyperextension)",
+      "Moving too quickly"
+    ],
+    safetyTips: "Master the movement with just arm or just leg before combining both.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      hipAngle: { min: 170, max: 180 },
+      shoulderAngle: { min: 170, max: 180 }
+    }
+  },
+  {
+    id: 10,
+    name: "Lateral Leg Raises",
+    targetMuscles: ["Hip Abductors", "Glutes"],
+    difficulty: "Beginner",
+    thumbnail: "🦵",
+    category: "Physical Therapy",
+    description: "Hip strengthening exercise for improving stability and preventing injuries.",
+    tips: [
+      "Lie on side with legs stacked",
+      "Lift top leg up keeping it straight",
+      "Hold for 2 seconds at top",
+      "Lower down with control"
+    ],
+    commonMistakes: [
+      "Rolling hips backward or forward",
+      "Bending the knee",
+      "Lifting too high (compensating)",
+      "Using momentum"
+    ],
+    safetyTips: "Keep movement slow and controlled. Should feel work in side of hip.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      hipAngle: { min: 30, max: 45 }
+    }
+  },
+  
+  // ===== ORIGINAL FITNESS EXERCISES =====
+  {
+    id: 11,
     name: "Squat",
     targetMuscles: ["Quadriceps", "Glutes", "Hamstrings"],
     difficulty: "Beginner",
     thumbnail: "🏋️",
+    category: "Strength Training",
     description: "A fundamental lower body exercise that targets your legs and glutes.",
     tips: [
       "Keep your feet shoulder-width apart",
@@ -27,10 +295,11 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 2,
+    id: 12,
     name: "Bench Press",
     targetMuscles: ["Chest", "Shoulders", "Triceps"],
     difficulty: "Intermediate",
+    category: "Strength Training",
     thumbnail: "💪",
     description: "A classic upper body exercise for building chest strength.",
     tips: [
@@ -54,7 +323,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 3,
+    id: 13,
     name: "Deadlift",
     targetMuscles: ["Hamstrings", "Glutes", "Back", "Traps"],
     difficulty: "Advanced",
@@ -81,7 +350,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 4,
+    id: 14,
     name: "Shoulder Press",
     targetMuscles: ["Shoulders", "Triceps"],
     difficulty: "Beginner",
@@ -108,7 +377,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 5,
+    id: 15,
     name: "Lat Pulldown",
     targetMuscles: ["Lats", "Rhomboids", "Biceps"],
     difficulty: "Beginner",
@@ -135,7 +404,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 6,
+    id: 16,
     name: "Bicep Curl",
     targetMuscles: ["Biceps"],
     difficulty: "Beginner",
@@ -162,7 +431,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 7,
+    id: 17,
     name: "Tricep Dips",
     targetMuscles: ["Triceps", "Chest"],
     difficulty: "Intermediate",
@@ -189,7 +458,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 8,
+    id: 18,
     name: "Lunges",
     targetMuscles: ["Quadriceps", "Glutes", "Hamstrings"],
     difficulty: "Beginner",
@@ -216,7 +485,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 9,
+    id: 19,
     name: "Push-ups",
     targetMuscles: ["Chest", "Shoulders", "Triceps"],
     difficulty: "Beginner",
@@ -243,7 +512,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 10,
+    id: 20,
     name: "Pull-ups",
     targetMuscles: ["Lats", "Rhomboids", "Biceps"],
     difficulty: "Advanced",
@@ -270,7 +539,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 11,
+    id: 21,
     name: "Romanian Deadlift",
     targetMuscles: ["Hamstrings", "Glutes"],
     difficulty: "Intermediate",
@@ -297,7 +566,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 12,
+    id: 22,
     name: "Overhead Press",
     targetMuscles: ["Shoulders", "Triceps", "Core"],
     difficulty: "Intermediate",
@@ -324,7 +593,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 13,
+    id: 23,
     name: "Bent-Over Row",
     targetMuscles: ["Lats", "Rhomboids", "Rear Delts"],
     difficulty: "Intermediate",
@@ -351,7 +620,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 14,
+    id: 24,
     name: "Calf Raises",
     targetMuscles: ["Calves"],
     difficulty: "Beginner",
@@ -378,7 +647,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 15,
+    id: 25,
     name: "Plank",
     targetMuscles: ["Core", "Shoulders"],
     difficulty: "Beginner",
@@ -405,7 +674,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 16,
+    id: 26,
     name: "Mountain Climbers",
     targetMuscles: ["Core", "Shoulders", "Legs"],
     difficulty: "Intermediate",
@@ -432,7 +701,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 17,
+    id: 27,
     name: "Burpees",
     targetMuscles: ["Full Body"],
     difficulty: "Advanced",
@@ -459,7 +728,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 18,
+    id: 28,
     name: "Russian Twists",
     targetMuscles: ["Obliques", "Core"],
     difficulty: "Beginner",
@@ -486,7 +755,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 19,
+    id: 29,
     name: "Leg Press",
     targetMuscles: ["Quadriceps", "Glutes"],
     difficulty: "Beginner",
@@ -513,7 +782,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 20,
+    id: 30,
     name: "Chest Fly",
     targetMuscles: ["Chest", "Anterior Delts"],
     difficulty: "Intermediate",
@@ -540,7 +809,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 21,
+    id: 31,
     name: "Hammer Curls",
     targetMuscles: ["Biceps", "Forearms"],
     difficulty: "Beginner",
@@ -567,7 +836,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 22,
+    id: 32,
     name: "Lateral Raises",
     targetMuscles: ["Shoulders"],
     difficulty: "Beginner",
@@ -594,7 +863,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 23,
+    id: 33,
     name: "Face Pulls",
     targetMuscles: ["Rear Delts", "Rhomboids"],
     difficulty: "Beginner",
@@ -621,7 +890,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 24,
+    id: 34,
     name: "Leg Curls",
     targetMuscles: ["Hamstrings"],
     difficulty: "Beginner",
@@ -648,7 +917,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 25,
+    id: 35,
     name: "Leg Extensions",
     targetMuscles: ["Quadriceps"],
     difficulty: "Beginner",
@@ -675,7 +944,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 26,
+    id: 36,
     name: "Cable Rows",
     targetMuscles: ["Lats", "Rhomboids", "Biceps"],
     difficulty: "Intermediate",
@@ -702,7 +971,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 27,
+    id: 37,
     name: "Chest Press Machine",
     targetMuscles: ["Chest", "Shoulders", "Triceps"],
     difficulty: "Beginner",
@@ -729,7 +998,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 28,
+    id: 38,
     name: "Seated Row",
     targetMuscles: ["Lats", "Rhomboids", "Biceps"],
     difficulty: "Beginner",
@@ -756,7 +1025,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 29,
+    id: 39,
     name: "Hip Thrusts",
     targetMuscles: ["Glutes", "Hamstrings"],
     difficulty: "Intermediate",
@@ -783,7 +1052,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 30,
+    id: 40,
     name: "Bulgarian Split Squats",
     targetMuscles: ["Quadriceps", "Glutes"],
     difficulty: "Advanced",
@@ -810,7 +1079,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 31,
+    id: 41,
     name: "Incline Bench Press",
     targetMuscles: ["Upper Chest", "Shoulders", "Triceps"],
     difficulty: "Intermediate",
@@ -837,7 +1106,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 32,
+    id: 42,
     name: "Decline Bench Press",
     targetMuscles: ["Lower Chest", "Shoulders", "Triceps"],
     difficulty: "Intermediate",
@@ -864,7 +1133,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 33,
+    id: 43,
     name: "Dumbbell Flyes",
     targetMuscles: ["Chest", "Anterior Delts"],
     difficulty: "Intermediate",
@@ -891,7 +1160,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 34,
+    id: 44,
     name: "Preacher Curls",
     targetMuscles: ["Biceps"],
     difficulty: "Intermediate",
@@ -918,7 +1187,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 35,
+    id: 45,
     name: "Skull Crushers",
     targetMuscles: ["Triceps"],
     difficulty: "Intermediate",
@@ -945,7 +1214,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 36,
+    id: 46,
     name: "Close-Grip Bench Press",
     targetMuscles: ["Triceps", "Chest"],
     difficulty: "Intermediate",
@@ -972,7 +1241,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 37,
+    id: 47,
     name: "Wide-Grip Pull-ups",
     targetMuscles: ["Lats", "Rhomboids"],
     difficulty: "Advanced",
@@ -999,7 +1268,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 38,
+    id: 48,
     name: "Chin-ups",
     targetMuscles: ["Lats", "Biceps"],
     difficulty: "Advanced",
@@ -1026,7 +1295,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 39,
+    id: 49,
     name: "Dips",
     targetMuscles: ["Triceps", "Chest"],
     difficulty: "Advanced",
@@ -1053,7 +1322,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 40,
+    id: 50,
     name: "Pike Push-ups",
     targetMuscles: ["Shoulders", "Triceps"],
     difficulty: "Advanced",
@@ -1080,7 +1349,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 41,
+    id: 51,
     name: "Handstand Push-ups",
     targetMuscles: ["Shoulders", "Triceps", "Core"],
     difficulty: "Advanced",
@@ -1107,7 +1376,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 42,
+    id: 52,
     name: "Muscle-ups",
     targetMuscles: ["Lats", "Triceps", "Chest"],
     difficulty: "Advanced",
@@ -1134,7 +1403,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 43,
+    id: 53,
     name: "Front Squats",
     targetMuscles: ["Quadriceps", "Glutes", "Core"],
     difficulty: "Advanced",
@@ -1161,7 +1430,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 44,
+    id: 54,
     name: "Overhead Squats",
     targetMuscles: ["Quadriceps", "Glutes", "Shoulders", "Core"],
     difficulty: "Advanced",
@@ -1188,7 +1457,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 45,
+    id: 55,
     name: "Goblet Squats",
     targetMuscles: ["Quadriceps", "Glutes"],
     difficulty: "Beginner",
@@ -1215,7 +1484,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 46,
+    id: 56,
     name: "Sumo Squats",
     targetMuscles: ["Quadriceps", "Glutes", "Inner Thighs"],
     difficulty: "Beginner",
@@ -1242,7 +1511,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 47,
+    id: 57,
     name: "Jump Squats",
     targetMuscles: ["Quadriceps", "Glutes", "Calves"],
     difficulty: "Intermediate",
@@ -1269,7 +1538,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 48,
+    id: 58,
     name: "Pistol Squats",
     targetMuscles: ["Quadriceps", "Glutes", "Core"],
     difficulty: "Advanced",
@@ -1296,7 +1565,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 49,
+    id: 59,
     name: "Wall Sits",
     targetMuscles: ["Quadriceps", "Glutes"],
     difficulty: "Beginner",
@@ -1323,7 +1592,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 50,
+    id: 60,
     name: "Step-ups",
     targetMuscles: ["Quadriceps", "Glutes"],
     difficulty: "Beginner",
@@ -1350,7 +1619,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 51,
+    id: 61,
     name: "Box Jumps",
     targetMuscles: ["Quadriceps", "Glutes", "Calves"],
     difficulty: "Intermediate",
@@ -1377,7 +1646,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 52,
+    id: 62,
     name: "Single-Leg Deadlifts",
     targetMuscles: ["Hamstrings", "Glutes", "Core"],
     difficulty: "Advanced",
@@ -1404,7 +1673,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 53,
+    id: 63,
     name: "Good Mornings",
     targetMuscles: ["Hamstrings", "Glutes", "Lower Back"],
     difficulty: "Intermediate",
@@ -1431,7 +1700,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 54,
+    id: 64,
     name: "Stiff-Leg Deadlifts",
     targetMuscles: ["Hamstrings", "Glutes"],
     difficulty: "Intermediate",
@@ -1458,7 +1727,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 55,
+    id: 65,
     name: "Kettlebell Swings",
     targetMuscles: ["Hamstrings", "Glutes", "Core"],
     difficulty: "Intermediate",
@@ -1485,7 +1754,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 56,
+    id: 66,
     name: "Turkish Get-ups",
     targetMuscles: ["Full Body"],
     difficulty: "Advanced",
@@ -1512,7 +1781,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 57,
+    id: 67,
     name: "Farmer's Walk",
     targetMuscles: ["Grip", "Core", "Traps"],
     difficulty: "Intermediate",
@@ -1539,7 +1808,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 58,
+    id: 68,
     name: "Battle Ropes",
     targetMuscles: ["Core", "Shoulders", "Arms"],
     difficulty: "Intermediate",
@@ -1566,7 +1835,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 59,
+    id: 69,
     name: "Sled Pushes",
     targetMuscles: ["Legs", "Core", "Cardio"],
     difficulty: "Intermediate",
@@ -1593,7 +1862,7 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 60,
+    id: 70,
     name: "Sled Pulls",
     targetMuscles: ["Legs", "Core", "Cardio"],
     difficulty: "Intermediate",

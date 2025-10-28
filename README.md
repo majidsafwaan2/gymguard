@@ -31,16 +31,44 @@ GymGuard is an AI-powered fitness app that uses computer vision to analyze worko
 2. **Clone and Install**
    ```bash
    git clone <repository-url>
-   cd fitnessapp
+   cd gymguard-ii
    npm install
    ```
 
-3. **Start the Development Server**
+3. **Environment Setup**
+   
+   Create a `.env` file in the root directory by copying the example:
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Then update `.env` with your actual API keys:
+   
+   **Firebase Configuration:**
+   - Go to [Firebase Console](https://console.firebase.google.com/)
+   - Select your project or create a new one
+   - Go to Project Settings > General
+   - Scroll down to "Your apps" and copy the config values
+   - Paste them into your `.env` file
+   
+   **Gemini AI API Key:**
+   - Visit [Google AI Studio](https://ai.google.dev/)
+   - Create/sign in to your account
+   - Generate an API key
+   - Add it to `GEMINI_API_KEY` in your `.env` file
+   
+   **Llama Vision API (Optional):**
+   - If you have a Llama API key, add it to your `.env` file
+   - Otherwise, leave the placeholder values
+
+   > ⚠️ **Important**: Never commit your `.env` file to Git. It's already in `.gitignore` to protect your keys.
+
+4. **Start the Development Server**
    ```bash
    npm start
    ```
 
-4. **Run on Device/Simulator**
+5. **Run on Device/Simulator**
    - Press `i` for iOS Simulator
    - Press `a` for Android Emulator
    - Scan QR code with Expo Go app for physical device

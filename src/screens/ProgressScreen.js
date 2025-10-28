@@ -6,231 +6,392 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
-  Image,
+  Modal,
+  TextInput,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
+import { useUser } from '../context/UserContext';
+import { LineChart } from 'react-native-chart-kit';
 
 const { width } = Dimensions.get('window');
 
 const ProgressScreen = ({ navigation }) => {
-  const [selectedPeriod, setSelectedPeriod] = useState('week');
-  const [selectedMetric, setSelectedMetric] = useState('weight');
+  const { userProfile, updateUserProfile, user } = useUser();
+  const [showRecordModal, setShowRecordModal] = useState(false);
+  const [showBodyFatModal, setShowBodyFatModal] = useState(false);
+  const [newWeight, setNewWeight] = useState('');
+  const [newNeck, setNewNeck] = useState('');
+  const [newWaist, setNewWaist] = useState('');
+  const [newHip, setNewHip] = useState('');
+  const [measurementDate, setMeasurementDate] = useState(new Date().toISOString().split('T')[0]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Mock data - in a real app, this would come from a database
-  const [progressData, setProgressData] = useState({
-    weight: {
-      current: 165,
-      goal: 160,
-      change: -2.5,
-      history: [170, 168, 167, 166, 165.5, 165, 165]
-    },
-    bodyFat: {
-      current: 18.5,
-      goal: 15,
-      change: -1.2,
-      history: [20.2, 19.8, 19.5, 19.0, 18.8, 18.5, 18.5]
-    },
-    muscleMass: {
-      current: 135,
-      goal: 140,
-      change: 1.8,
-      history: [133, 133.5, 134, 134.2, 134.8, 135, 135]
-    },
-    strength: {
-      current: 225,
-      goal: 250,
-      change: 15,
-      history: [200, 205, 210, 215, 220, 225, 225]
+  // Get body measurements and targets from user profile
+  const currentWeight = userProfile?.weight || 0;
+  const targetWeight = userProfile?.targetWeight || 0;
+  const currentBodyFat = userProfile?.bodyFat || 0;
+  const targetBodyFat = userProfile?.targetBodyFat || 0;
+  
+  // Calculate Fat Mass and Lean Mass
+  // FM = BF × Weight (where BF is body fat as decimal)
+  // LM = Weight - FM
+  const fatMass = currentWeight && currentBodyFat ? (currentBodyFat / 100) * currentWeight : 0;
+  const leanMass = currentWeight && fatMass ? currentWeight - fatMass : 0;
+  
+  // Calculate percentages towards goals
+  const getProgressPercentage = (current, goal, isWeight) => {
+    if (!goal || !current) return 0;
+    // For weight loss: goal is less, for weight gain: goal is more
+    // We'll assume weight loss for simplicity
+    if (isWeight) {
+      const diff = current - goal;
+      const totalDiff = current - goal;
+      // If losing weight, calculate % towards goal (0-100%)
+      if (current > goal) {
+        return Math.min(100, (diff / Math.abs(current - goal)) * 100);
+      }
+      return 0;
+    } else {
+      // For body fat, lower is better
+      const diff = current - goal;
+      return Math.min(100, Math.max(0, ((current - goal) / current) * 100));
     }
-  });
+  };
 
-  const [workoutStats, setWorkoutStats] = useState({
-    thisWeek: {
-      workouts: 4,
-      totalTime: 320,
-      caloriesBurned: 1200,
-      exercisesCompleted: 28
-    },
-    lastWeek: {
-      workouts: 3,
-      totalTime: 240,
-      caloriesBurned: 900,
-      exercisesCompleted: 21
+  // Calculate Body Fat Percentage using U.S. Navy Method
+  const calculateBodyFatPercentage = (weight) => {
+    const height = userProfile?.height;
+    const neck = userProfile?.neck;
+    const waist = userProfile?.waist;
+    const hip = userProfile?.hip;
+    const gender = userProfile?.gender;
+    
+    const heightNum = parseFloat(height);
+    const neckNum = parseFloat(neck);
+    const waistNum = parseFloat(waist);
+    const hipNum = parseFloat(hip);
+    
+    // Validate required measurements
+    if (!heightNum || !neckNum || !waistNum || !gender || !weight) {
+      return null;
     }
-  });
+    
+    // For females, hip measurement is required
+    if (gender === 'female' && !hipNum) {
+      return null;
+    }
+    
+    let bodyFat;
+    
+    if (gender === 'male') {
+      // U.S. Navy Method for Males (USC Units - inches)
+      // BFP = 86.010×log₁₀(abdomen-neck) - 70.041×log₁₀(height) + 36.76
+      const abdomenMinusNeck = waistNum - neckNum;
+      
+      if (abdomenMinusNeck <= 0) {
+        return null; // Invalid measurement
+      }
+      
+      bodyFat = 86.010 * Math.log10(abdomenMinusNeck) - 70.041 * Math.log10(heightNum) + 36.76;
+    } else if (gender === 'female') {
+      // U.S. Navy Method for Females (USC Units - inches)
+      // BFP = 163.205×log₁₀(waist+hip-neck) - 97.684×log₁₀(height) - 78.387
+      const waistPlusHipMinusNeck = waistNum + hipNum - neckNum;
+      
+      if (waistPlusHipMinusNeck <= 0) {
+        return null; // Invalid measurement
+      }
+      
+      bodyFat = 163.205 * Math.log10(waistPlusHipMinusNeck) - 97.684 * Math.log10(heightNum) - 78.387;
+    } else {
+      // For 'other' gender, use male formula as default
+      const abdomenMinusNeck = waistNum - neckNum;
+      
+      if (abdomenMinusNeck <= 0) {
+        return null;
+      }
+      
+      bodyFat = 86.010 * Math.log10(abdomenMinusNeck) - 70.041 * Math.log10(heightNum) + 36.76;
+    }
+    
+    // Ensure the result is between 5% and 50%
+    const clampedBFP = Math.max(5, Math.min(50, bodyFat));
+    
+    return Math.round(clampedBFP * 10) / 10; // Round to 1 decimal place
+  };
 
-  const [achievements, setAchievements] = useState([
-    {
-      id: 1,
-      title: "First Workout",
-      description: "Completed your first workout",
-      icon: "🏆",
-      earned: true,
-      date: "2024-01-15"
-    },
-    {
-      id: 2,
-      title: "Week Warrior",
-      description: "Worked out 4 times in a week",
-      icon: "💪",
-      earned: true,
-      date: "2024-01-20"
-    },
-    {
-      id: 3,
-      title: "Strength Master",
-      description: "Increased bench press by 25lbs",
-      icon: "🔥",
-      earned: false,
-      date: null
-    },
-    {
-      id: 4,
-      title: "Consistency King",
-      description: "Worked out 30 days in a row",
-      icon: "👑",
-      earned: false,
-      date: null
+  const handleRecordWeight = async () => {
+    const weightNum = parseFloat(newWeight);
+    
+    if (!weightNum || weightNum <= 0) {
+      Alert.alert('Invalid Input', 'Please enter a valid weight.');
+      return;
     }
-  ]);
+
+    if (!measurementDate) {
+      Alert.alert('Invalid Date', 'Please select a date.');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      
+      // Calculate new body fat percentage
+      const newBodyFat = calculateBodyFatPercentage(weightNum);
+      
+      // Get existing weight entries or initialize empty array
+      const existingEntries = userProfile?.weightEntries || [];
+      
+      // Add new entry with date and weight
+      const newEntry = {
+        date: measurementDate,
+        weight: weightNum,
+        bodyFat: newBodyFat
+      };
+      
+      // Add to existing entries and sort by date
+      const updatedEntries = [...existingEntries, newEntry].sort((a, b) => 
+        new Date(a.date) - new Date(b.date)
+      );
+      
+      // Keep only last 30 entries
+      const recentEntries = updatedEntries.slice(-30);
+      
+      const updates = { 
+        weight: weightNum,
+        weightEntries: recentEntries
+      };
+      
+      if (newBodyFat !== null) {
+        updates.bodyFat = newBodyFat;
+        console.log('Recalculated body fat percentage:', newBodyFat + '%');
+      }
+      
+      await updateUserProfile(updates);
+      
+      setShowRecordModal(false);
+      setNewWeight('');
+      setMeasurementDate(new Date().toISOString().split('T')[0]);
+      Alert.alert('Success', 'Your measurements have been updated!');
+    } catch (error) {
+      console.error('Error recording weight:', error);
+      Alert.alert('Error', 'Failed to update measurements. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUpdateBodyFatMeasurements = async () => {
+    const weightNum = parseFloat(newWeight);
+    const neckNum = parseFloat(newNeck);
+    const waistNum = parseFloat(newWaist);
+    const hipNum = parseFloat(newHip);
+    const gender = userProfile?.gender;
+    
+    // Validate required inputs
+    if (!weightNum || weightNum <= 0) {
+      Alert.alert('Invalid Input', 'Please enter a valid weight.');
+      return;
+    }
+    
+    if (!neckNum || neckNum <= 0) {
+      Alert.alert('Invalid Input', 'Please enter a valid neck circumference.');
+      return;
+    }
+    
+    if (!waistNum || waistNum <= 0) {
+      Alert.alert('Invalid Input', 'Please enter a valid waist circumference.');
+      return;
+    }
+    
+    // For females, hip is required
+    if (gender === 'female' && (!hipNum || hipNum <= 0)) {
+      Alert.alert('Invalid Input', 'Please enter a valid hip circumference.');
+      return;
+    }
+
+    if (!measurementDate) {
+      Alert.alert('Invalid Date', 'Please select a date.');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      
+      const updates = {
+        weight: weightNum,
+        neck: neckNum,
+        waist: waistNum
+      };
+      
+      if (gender === 'female') {
+        updates.hip = hipNum;
+      }
+      
+      // Calculate new body fat percentage with updated measurements using U.S. Navy Method
+      const height = userProfile?.height;
+      const heightNum = parseFloat(height);
+      
+      let newBodyFat = null;
+      
+      if (heightNum && neckNum && waistNum) {
+        let bodyFat;
+        
+        if (gender === 'male') {
+          const abdomenMinusNeck = waistNum - neckNum;
+          if (abdomenMinusNeck > 0) {
+            bodyFat = 86.010 * Math.log10(abdomenMinusNeck) - 70.041 * Math.log10(heightNum) + 36.76;
+          }
+        } else if (gender === 'female' && hipNum) {
+          const waistPlusHipMinusNeck = waistNum + hipNum - neckNum;
+          if (waistPlusHipMinusNeck > 0) {
+            bodyFat = 163.205 * Math.log10(waistPlusHipMinusNeck) - 97.684 * Math.log10(heightNum) - 78.387;
+          }
+        } else {
+          // For 'other' gender, use male formula
+          const abdomenMinusNeck = waistNum - neckNum;
+          if (abdomenMinusNeck > 0) {
+            bodyFat = 86.010 * Math.log10(abdomenMinusNeck) - 70.041 * Math.log10(heightNum) + 36.76;
+          }
+        }
+        
+        if (bodyFat !== undefined) {
+          const clampedBFP = Math.max(5, Math.min(50, bodyFat));
+          newBodyFat = Math.round(clampedBFP * 10) / 10;
+        }
+      }
+      
+      if (newBodyFat !== null) {
+        updates.bodyFat = newBodyFat;
+        console.log('Recalculated body fat percentage:', newBodyFat + '%');
+      }
+      
+      // Get existing weight entries or initialize empty array
+      const existingEntries = userProfile?.weightEntries || [];
+      
+      // Add new entry with date and measurements
+      const newEntry = {
+        date: measurementDate,
+        weight: weightNum,
+        bodyFat: newBodyFat
+      };
+      
+      // Add to existing entries and sort by date
+      const updatedEntries = [...existingEntries, newEntry].sort((a, b) => 
+        new Date(a.date) - new Date(b.date)
+      );
+      
+      // Keep only last 30 entries
+      const recentEntries = updatedEntries.slice(-30);
+      updates.weightEntries = recentEntries;
+      
+      await updateUserProfile(updates);
+      
+      setShowBodyFatModal(false);
+      setNewWeight('');
+      setNewNeck('');
+      setNewWaist('');
+      setNewHip('');
+      setMeasurementDate(new Date().toISOString().split('T')[0]);
+      Alert.alert('Success', 'Your body measurements have been updated!');
+    } catch (error) {
+      console.error('Error updating measurements:', error);
+      Alert.alert('Error', 'Failed to update measurements. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Get weight entries from profile
+  const weightEntries = userProfile?.weightEntries || [];
+  
+  // Prepare chart data from actual weight entries
+  const prepareWeightHistory = () => {
+    if (weightEntries.length === 0) {
+      // Return empty data if no entries
+      return {
+        labels: ['No data'],
+        values: [0],
+        month: null
+      };
+    }
+    
+    // Get last 7 entries or all if less than 7
+    const recentEntries = weightEntries.slice(-7);
+    
+    // Helper function to parse date string and get local date (avoid timezone issues)
+    const parseDate = (dateString) => {
+      const parts = dateString.split('-');
+      if (parts.length === 3) {
+        return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+      }
+      return new Date(dateString);
+    };
+    
+    // Get the month name from the most recent entry
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                        'July', 'August', 'September', 'October', 'November', 'December'];
+    let month = null;
+    if (recentEntries.length > 0) {
+      const mostRecentDate = parseDate(recentEntries[recentEntries.length - 1].date);
+      month = monthNames[mostRecentDate.getMonth()];
+    }
+    
+    // Format dates as day numbers (e.g., 14, 17, 21)
+    const labels = recentEntries.map(entry => {
+      const date = parseDate(entry.date);
+      return date.getDate().toString(); // Returns day of month (1-31)
+    });
+    
+    const values = recentEntries.map(entry => parseFloat(entry.weight));
+    
+    return { labels, values, month };
+  };
+  
+  const chartData = prepareWeightHistory();
 
   const chartConfig = {
-    backgroundColor: '#ffffff',
-    backgroundGradientFrom: '#ffffff',
-    backgroundGradientTo: '#ffffff',
-    decimalPlaces: 1,
-    color: (opacity = 1) => `rgba(102, 126, 234, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    backgroundColor: '#2d2d2d',
+    backgroundGradientFrom: '#2d2d2d',
+    backgroundGradientTo: '#2d2d2d',
+    decimalPlaces: 0,
+    color: (opacity = 1) => `rgba(0, 212, 255, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
     style: {
       borderRadius: 16
     },
     propsForDots: {
       r: '6',
       strokeWidth: '2',
-      stroke: '#667eea'
+      stroke: '#00d4ff'
     }
   };
 
-  const periods = [
-    { key: 'week', label: 'Week' },
-    { key: 'month', label: 'Month' },
-    { key: 'year', label: 'Year' }
-  ];
-
-  const metrics = [
-    { key: 'weight', label: 'Weight', unit: 'lbs', color: '#FF5722' },
-    { key: 'bodyFat', label: 'Body Fat', unit: '%', color: '#2196F3' },
-    { key: 'muscleMass', label: 'Muscle', unit: 'lbs', color: '#4CAF50' },
-    { key: 'strength', label: 'Strength', unit: 'lbs', color: '#FF9800' }
-  ];
-
-  const getProgressPercentage = (current, goal) => {
-    return Math.min((current / goal) * 100, 100);
-  };
-
-  const getChangeColor = (change) => {
-    if (change > 0) return '#4CAF50';
-    if (change < 0) return '#F44336';
-    return '#666666';
-  };
-
-  const renderMetricCard = (metric) => {
-    const data = progressData[metric.key];
-    const percentage = getProgressPercentage(data.current, data.goal);
-    
-    return (
-      <TouchableOpacity
-        key={metric.key}
-        style={[
-          styles.metricCard,
-          selectedMetric === metric.key && styles.selectedMetricCard
-        ]}
-        onPress={() => setSelectedMetric(metric.key)}
-      >
-        <View style={styles.metricHeader}>
-          <Text style={styles.metricLabel}>{metric.label}</Text>
-          <View style={[styles.metricColorDot, { backgroundColor: metric.color }]} />
-        </View>
-        <Text style={styles.metricValue}>{data.current}{metric.unit}</Text>
-        <Text style={styles.metricGoal}>Goal: {data.goal}{metric.unit}</Text>
-        <View style={styles.progressBar}>
-          <View style={[
-            styles.progressFill,
-            {
-              width: `${percentage}%`,
-              backgroundColor: metric.color
-            }
-          ]} />
-        </View>
-        <View style={styles.metricChange}>
-          <Ionicons 
-            name={data.change > 0 ? "trending-up" : "trending-down"} 
-            size={16} 
-            color={getChangeColor(data.change)} 
-          />
-          <Text style={[styles.changeText, { color: getChangeColor(data.change) }]}>
-            {data.change > 0 ? '+' : ''}{data.change}{metric.unit}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  const renderAchievement = (achievement) => (
-    <View key={achievement.id} style={[
-      styles.achievementCard,
-      !achievement.earned && styles.lockedAchievement
-    ]}>
-      <Text style={styles.achievementIcon}>{achievement.icon}</Text>
-      <View style={styles.achievementInfo}>
-        <Text style={[
-          styles.achievementTitle,
-          !achievement.earned && styles.lockedText
-        ]}>
-          {achievement.title}
-        </Text>
-        <Text style={[
-          styles.achievementDescription,
-          !achievement.earned && styles.lockedText
-        ]}>
-          {achievement.description}
-        </Text>
-        {achievement.earned && (
-          <Text style={styles.achievementDate}>
-            Earned on {new Date(achievement.date).toLocaleDateString()}
-          </Text>
-        )}
-      </View>
-      {achievement.earned && (
-        <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
-      )}
-    </View>
-  );
-
   const prepareChartData = () => {
-    const data = progressData[selectedMetric];
+    if (chartData.values.length === 0 || chartData.values[0] === 0) {
+      return {
+        labels: ['No data available'],
+        datasets: [{
+          data: [currentWeight || 0]
+        }]
+      };
+    }
+    
     return {
-      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      labels: chartData.labels,
       datasets: [{
-        data: data.history,
-        color: (opacity = 1) => `rgba(102, 126, 234, ${opacity})`,
+        data: chartData.values,
+        color: (opacity = 1) => `rgba(0, 212, 255, ${opacity})`,
         strokeWidth: 2
       }]
     };
   };
 
-  const prepareWorkoutChartData = () => {
-    return {
-      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      datasets: [{
-        data: [45, 60, 0, 75, 0, 90, 50], // Mock workout duration data
-        color: (opacity = 1) => `rgba(76, 175, 80, ${opacity})`,
-        strokeWidth: 2
-      }]
-    };
-  };
+  const weightProgress = getProgressPercentage(currentWeight, targetWeight, true);
+  const bodyFatProgress = getProgressPercentage(currentBodyFat, targetBodyFat, false);
 
   return (
     <View style={styles.container}>
@@ -248,122 +409,304 @@ const ProgressScreen = ({ navigation }) => {
       </View>
 
       <ScrollView style={styles.content}>
-        {/* Period Selector */}
-        <View style={styles.periodSelector}>
-          {periods.map(period => (
-            <TouchableOpacity
-              key={period.key}
-              style={[
-                styles.periodButton,
-                selectedPeriod === period.key && styles.selectedPeriodButton
-              ]}
-              onPress={() => setSelectedPeriod(period.key)}
-            >
-              <Text style={[
-                styles.periodButtonText,
-                selectedPeriod === period.key && styles.selectedPeriodButtonText
-              ]}>
-                {period.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* Metrics Overview */}
-        <View style={styles.metricsContainer}>
-          {metrics.map(renderMetricCard)}
-        </View>
-
         {/* Progress Chart */}
         <View style={styles.chartCard}>
-          <Text style={styles.chartTitle}>{metrics.find(m => m.key === selectedMetric)?.label} Progress</Text>
-          <LineChart
-            data={prepareChartData()}
-            width={width - 40}
-            height={220}
-            chartConfig={chartConfig}
-            bezier
-            style={styles.chart}
-          />
+          {chartData.month && (
+            <Text style={styles.chartMonthTitle}>{chartData.month}</Text>
+          )}
+          <Text style={styles.chartTitle}>Weight Progress</Text>
+          {weightEntries.length > 0 ? (
+            <LineChart
+              data={prepareChartData()}
+              width={width - 40}
+              height={220}
+              chartConfig={chartConfig}
+              bezier
+              style={styles.chart}
+            />
+          ) : (
+            <View style={styles.emptyChart}>
+              <Ionicons name="bar-chart-outline" size={64} color="#666666" />
+              <Text style={styles.emptyChartText}>Record your weight to see your progress!</Text>
+            </View>
+          )}
+        </View>
+
+        {/* Weight and Body Fat Cards */}
+        <View style={styles.metricsContainer}>
+          {/* Weight Card */}
+          <View style={styles.metricCard}>
+            <View style={styles.metricHeader}>
+              <Text style={styles.metricLabel}>Weight</Text>
+              <View style={[styles.metricColorDot, { backgroundColor: '#FF5722' }]} />
+            </View>
+            <Text style={styles.metricValue}>{currentWeight ? parseFloat(currentWeight).toFixed(1) : 0} lbs</Text>
+            <Text style={styles.metricGoal}>Goal: {targetWeight ? targetWeight.toFixed(1) : 'N/A'} lbs</Text>
+            <View style={styles.progressBar}>
+              <View style={[
+                styles.progressFill,
+                {
+                  width: `${Math.min(100, weightProgress)}%`,
+                  backgroundColor: '#FF5722'
+                }
+              ]} />
+            </View>
+            <TouchableOpacity
+              style={styles.recordButton}
+              onPress={() => setShowRecordModal(true)}
+            >
+              <Ionicons name="add-circle" size={16} color="#ffffff" />
+              <Text style={styles.recordButtonText}>Record Weight</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Body Fat Card */}
+          <View style={styles.metricCard}>
+            <View style={styles.metricHeader}>
+              <Text style={styles.metricLabel}>Body Fat %</Text>
+              <View style={[styles.metricColorDot, { backgroundColor: '#2196F3' }]} />
+            </View>
+            <Text style={styles.metricValue}>{currentBodyFat ? currentBodyFat.toFixed(1) : 0}%</Text>
+            <Text style={styles.metricGoal}>Goal: {targetBodyFat ? targetBodyFat.toFixed(1) : 'N/A'}%</Text>
+            <View style={styles.progressBar}>
+              <View style={[
+                styles.progressFill,
+                {
+                  width: `${Math.min(100, bodyFatProgress)}%`,
+                  backgroundColor: '#2196F3'
+                }
+              ]} />
+            </View>
+            
+            {/* Fat Mass and Lean Mass */}
+            <View style={styles.massBreakdown}>
+              <View style={styles.massItem}>
+                <Text style={styles.massLabel}>Fat Mass</Text>
+                <Text style={styles.massValue}>{fatMass ? fatMass.toFixed(1) : 0} lbs</Text>
+              </View>
+              <View style={styles.massDivider} />
+              <View style={styles.massItem}>
+                <Text style={styles.massLabel}>Lean Mass</Text>
+                <Text style={styles.massValue}>{leanMass ? leanMass.toFixed(1) : 0} lbs</Text>
+              </View>
+            </View>
+            
+            <TouchableOpacity
+              style={styles.recordButton}
+              onPress={() => {
+                // Pre-fill with current values
+                setNewWeight(currentWeight.toString());
+                setNewNeck((userProfile?.neck || '').toString());
+                setNewWaist((userProfile?.waist || '').toString());
+                setNewHip((userProfile?.hip || '').toString());
+                setShowBodyFatModal(true);
+              }}
+            >
+              <Ionicons name="calculator" size={16} color="#ffffff" />
+              <Text style={styles.recordButtonText}>Update Measurements</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Workout Stats */}
         <View style={styles.statsCard}>
-          <Text style={styles.statsTitle}>Workout Statistics</Text>
+          <Text style={styles.statsTitle}>This Week</Text>
           <View style={styles.statsGrid}>
             <View style={styles.statItem}>
               <Ionicons name="fitness-outline" size={24} color="#667eea" />
-              <Text style={styles.statValue}>{workoutStats.thisWeek.workouts}</Text>
+              <Text style={styles.statValue}>4</Text>
               <Text style={styles.statLabel}>Workouts</Text>
             </View>
             <View style={styles.statItem}>
               <Ionicons name="time-outline" size={24} color="#667eea" />
-              <Text style={styles.statValue}>{workoutStats.thisWeek.totalTime}m</Text>
+              <Text style={styles.statValue}>320m</Text>
               <Text style={styles.statLabel}>Total Time</Text>
             </View>
             <View style={styles.statItem}>
               <Ionicons name="flame-outline" size={24} color="#667eea" />
-              <Text style={styles.statValue}>{workoutStats.thisWeek.caloriesBurned}</Text>
+              <Text style={styles.statValue}>1200</Text>
               <Text style={styles.statLabel}>Calories</Text>
             </View>
-            <View style={styles.statItem}>
-              <Ionicons name="checkmark-circle-outline" size={24} color="#667eea" />
-              <Text style={styles.statValue}>{workoutStats.thisWeek.exercisesCompleted}</Text>
-              <Text style={styles.statLabel}>Exercises</Text>
-            </View>
           </View>
-        </View>
-
-        {/* Workout Duration Chart */}
-        <View style={styles.chartCard}>
-          <Text style={styles.chartTitle}>Daily Workout Duration</Text>
-          <BarChart
-            data={{
-              labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-              datasets: [{
-                data: [45, 60, 0, 75, 0, 90, 50]
-              }]
-            }}
-            width={width - 40}
-            height={220}
-            chartConfig={chartConfig}
-            style={styles.chart}
-          />
         </View>
 
         {/* Achievements */}
         <View style={styles.achievementsCard}>
           <Text style={styles.achievementsTitle}>Achievements</Text>
-          {achievements.map(renderAchievement)}
-        </View>
-
-        {/* Body Measurements */}
-        <View style={styles.measurementsCard}>
-          <Text style={styles.measurementsTitle}>Body Measurements</Text>
-          <View style={styles.measurementsGrid}>
-            <View style={styles.measurementItem}>
-              <Text style={styles.measurementLabel}>Chest</Text>
-              <Text style={styles.measurementValue}>42"</Text>
-              <Text style={styles.measurementChange}>+0.5"</Text>
+          <View style={styles.achievementCard}>
+            <Text style={styles.achievementIcon}>🏆</Text>
+            <View style={styles.achievementInfo}>
+              <Text style={styles.achievementTitle}>First Workout</Text>
+              <Text style={styles.achievementDescription}>Completed your first workout</Text>
+              <Text style={styles.achievementDate}>Earned on 1/15/2024</Text>
             </View>
-            <View style={styles.measurementItem}>
-              <Text style={styles.measurementLabel}>Waist</Text>
-              <Text style={styles.measurementValue}>32"</Text>
-              <Text style={styles.measurementChange}>-1.0"</Text>
+            <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
+          </View>
+          <View style={styles.achievementCard}>
+            <Text style={styles.achievementIcon}>💪</Text>
+            <View style={styles.achievementInfo}>
+              <Text style={styles.achievementTitle}>Week Warrior</Text>
+              <Text style={styles.achievementDescription}>Worked out 4 times in a week</Text>
+              <Text style={styles.achievementDate}>Earned on 1/20/2024</Text>
             </View>
-            <View style={styles.measurementItem}>
-              <Text style={styles.measurementLabel}>Arms</Text>
-              <Text style={styles.measurementValue}>15"</Text>
-              <Text style={styles.measurementChange}>+0.3"</Text>
-            </View>
-            <View style={styles.measurementItem}>
-              <Text style={styles.measurementLabel}>Thighs</Text>
-              <Text style={styles.measurementValue}>24"</Text>
-              <Text style={styles.measurementChange}>+0.2"</Text>
-            </View>
+            <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
           </View>
         </View>
       </ScrollView>
+
+      {/* Record Weight Modal */}
+      <Modal
+        visible={showRecordModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowRecordModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Record New Weight</Text>
+              <TouchableOpacity onPress={() => setShowRecordModal(false)}>
+                <Ionicons name="close" size={24} color="#ffffff" />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.modalLabel}>Enter your current weight (lb)</Text>
+            <TextInput
+              style={styles.modalInput}
+              value={newWeight}
+              onChangeText={setNewWeight}
+              keyboardType="numeric"
+              placeholder="e.g. 165"
+              placeholderTextColor="#666666"
+              autoFocus
+            />
+            <Text style={styles.modalLabel}>Select measurement date</Text>
+            <TextInput
+              style={styles.modalInput}
+              value={measurementDate}
+              onChangeText={setMeasurementDate}
+              placeholder="YYYY-MM-DD"
+              placeholderTextColor="#666666"
+            />
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={styles.modalCancelButton}
+                onPress={() => setShowRecordModal(false)}
+              >
+                <Text style={styles.modalCancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalSaveButton}
+                onPress={handleRecordWeight}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="#ffffff" />
+                ) : (
+                  <Text style={styles.modalSaveText}>Save</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Update Body Fat Measurements Modal */}
+      <Modal
+        visible={showBodyFatModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowBodyFatModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <ScrollView contentContainerStyle={styles.modalScrollContent}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Update Body Measurements</Text>
+                <TouchableOpacity onPress={() => setShowBodyFatModal(false)}>
+                  <Ionicons name="close" size={24} color="#ffffff" />
+                </TouchableOpacity>
+              </View>
+              
+              <Text style={styles.modalDescription}>
+                Enter your current measurements to calculate body fat percentage using the U.S. Navy Method
+              </Text>
+              
+              <Text style={styles.modalLabel}>Weight (lb)</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={newWeight}
+                onChangeText={setNewWeight}
+                keyboardType="numeric"
+                placeholder="e.g. 165"
+                placeholderTextColor="#666666"
+              />
+              
+              <Text style={styles.modalLabel}>Neck Circumference (in)</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={newNeck}
+                onChangeText={setNewNeck}
+                keyboardType="numeric"
+                placeholder="e.g. 15"
+                placeholderTextColor="#666666"
+              />
+              
+              <Text style={styles.modalLabel}>Waist Circumference (in)</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={newWaist}
+                onChangeText={setNewWaist}
+                keyboardType="numeric"
+                placeholder="e.g. 32"
+                placeholderTextColor="#666666"
+              />
+              
+              {userProfile?.gender === 'female' && (
+                <>
+                  <Text style={styles.modalLabel}>Hip Circumference (in)</Text>
+                  <TextInput
+                    style={styles.modalInput}
+                    value={newHip}
+                    onChangeText={setNewHip}
+                    keyboardType="numeric"
+                    placeholder="e.g. 38"
+                    placeholderTextColor="#666666"
+                  />
+                </>
+              )}
+              
+              <Text style={styles.modalLabel}>Measurement Date</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={measurementDate}
+                onChangeText={setMeasurementDate}
+                placeholder="YYYY-MM-DD"
+                placeholderTextColor="#666666"
+              />
+              
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={styles.modalCancelButton}
+                  onPress={() => setShowBodyFatModal(false)}
+                >
+                  <Text style={styles.modalCancelText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalSaveButton}
+                  onPress={handleUpdateBodyFatMeasurements}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <ActivityIndicator color="#ffffff" />
+                  ) : (
+                    <Text style={styles.modalSaveText}>Calculate & Save</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
+          </ScrollView>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -396,46 +739,43 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
   },
-  periodSelector: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(0, 212, 255, 0.2)',
-    borderRadius: 25,
-    padding: 4,
-    marginBottom: 20,
-  },
-  periodButton: {
-    flex: 1,
-    paddingVertical: 8,
-    alignItems: 'center',
-    borderRadius: 20,
-  },
-  selectedPeriodButton: {
-    backgroundColor: '#ffffff',
-  },
-  periodButtonText: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.8)',
-  },
-  selectedPeriodButtonText: {
-    color: '#667eea',
-    fontWeight: 'bold',
-  },
-  metricsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  metricCard: {
-    width: (width - 40) / 2,
+  chartCard: {
     backgroundColor: '#2d2d2d',
     borderRadius: 15,
     padding: 15,
-    marginBottom: 10,
+    paddingBottom: 20,
+    marginBottom: 20,
   },
-  selectedMetricCard: {
-    borderWidth: 2,
-    borderColor: '#667eea',
+  chartMonthTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#00d4ff',
+    marginBottom: 5,
+    textAlign: 'center',
+  },
+  chartTitle: {
+    fontSize: 14,
+    color: '#cccccc',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  chart: {
+    marginVertical: 8,
+    marginLeft: -15,
+    borderRadius: 16,
+  },
+  metricsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+    gap: 15,
+  },
+  metricCard: {
+    flex: 1,
+    backgroundColor: '#2d2d2d',
+    borderRadius: 15,
+    padding: 15,
+    minHeight: 200,
   },
   metricHeader: {
     flexDirection: 'row',
@@ -453,7 +793,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   metricValue: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#ffffff',
     marginBottom: 5,
@@ -465,39 +805,59 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 6,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: '#333333',
     borderRadius: 3,
-    marginBottom: 10,
+    marginBottom: 15,
   },
   progressFill: {
     height: '100%',
     borderRadius: 3,
   },
-  metricChange: {
+  recordButton: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#00d4ff',
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    marginTop: 5,
   },
-  changeText: {
-    fontSize: 12,
+  recordButtonText: {
+    color: '#ffffff',
+    fontSize: 14,
     fontWeight: '600',
     marginLeft: 5,
   },
-  chartCard: {
-    backgroundColor: '#2d2d2d',
-    borderRadius: 15,
-    padding: 15,
-    marginBottom: 20,
+  massBreakdown: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#1a1a1a',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 10,
+    marginBottom: 10,
   },
-  chartTitle: {
-    fontSize: 18,
+  massItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  massDivider: {
+    width: 1,
+    height: 30,
+    backgroundColor: '#333333',
+    marginHorizontal: 10,
+  },
+  massLabel: {
+    fontSize: 11,
+    color: '#999999',
+    marginBottom: 5,
+  },
+  massValue: {
+    fontSize: 16,
     fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  chart: {
-    marginVertical: 8,
-    borderRadius: 16,
+    color: '#00d4ff',
   },
   statsCard: {
     backgroundColor: '#2d2d2d',
@@ -514,13 +874,10 @@ const styles = StyleSheet.create({
   },
   statsGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'space-around',
   },
   statItem: {
-    width: (width - 60) / 2,
     alignItems: 'center',
-    marginBottom: 15,
     paddingHorizontal: 5,
   },
   statValue: {
@@ -552,10 +909,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
-  },
-  lockedAchievement: {
-    opacity: 0.5,
+    borderBottomColor: '#333333',
   },
   achievementIcon: {
     fontSize: 24,
@@ -579,48 +933,99 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: '#999999',
   },
-  lockedText: {
-    color: '#999999',
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  measurementsCard: {
+  modalScrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  modalContent: {
     backgroundColor: '#2d2d2d',
-    borderRadius: 15,
-    padding: 20,
+    borderRadius: 20,
+    padding: 25,
+    width: width - 60,
+    maxWidth: 400,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 20,
   },
-  measurementsTitle: {
-    fontSize: 18,
+  modalTitle: {
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#ffffff',
-    marginBottom: 15,
-    textAlign: 'center',
   },
-  measurementsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-  },
-  measurementItem: {
-    width: (width - 60) / 2,
-    alignItems: 'center',
-    marginBottom: 15,
-    paddingHorizontal: 5,
-  },
-  measurementLabel: {
-    fontSize: 12,
+  modalDescription: {
+    fontSize: 14,
     color: '#cccccc',
-    marginBottom: 5,
+    marginBottom: 20,
+    lineHeight: 20,
   },
-  measurementValue: {
+  modalLabel: {
+    fontSize: 16,
+    color: '#cccccc',
+    marginBottom: 15,
+  },
+  modalInput: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 10,
+    padding: 15,
     fontSize: 18,
-    fontWeight: 'bold',
     color: '#ffffff',
-    marginBottom: 2,
+    borderWidth: 1,
+    borderColor: '#00d4ff',
+    marginBottom: 25,
   },
-  measurementChange: {
-    fontSize: 10,
-    color: '#4CAF50',
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 15,
+  },
+  modalCancelButton: {
+    flex: 1,
+    backgroundColor: '#1a1a1a',
+    borderRadius: 10,
+    padding: 15,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#666666',
+  },
+  modalCancelText: {
+    color: '#ffffff',
+    fontSize: 16,
     fontWeight: '600',
+  },
+  modalSaveButton: {
+    flex: 1,
+    backgroundColor: '#00d4ff',
+    borderRadius: 10,
+    padding: 15,
+    alignItems: 'center',
+  },
+  modalSaveText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  emptyChart: {
+    height: 220,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyChartText: {
+    color: '#999999',
+    fontSize: 16,
+    marginTop: 10,
+    textAlign: 'center',
   },
 });
 

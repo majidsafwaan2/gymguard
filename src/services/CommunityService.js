@@ -20,7 +20,7 @@ class CommunityService {
   // Create a new community post
   static async createPost(postData) {
     try {
-      const postsRef = collection(db, 'communityPosts');
+      const postsRef = collection(db, 'posts');
       const docRef = await addDoc(postsRef, {
         ...postData,
         createdAt: serverTimestamp(),
@@ -40,7 +40,7 @@ class CommunityService {
   // Get all community posts (paginated)
   static async getPosts(limitCount = 20) {
     try {
-      const postsRef = collection(db, 'communityPosts');
+      const postsRef = collection(db, 'posts');
       const q = query(
         postsRef, 
         orderBy('createdAt', 'desc'), 
@@ -66,10 +66,51 @@ class CommunityService {
     }
   }
 
+  // Get filtered posts for a specific user (includes public posts and private doctor posts)
+  static async getPostsForUser(userId, userDoctorId, limitCount = 50) {
+    try {
+      const postsRef = collection(db, 'posts');
+      const q = query(
+        postsRef, 
+        orderBy('createdAt', 'desc'), 
+        limit(limitCount)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const posts = [];
+      
+      querySnapshot.forEach((doc) => {
+        const postData = doc.data();
+        
+        // Include post if:
+        // 1. It's public (no visibility field or visibility === 'public')
+        // 2. It's private AND the current user is in visibleTo array
+        // 3. It's from the user's doctor
+        const isPublic = !postData.visibility || postData.visibility === 'public';
+        const isVisibleToUser = postData.visibleTo?.includes(userId);
+        const isFromDoctor = userDoctorId && postData.userId === userDoctorId;
+        
+        if (isPublic || isVisibleToUser || isFromDoctor) {
+          posts.push({
+            id: doc.id,
+            ...postData,
+            createdAt: postData.createdAt?.toDate?.() || new Date(),
+            updatedAt: postData.updatedAt?.toDate?.() || new Date()
+          });
+        }
+      });
+      
+      return posts;
+    } catch (error) {
+      console.error('Error getting filtered posts:', error);
+      throw error;
+    }
+  }
+
   // Get posts by a specific user
   static async getUserPosts(userId) {
     try {
-      const postsRef = collection(db, 'communityPosts');
+      const postsRef = collection(db, 'posts');
       const q = query(
         postsRef,
         where('userId', '==', userId),
@@ -98,7 +139,7 @@ class CommunityService {
   // Like a post
   static async likePost(postId, userId) {
     try {
-      const postRef = doc(db, 'communityPosts', postId);
+      const postRef = doc(db, 'posts', postId);
       await updateDoc(postRef, {
         likes: increment(1),
         likedBy: arrayUnion(userId),
@@ -113,7 +154,7 @@ class CommunityService {
   // Unlike a post
   static async unlikePost(postId, userId) {
     try {
-      const postRef = doc(db, 'communityPosts', postId);
+      const postRef = doc(db, 'posts', postId);
       await updateDoc(postRef, {
         likes: increment(-1),
         likedBy: arrayRemove(userId),
@@ -128,7 +169,7 @@ class CommunityService {
   // Add a comment to a post
   static async addComment(postId, commentData) {
     try {
-      const postRef = doc(db, 'communityPosts', postId);
+      const postRef = doc(db, 'posts', postId);
       await updateDoc(postRef, {
         comments: increment(1),
         commentsList: arrayUnion({
@@ -146,7 +187,7 @@ class CommunityService {
   // Update a post
   static async updatePost(postId, updateData) {
     try {
-      const postRef = doc(db, 'communityPosts', postId);
+      const postRef = doc(db, 'posts', postId);
       await updateDoc(postRef, {
         ...updateData,
         updatedAt: serverTimestamp()
@@ -160,7 +201,7 @@ class CommunityService {
   // Delete a post
   static async deletePost(postId) {
     try {
-      const postRef = doc(db, 'communityPosts', postId);
+      const postRef = doc(db, 'posts', postId);
       await deleteDoc(postRef);
     } catch (error) {
       console.error('Error deleting post:', error);

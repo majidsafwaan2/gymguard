@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,12 +7,22 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
+  RefreshControl,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useUser } from '../context/UserContext';
+import { useCommunity } from '../context/CommunityContext';
+import CreatePostModal from '../components/CreatePostModal';
 
 const { width } = Dimensions.get('window');
 
 const HomeScreen = ({ navigation }) => {
+  const [showCreatePost, setShowCreatePost] = useState(false);
+  const { user, userProfile } = useUser();
+  const { posts, loading, refreshing, refreshPosts, likePost, deletePost } = useCommunity();
+  
   const [userStats, setUserStats] = useState({
     streak: 7,
     workoutsThisWeek: 4,
@@ -57,89 +67,121 @@ const HomeScreen = ({ navigation }) => {
     </TouchableOpacity>
   );
 
-  const communityPosts = [
-    {
-      id: 1,
-      user: {
-        name: "FitnessFan123",
-        avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=50&h=50&fit=crop&crop=face",
-        isFriend: true
-      },
-      content: "Just completed my first ski trip! 🎿 The training really paid off. Thanks to everyone who encouraged me!",
-      time: "2 hours ago",
-      likes: 24,
-      comments: 8,
-      image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300&h=200&fit=crop"
-    },
-    {
-      id: 2,
-      user: {
-        name: "GymGuru",
-        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=50&h=50&fit=crop&crop=face",
-        isFriend: false
-      },
-      content: "New PR on deadlifts today! 315lbs Consistency is key, keep grinding everyone!",
-      time: "4 hours ago",
-      likes: 45,
-      comments: 12,
-      image: "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=300&h=200&fit=crop"
-    },
-    {
-      id: 3,
-      user: {
-        name: "HealthyEats",
-        avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=50&h=50&fit=crop&crop=face",
-        isFriend: false
-      },
-      content: "Meal prep Sunday! Here's my healthy lunch for the week. Recipe in comments!",
-      time: "6 hours ago",
-      likes: 18,
-      comments: 5,
-      image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=300&h=200&fit=crop"
+  const handleLikePost = async (postId) => {
+    try {
+      await likePost(postId);
+    } catch (error) {
+      console.error('Error liking post:', error);
     }
-  ];
+  };
 
-  const renderCommunityPost = (post) => (
-    <View key={post.id} style={styles.postCard}>
-      <View style={styles.postHeader}>
-        <Image source={{ uri: post.user.avatar }} style={styles.postAvatar} />
-        <View style={styles.postUserInfo}>
-          <View style={styles.postUserRow}>
-            <Text style={styles.postUserName}>{post.user.name}</Text>
-            {post.user.isFriend && (
-              <View style={styles.friendBadge}>
-                <Text style={styles.friendBadgeText}>Friend</Text>
+  const handleDeletePost = async (postId) => {
+    Alert.alert(
+      'Delete Post',
+      'Are you sure you want to delete this post? This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deletePost(postId);
+              Alert.alert('Success', 'Post deleted successfully');
+            } catch (error) {
+              Alert.alert('Error', 'Failed to delete post. Please try again.');
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const formatTimeAgo = (date) => {
+    const now = new Date();
+    const postDate = new Date(date);
+    const diffInSeconds = Math.floor((now - postDate) / 1000);
+    
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    return `${Math.floor(diffInSeconds / 86400)}d ago`;
+  };
+
+  const renderCommunityPost = (post) => {
+    const isLiked = post.likedBy?.includes(user?.uid);
+    const postTypeIcon = {
+      workout: 'fitness',
+      nutrition: 'nutrition',
+      achievement: 'trophy',
+      motivation: 'heart',
+      general: 'chatbubble'
+    }[post.type] || 'chatbubble';
+
+    return (
+      <View key={post.id} style={styles.postCard}>
+        <View style={styles.postHeader}>
+          <Image 
+            source={{ 
+              uri: post.user?.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face'
+            }} 
+            style={styles.postAvatar} 
+          />
+          <View style={styles.postUserInfo}>
+            <View style={styles.postUserRow}>
+              <Text style={styles.postUserName}>{post.user?.name || 'Anonymous'}</Text>
+              <View style={styles.postTypeBadge}>
+                <Ionicons name={postTypeIcon} size={12} color="#00d4ff" />
+                <Text style={styles.postTypeText}>{post.type}</Text>
               </View>
-            )}
+            </View>
+            <Text style={styles.postTime}>{formatTimeAgo(post.createdAt)}</Text>
           </View>
-          <Text style={styles.postTime}>{post.time}</Text>
+          {post.userId === user?.uid ? (
+            <TouchableOpacity 
+              style={styles.postOptions}
+              onPress={() => handleDeletePost(post.id)}
+            >
+              <Ionicons name="trash-outline" size={20} color="#ff4444" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={styles.postOptions}>
+              <Ionicons name="ellipsis-horizontal" size={20} color="#666666" />
+            </TouchableOpacity>
+          )}
         </View>
-        <TouchableOpacity style={styles.postOptions}>
-          <Ionicons name="ellipsis-horizontal" size={20} color="#666666" />
-        </TouchableOpacity>
+        
+        <Text style={styles.postContent}>{post.content}</Text>
+        
+        {post.image && (
+          <Image source={{ uri: post.image }} style={styles.postImage} />
+        )}
+        
+        <View style={styles.postActions}>
+          <TouchableOpacity 
+            style={styles.postAction}
+            onPress={() => handleLikePost(post.id)}
+          >
+            <Ionicons 
+              name={isLiked ? "heart" : "heart-outline"} 
+              size={20} 
+              color={isLiked ? "#F44336" : "#666666"} 
+            />
+            <Text style={[styles.postActionText, isLiked && { color: "#F44336" }]}>
+              {post.likes || 0}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.postAction}>
+            <Ionicons name="chatbubble-outline" size={20} color="#666666" />
+            <Text style={styles.postActionText}>{post.comments || 0}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.postAction}>
+            <Ionicons name="share-outline" size={20} color="#666666" />
+          </TouchableOpacity>
+        </View>
       </View>
-      
-      <Text style={styles.postContent}>{post.content}</Text>
-      
-      {post.image && (
-        <Image source={{ uri: post.image }} style={styles.postImage} />
-      )}
-      
-      <View style={styles.postActions}>
-        <TouchableOpacity style={styles.postAction}>
-          <Ionicons name="heart-outline" size={20} color="#666666" />
-          <Text style={styles.postActionText}>{post.likes}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.postAction}>
-          <Ionicons name="chatbubble-outline" size={20} color="#666666" />
-          <Text style={styles.postActionText}>{post.comments}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.postAction}>
-          <Ionicons name="share-outline" size={20} color="#666666" />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+    );
+  };
 
   const renderAchievement = (achievement) => (
     <View key={achievement.id} style={styles.achievementCard}>
@@ -159,15 +201,31 @@ const HomeScreen = ({ navigation }) => {
           <Text style={styles.greeting}>Good morning!</Text>
           <Text style={styles.userName}>Ready to train?</Text>
         </View>
-        <TouchableOpacity style={styles.profileButton}>
+        <TouchableOpacity 
+          style={styles.profileButton}
+          onPress={() => navigation.navigate('UserProfile')}
+        >
           <Image 
-            source={{ uri: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face" }} 
+            source={{ 
+              uri: userProfile?.profilePicture || user?.photoURL || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face" 
+            }} 
             style={styles.profileImage} 
           />
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={styles.content} 
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={refreshPosts}
+            tintColor="#00d4ff"
+            colors={["#00d4ff"]}
+          />
+        }
+      >
         {/* Stats Overview */}
         <View style={styles.statsContainer}>
           <View style={styles.statCard}>
@@ -185,6 +243,31 @@ const HomeScreen = ({ navigation }) => {
             <Text style={styles.statValue}>{userStats.totalWorkouts}</Text>
             <Text style={styles.statLabel}>Total</Text>
           </View>
+        </View>
+
+        {/* Doctor Assigned Workouts */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Doctor Assigned Workouts</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('DoctorAssignedWorkouts')}>
+              <Ionicons name="arrow-forward" size={20} color="#00d4ff" />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity 
+            style={styles.doctorWorkoutCard}
+            onPress={() => navigation.navigate('DoctorAssignedWorkouts')}
+          >
+            <View style={styles.doctorWorkoutIcon}>
+              <Ionicons name="medical" size={32} color="#00d4ff" />
+            </View>
+            <View style={styles.doctorWorkoutInfo}>
+              <Text style={styles.doctorWorkoutTitle}>View Your Prescribed Exercises</Text>
+              <Text style={styles.doctorWorkoutSubtitle}>
+                Personalized workouts from your physical therapist
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color="#cccccc" />
+          </TouchableOpacity>
         </View>
 
         {/* Today's Workout */}
@@ -215,8 +298,36 @@ const HomeScreen = ({ navigation }) => {
 
         {/* Community Posts */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Community</Text>
-          {communityPosts.map(renderCommunityPost)}
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Community</Text>
+            <TouchableOpacity 
+              style={styles.createPostButton}
+              onPress={() => setShowCreatePost(true)}
+            >
+              <Ionicons name="add" size={20} color="#ffffff" />
+            </TouchableOpacity>
+          </View>
+          
+          {loading && posts.length === 0 ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#00d4ff" />
+              <Text style={styles.loadingText}>Loading community posts...</Text>
+            </View>
+          ) : posts.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Ionicons name="people-outline" size={48} color="#666666" />
+              <Text style={styles.emptyStateTitle}>No posts yet</Text>
+              <Text style={styles.emptyStateText}>Be the first to share something with the community!</Text>
+              <TouchableOpacity 
+                style={styles.emptyStateButton}
+                onPress={() => setShowCreatePost(true)}
+              >
+                <Text style={styles.emptyStateButtonText}>Create First Post</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            posts.map(renderCommunityPost)
+          )}
         </View>
 
         {/* Recent Achievements */}
@@ -248,6 +359,11 @@ const HomeScreen = ({ navigation }) => {
           </View>
         </View>
       </ScrollView>
+      
+      <CreatePostModal
+        visible={showCreatePost}
+        onClose={() => setShowCreatePost(false)}
+      />
     </View>
   );
 };
@@ -323,6 +439,43 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#ffffff',
     marginBottom: 15,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  doctorWorkoutCard: {
+    backgroundColor: '#2d2d2d',
+    borderRadius: 15,
+    padding: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 212, 255, 0.3)',
+  },
+  doctorWorkoutIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'rgba(0, 212, 255, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 15,
+  },
+  doctorWorkoutInfo: {
+    flex: 1,
+  },
+  doctorWorkoutTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginBottom: 4,
+  },
+  doctorWorkoutSubtitle: {
+    fontSize: 14,
+    color: '#cccccc',
   },
   quickActionsScroll: {
     marginHorizontal: -5,
@@ -541,6 +694,75 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: '#00d4ff',
     borderRadius: 3,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  createPostButton: {
+    backgroundColor: '#00d4ff',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  loadingText: {
+    color: '#cccccc',
+    fontSize: 16,
+    marginTop: 10,
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+  },
+  emptyStateTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#ffffff',
+    marginTop: 15,
+    marginBottom: 8,
+  },
+  emptyStateText: {
+    fontSize: 14,
+    color: '#cccccc',
+    textAlign: 'center',
+    marginBottom: 20,
+    lineHeight: 20,
+  },
+  emptyStateButton: {
+    backgroundColor: '#00d4ff',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 20,
+  },
+  emptyStateButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+  postTypeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 212, 255, 0.1)',
+    borderRadius: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginLeft: 8,
+  },
+  postTypeText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#00d4ff',
+    marginLeft: 4,
+    textTransform: 'capitalize',
   },
 });
 

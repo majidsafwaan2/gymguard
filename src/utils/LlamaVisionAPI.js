@@ -3,8 +3,9 @@
  * This module handles communication with Llama 3.2 Vision API for detailed movement analysis
  */
 
-const LLAMA_API_BASE_URL = 'https://api.llama.ai/v1'; // Replace with actual API endpoint
-const API_KEY = 'your-llama-api-key'; // Replace with actual API key
+import { LLAMA_API_KEY, LLAMA_API_BASE_URL } from '@env';
+
+const API_KEY = LLAMA_API_KEY || 'your-llama-api-key'; // Fallback for development
 
 /**
  * Analyzes workout form using Llama 3.2 Vision
