@@ -56,10 +56,10 @@ const LoginScreen = ({ navigation }) => {
           {/* Logo and Title */}
           <View style={styles.header}>
             <View style={styles.logoContainer}>
-              <Ionicons name="shield-checkmark" size={60} color="#00d4ff" />
+              <Ionicons name="medical" size={60} color="#00d4ff" />
             </View>
             <Text style={styles.title}>Welcome Back</Text>
-            <Text style={styles.subtitle}>Sign in to continue your fitness journey</Text>
+            <Text style={styles.subtitle}>Sign in to continue your therapy journey</Text>
           </View>
 
           {/* Login Form */}

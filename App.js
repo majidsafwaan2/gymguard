@@ -17,12 +17,16 @@ import CameraAnalysisScreen from './src/screens/CameraAnalysisScreen';
 import AnalysisResultsScreen from './src/screens/AnalysisResultsScreen';
 import ProgressScreen from './src/screens/ProgressScreen';
 import GymBuddyScreen from './src/screens/GymBuddyScreen';
-import NutritionScreen from './src/screens/NutritionScreen';
+import PainTrackingScreen from './src/screens/PainTrackingScreen';
 import WorkoutPlansScreen from './src/screens/WorkoutPlansScreen';
 import SocialScreen from './src/screens/SocialScreen';
 import WorkoutTimerScreen from './src/screens/WorkoutTimerScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import UserProfileScreen from './src/screens/UserProfileScreen';
+import DoctorDashboardScreen from './src/screens/DoctorDashboardScreen';
+import DoctorInboxScreen from './src/screens/DoctorInboxScreen';
+import WorkoutAssignmentScreen from './src/screens/WorkoutAssignmentScreen';
+import InjuryTimelineScreen from './src/screens/InjuryTimelineScreen';
 import FloatingChatbot from './src/components/FloatingChatbot';
 
 // Import context
@@ -70,12 +74,12 @@ function WorkoutStack() {
       <Stack.Screen 
         name="GymBuddy" 
         component={GymBuddyScreen}
-        options={{ title: 'AI Gym Buddy' }}
+        options={{ title: 'AI Physical Therapist' }}
       />
       <Stack.Screen 
-        name="Nutrition" 
-        component={NutritionScreen}
-        options={{ title: 'Nutrition Tracker' }}
+        name="PainTracking" 
+        component={PainTrackingScreen}
+        options={{ title: 'Pain Tracker' }}
       />
       <Stack.Screen 
         name="WorkoutPlans" 
@@ -115,7 +119,8 @@ function AuthStackNavigator() {
   );
 }
 
-function MainTabs() {
+// Patient Tabs
+function PatientTabs() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -128,21 +133,21 @@ function MainTabs() {
             iconName = focused ? 'fitness' : 'fitness-outline';
           } else if (route.name === 'Progress') {
             iconName = focused ? 'trending-up' : 'trending-up-outline';
-          } else if (route.name === 'Nutrition') {
-            iconName = focused ? 'nutrition' : 'nutrition-outline';
+          } else if (route.name === 'Community') {
+            iconName = focused ? 'people' : 'people-outline';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#00d4ff',
         tabBarInactiveTintColor: '#666666',
-            tabBarStyle: {
-              backgroundColor: '#1a1a1a',
-              borderTopColor: '#333333',
-              paddingTop: Platform.OS === 'ios' ? 5 : 3,
-              paddingBottom: Platform.OS === 'ios' ? 5 : 3,
-              height: Platform.OS === 'ios' ? 60 : 50,
-            },
+        tabBarStyle: {
+          backgroundColor: '#1a1a1a',
+          borderTopColor: '#333333',
+          paddingTop: Platform.OS === 'ios' ? 5 : 3,
+          paddingBottom: Platform.OS === 'ios' ? 5 : 3,
+          height: Platform.OS === 'ios' ? 60 : 50,
+        },
         headerShown: false,
       })}
     >
@@ -150,30 +155,108 @@ function MainTabs() {
       <Tab.Screen 
         name="Workouts" 
         component={WorkoutStack}
-        listeners={{
-          tabPress: (e) => {
-            // Allow normal navigation for Workouts tab
-          }
-        }}
       />
       <Tab.Screen name="Progress" component={ProgressScreen} />
-      <Tab.Screen name="Nutrition" component={NutritionScreen} />
+      <Tab.Screen name="Community" component={SocialScreen} />
+    </Tab.Navigator>
+  );
+}
+
+// Doctor Tabs
+function DoctorTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === 'Dashboard') {
+            iconName = focused ? 'grid' : 'grid-outline';
+          } else if (route.name === 'Patients') {
+            iconName = focused ? 'people' : 'people-outline';
+          } else if (route.name === 'Community') {
+            iconName = focused ? 'chatbubbles' : 'chatbubbles-outline';
+          } else if (route.name === 'Profile') {
+            iconName = focused ? 'person' : 'person-outline';
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: '#00d4ff',
+        tabBarInactiveTintColor: '#666666',
+        tabBarStyle: {
+          backgroundColor: '#1a1a1a',
+          borderTopColor: '#333333',
+          paddingTop: Platform.OS === 'ios' ? 5 : 3,
+          paddingBottom: Platform.OS === 'ios' ? 5 : 3,
+          height: Platform.OS === 'ios' ? 60 : 50,
+        },
+        headerShown: false,
+      })}
+    >
+      <Tab.Screen 
+        name="Dashboard" 
+        component={DoctorDashboardScreen}
+        options={{ title: 'Dashboard' }}
+      />
+      <Tab.Screen 
+        name="Patients" 
+        component={DoctorDashboardScreen}
+        options={{ title: 'Patients' }}
+      />
+      <Tab.Screen 
+        name="Community" 
+        component={SocialScreen}
+        options={{ title: 'Community' }}
+      />
+      <Tab.Screen 
+        name="Profile" 
+        component={UserProfileScreen}
+        options={{ title: 'Profile' }}
+      />
     </Tab.Navigator>
   );
 }
 
 // Main App Navigator with Profile Screen
 function MainApp() {
+  const { userProfile } = useUser();
+  const isDoctor = userProfile?.userType === 'doctor';
+  
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
       }}
     >
-      <Stack.Screen name="MainTabs" component={MainTabs} />
+      <Stack.Screen 
+        name="MainTabs" 
+        component={isDoctor ? DoctorTabs : PatientTabs} 
+      />
       <Stack.Screen 
         name="UserProfile" 
         component={UserProfileScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen 
+        name="DoctorInbox" 
+        component={DoctorInboxScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen 
+        name="WorkoutAssignment" 
+        component={WorkoutAssignmentScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen 
+        name="InjuryTimeline" 
+        component={InjuryTimelineScreen}
         options={{
           headerShown: false,
         }}
@@ -199,12 +282,12 @@ function AppNavigator() {
     return <AuthStackNavigator />;
   }
 
-  // If user is authenticated but hasn't completed survey, show survey
-  if (user && !userProfile?.surveyCompleted) {
+  // If user is authenticated but hasn't completed survey (patients only), show survey
+  if (user && userProfile?.userType === 'patient' && !userProfile?.surveyCompleted) {
     return <FitnessSurveyScreen />;
   }
 
-  // If user is authenticated and completed survey, show main app
+  // If user is authenticated and completed survey (or is a doctor), show main app
   return <MainApp />;
 }
 

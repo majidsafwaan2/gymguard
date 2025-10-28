@@ -1,10 +1,278 @@
 export const workoutDatabase = [
+  // ===== PHYSICAL THERAPY EXERCISES =====
   {
     id: 1,
+    name: "Knee Flexion Stretch",
+    targetMuscles: ["Hamstrings", "Knee Joint"],
+    difficulty: "Beginner",
+    thumbnail: "🦵",
+    category: "Physical Therapy",
+    description: "A gentle rehabilitation exercise for improving knee range of motion after injury or surgery.",
+    tips: [
+      "Sit on the edge of a chair or bed",
+      "Slowly bend your knee as far as comfortable",
+      "Hold the stretch for 5-10 seconds",
+      "Return to starting position slowly"
+    ],
+    commonMistakes: [
+      "Moving too quickly",
+      "Forcing the knee beyond comfortable range",
+      "Not breathing properly during the stretch",
+      "Skipping warm-up"
+    ],
+    safetyTips: "Pain scale should be 0-3/10. Sharp pain means stop immediately.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      kneeAngle: { min: 90, max: 120 }
+    }
+  },
+  {
+    id: 2,
+    name: "Shoulder Pendulum",
+    targetMuscles: ["Shoulder Joint", "Rotator Cuff"],
+    difficulty: "Beginner",
+    thumbnail: "💪",
+    category: "Physical Therapy",
+    description: "A passive range of motion exercise for shoulder rehabilitation, especially after injury or surgery.",
+    tips: [
+      "Lean forward supporting yourself with good arm",
+      "Let injured arm hang down relaxed",
+      "Gently swing arm in small circles",
+      "Gradually increase circle size as tolerated"
+    ],
+    commonMistakes: [
+      "Using muscles to swing (should be gravity-driven)",
+      "Making circles too large too soon",
+      "Tensing the shoulder",
+      "Moving too fast"
+    ],
+    safetyTips: "This should be pain-free. If you feel pain, reduce the range of motion.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      shoulderAngle: { min: 85, max: 100 }
+    }
+  },
+  {
+    id: 3,
+    name: "Ankle Alphabet",
+    targetMuscles: ["Ankle Joint", "Calf"],
+    difficulty: "Beginner",
+    thumbnail: "🦶",
+    category: "Physical Therapy",
+    description: "Range of motion exercise for ankle rehabilitation, improving flexibility and strength.",
+    tips: [
+      "Sit comfortably with leg extended",
+      "Use your big toe to 'write' letters A-Z in the air",
+      "Move only from the ankle joint",
+      "Keep movements slow and controlled"
+    ],
+    commonMistakes: [
+      "Moving from the knee instead of ankle",
+      "Making letters too small",
+      "Moving too quickly",
+      "Not completing full alphabet"
+    ],
+    safetyTips: "Should feel gentle stretch, not pain. Start with capital letters.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      ankleAngle: { min: 70, max: 110 }
+    }
+  },
+  {
+    id: 4,
+    name: "Quad Sets",
+    targetMuscles: ["Quadriceps"],
+    difficulty: "Beginner",
+    thumbnail: "🦵",
+    category: "Physical Therapy",
+    description: "Isometric strengthening exercise for the quadriceps, often first exercise after knee injury/surgery.",
+    tips: [
+      "Sit or lie with leg extended",
+      "Tighten thigh muscle pushing knee down",
+      "Hold contraction for 5 seconds",
+      "Relax and repeat"
+    ],
+    commonMistakes: [
+      "Not fully contracting the muscle",
+      "Holding breath during contraction",
+      "Lifting the leg",
+      "Rushing through repetitions"
+    ],
+    safetyTips: "Place small towel roll under knee if extension is uncomfortable.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      kneeAngle: { min: 175, max: 180 }
+    }
+  },
+  {
+    id: 5,
+    name: "Wall Slides",
+    targetMuscles: ["Shoulders", "Upper Back", "Posture Muscles"],
+    difficulty: "Beginner",
+    thumbnail: "🧍",
+    category: "Physical Therapy",
+    description: "Postural exercise that strengthens shoulder blade muscles and improves upper body alignment.",
+    tips: [
+      "Stand with back against wall",
+      "Arms in 'goalpost' position against wall",
+      "Slide arms up while maintaining contact with wall",
+      "Lower back down slowly"
+    ],
+    commonMistakes: [
+      "Lower back arching away from wall",
+      "Losing arm contact with wall",
+      "Shoulders shrugging up",
+      "Moving too fast"
+    ],
+    safetyTips: "Keep movements slow and controlled. Should feel muscle work, not joint pain.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      shoulderAngle: { min: 90, max: 170 },
+      elbowAngle: { min: 85, max: 90 }
+    }
+  },
+  {
+    id: 6,
+    name: "Hip Bridges",
+    targetMuscles: ["Glutes", "Hamstrings", "Lower Back"],
+    difficulty: "Beginner",
+    thumbnail: "🏋️",
+    category: "Physical Therapy",
+    description: "Strengthening exercise for lower back pain and hip stability.",
+    tips: [
+      "Lie on back with knees bent, feet flat",
+      "Squeeze glutes and lift hips up",
+      "Form straight line from knees to shoulders",
+      "Lower down slowly with control"
+    ],
+    commonMistakes: [
+      "Lifting too high (hyperextending back)",
+      "Not engaging glutes",
+      "Pushing through toes instead of heels",
+      "Moving too quickly"
+    ],
+    safetyTips: "Stop if you feel lower back pain. Focus on glute engagement, not height.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      hipAngle: { min: 170, max: 180 },
+      kneeAngle: { min: 85, max: 95 }
+    }
+  },
+  {
+    id: 7,
+    name: "Seated Row (Resistance Band)",
+    targetMuscles: ["Upper Back", "Rhomboids", "Biceps"],
+    difficulty: "Intermediate",
+    thumbnail: "💪",
+    category: "Physical Therapy",
+    description: "Strengthening exercise for upper back and posture correction using resistance band.",
+    tips: [
+      "Sit with legs extended, band around feet",
+      "Pull band toward waist keeping elbows close",
+      "Squeeze shoulder blades together",
+      "Return to start with control"
+    ],
+    commonMistakes: [
+      "Using momentum instead of muscle",
+      "Rounding shoulders forward",
+      "Pulling with arms instead of back",
+      "Not maintaining upright posture"
+    ],
+    safetyTips: "Start with light resistance. Breathe out during pull, in during release.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      elbowAngle: { min: 70, max: 90 },
+      shoulderAngle: { min: 85, max: 95 }
+    }
+  },
+  {
+    id: 8,
+    name: "Calf Raises",
+    targetMuscles: ["Calves", "Achilles Tendon"],
+    difficulty: "Beginner",
+    thumbnail: "🦶",
+    category: "Physical Therapy",
+    description: "Strengthening exercise for calf muscles and Achilles tendon rehabilitation.",
+    tips: [
+      "Stand with feet hip-width apart",
+      "Rise up onto balls of feet",
+      "Hold at top for 2 seconds",
+      "Lower down slowly with control"
+    ],
+    commonMistakes: [
+      "Using momentum to bounce",
+      "Not lifting high enough",
+      "Lowering too quickly",
+      "Leaning forward or backward"
+    ],
+    safetyTips: "Hold onto support for balance if needed. Progress to single leg when ready.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      ankleAngle: { min: 110, max: 130 }
+    }
+  },
+  {
+    id: 9,
+    name: "Bird Dog",
+    targetMuscles: ["Core", "Lower Back", "Glutes"],
+    difficulty: "Intermediate",
+    thumbnail: "🐕",
+    category: "Physical Therapy",
+    description: "Core stabilization exercise that improves balance and spinal stability.",
+    tips: [
+      "Start on hands and knees (tabletop position)",
+      "Extend opposite arm and leg simultaneously",
+      "Keep hips level and spine neutral",
+      "Hold for 5 seconds then switch"
+    ],
+    commonMistakes: [
+      "Rotating hips or shoulders",
+      "Arching or rounding back",
+      "Looking up (neck hyperextension)",
+      "Moving too quickly"
+    ],
+    safetyTips: "Master the movement with just arm or just leg before combining both.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      hipAngle: { min: 170, max: 180 },
+      shoulderAngle: { min: 170, max: 180 }
+    }
+  },
+  {
+    id: 10,
+    name: "Lateral Leg Raises",
+    targetMuscles: ["Hip Abductors", "Glutes"],
+    difficulty: "Beginner",
+    thumbnail: "🦵",
+    category: "Physical Therapy",
+    description: "Hip strengthening exercise for improving stability and preventing injuries.",
+    tips: [
+      "Lie on side with legs stacked",
+      "Lift top leg up keeping it straight",
+      "Hold for 2 seconds at top",
+      "Lower down with control"
+    ],
+    commonMistakes: [
+      "Rolling hips backward or forward",
+      "Bending the knee",
+      "Lifting too high (compensating)",
+      "Using momentum"
+    ],
+    safetyTips: "Keep movement slow and controlled. Should feel work in side of hip.",
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    idealAngles: {
+      hipAngle: { min: 30, max: 45 }
+    }
+  },
+  
+  // ===== ORIGINAL FITNESS EXERCISES =====
+  {
+    id: 11,
     name: "Squat",
     targetMuscles: ["Quadriceps", "Glutes", "Hamstrings"],
     difficulty: "Beginner",
     thumbnail: "🏋️",
+    category: "Strength Training",
     description: "A fundamental lower body exercise that targets your legs and glutes.",
     tips: [
       "Keep your feet shoulder-width apart",
@@ -27,10 +295,11 @@ export const workoutDatabase = [
     }
   },
   {
-    id: 2,
+    id: 12,
     name: "Bench Press",
     targetMuscles: ["Chest", "Shoulders", "Triceps"],
     difficulty: "Intermediate",
+    category: "Strength Training",
     thumbnail: "💪",
     description: "A classic upper body exercise for building chest strength.",
     tips: [

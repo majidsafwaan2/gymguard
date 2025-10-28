@@ -17,7 +17,15 @@ export const CommunityProvider = ({ children }) => {
     try {
       setLoading(true);
       setError(null);
-      const communityPosts = await CommunityService.getPosts();
+      
+      // Get user's doctor ID if they're a patient
+      const doctorId = userProfile?.userType === 'patient' ? userProfile?.doctorId : null;
+      
+      // Use filtered posts for patients, all posts for doctors
+      const communityPosts = userProfile?.userType === 'patient' && user?.uid
+        ? await CommunityService.getPostsForUser(user.uid, doctorId)
+        : await CommunityService.getPosts();
+      
       setPosts(communityPosts);
     } catch (error) {
       setError(error.message);
@@ -32,7 +40,15 @@ export const CommunityProvider = ({ children }) => {
     try {
       setRefreshing(true);
       setError(null);
-      const communityPosts = await CommunityService.getPosts();
+      
+      // Get user's doctor ID if they're a patient
+      const doctorId = userProfile?.userType === 'patient' ? userProfile?.doctorId : null;
+      
+      // Use filtered posts for patients, all posts for doctors
+      const communityPosts = userProfile?.userType === 'patient' && user?.uid
+        ? await CommunityService.getPostsForUser(user.uid, doctorId)
+        : await CommunityService.getPosts();
+      
       setPosts(communityPosts);
     } catch (error) {
       setError(error.message);
