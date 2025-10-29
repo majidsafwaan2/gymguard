@@ -1,47 +1,42 @@
 # Blockchain Secure Patient Records - Simplified Flow
 
 ```mermaid
-flowchart TD
+flowchart LR
     Start([Patient Completes Workout]) --> AI[AI Analyzes Form]
-    AI --> Risk{Risk Detected?}
-    Risk -->|Yes| Encrypt[Encrypt Data AES-256]
-    Risk -->|No| Encrypt
-    Encrypt --> Hash[Generate Blockchain Hash]
-    Hash --> Store[(Store in Firestore)]
-    Store --> BC[Post to Ethereum Goerli]
+    AI --> Encrypt[Encrypt with AES-256]
+    Encrypt --> Store[(Store in Firestore)]
+    Store --> BC[Post Hash to Ethereum]
     
-    Doctor([Doctor Opens Records]) --> Auth{Enter Private Key}
-    Auth -->|Valid| View1[View All Patient Records]
-    View1 --> Show1[Show Scores + Risks]
+    Start2([Doctor Opens Records]) --> Auth[Private Key Auth]
+    Auth --> View1[View Patient Records]
     
-    Patient([Patient Opens Records]) --> View2[View Personal Records]
-    View2 --> Show2[Show Workout History]
+    Start3([Patient Opens Records]) --> View2[View Personal Records]
     
-    Show1 --> Verify[Blockchain Verification]
-    Show2 --> Verify
-    Verify --> End([Data Integrity Confirmed])
+    View1 --> Verify[Verify Integrity]
+    View2 --> Verify
+    Verify --> Show[Display Secure Records]
+    Show --> End([Complete])
     
     %% Styling
     classDef main fill:#4A90E2,stroke:#2C5F8D,stroke-width:3px,color:#fff
-    classDef decision fill:#F5A623,stroke:#D17E00,stroke-width:3px,color:#fff
     classDef store fill:#50C878,stroke:#2E7D4E,stroke-width:3px,color:#fff
     classDef start fill:#9B59B6,stroke:#6A4C93,stroke-width:3px,color:#fff
     
-    class AI,Encrypt,Hash,BC,View1,View2,Show1,Show2,Verify main
-    class Risk,Auth decision
+    class AI,Encrypt,BC,Auth,View1,View2,Verify,Show main
     class Store store
-    class Start,Doctor,Patient,End start
+    class Start,Start2,Start3,End start
 ```
 
-## Key Components
+## Simplified Flow (10 Elements)
 
-1. **Patient Workout** → Form analysis with AI
-2. **Risk Detection** → Flags injury concerns
-3. **Encryption** → AES-256 for privacy
-4. **Blockchain Hash** → SHA-256 for integrity
-5. **Firestore Storage** → Secure database
-6. **Ethereum Goerli** → Immutable verification
-7. **Doctor Access** → Private key required
-8. **Patient Access** → Direct view
-9. **Verification** → Anti-tampering checks
+1. **Patient Completes Workout** → Starting point
+2. **AI Analyzes Form** → Automated analysis
+3. **Encrypt with AES-256** → Privacy protection
+4. **Store in Firestore** → Database storage
+5. **Post Hash to Ethereum** → Blockchain integrity
+6. **Doctor Opens Records** → Requires authentication
+7. **Patient Opens Records** → Direct access
+8. **Verify Integrity** → Anti-tampering check
+9. **Display Secure Records** → User view
+10. **Complete** → End state
 
