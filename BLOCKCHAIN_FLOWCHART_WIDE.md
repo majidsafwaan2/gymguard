@@ -2,25 +2,21 @@
 
 ```mermaid
 flowchart LR
-    subgraph PatientFlow["Patient Workout Data Flow"]
-        Start([Patient Completes Workout]) --> AI[AI Analyzes Form]
-        AI --> Risk{Injury Risks Detected?}
-        Risk -->|Yes| FlagRisks[Flag Critical Issues]
-        Risk -->|No| Basic[Basic Score Record]
-        FlagRisks --> Encrypt[/Encrypt with AES-256/]
-        Basic --> Encrypt
-        Encrypt --> Hash{{Generate Blockchain Hash}}
-        Hash --> Store[(Store in Firestore)]
-        Store --> BC[Post to Ethereum Goerli]
-    end
+    Start([Patient Completes Workout]) --> AI[AI Analyzes Form]
+    AI --> Risk{Injury Risks?}
+    Risk -->|Yes| FlagRisks[Flag Issues]
+    Risk -->|No| Basic[Basic Record]
+    FlagRisks --> Encrypt[/Encrypt AES-256/]
+    Basic --> Encrypt
+    Encrypt --> Hash{{Generate Hash}}
+    Hash --> Store[(Firestore)]
+    Store --> BC[Ethereum Goerli]
     
-    subgraph AccessFlow["Doctor/Patient Access Flow"]
-        AccessStart([Doctor/Patient Access]) --> Auth{Enter Private Key}
-        Auth -->|Valid| Verify[Verify Data Integrity]
-        Auth -->|Invalid| Deny[X Access Denied]
-        Verify --> Display>Display Secure Records]
-        Display --> End([Complete])
-    end
+    AccessStart([Doctor/Patient Access]) --> Auth{Private Key}
+    Auth -->|Valid| Verify[Verify Integrity]
+    Auth -->|Invalid| Deny[X Denied]
+    Verify --> Display>Display Records]
+    Display --> End([Complete])
     
     %% Styling with varied colors
     classDef main fill:#4A90E2,stroke:#2C5F8D,stroke-width:3px,color:#fff
