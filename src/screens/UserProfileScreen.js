@@ -268,6 +268,26 @@ const UserProfileScreen = ({ navigation }) => {
           )}
         </View>
 
+        {/* Blockchain Records Section */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Medical Records</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.recordsButton}
+            onPress={() => navigation.navigate('ViewRecords')}
+          >
+            <LinearGradient
+              colors={['#2d2d2d', '#1a1a1a']}
+              style={styles.recordsButtonGradient}
+            >
+              <Ionicons name="shield-checkmark" size={24} color="#00d4ff" />
+              <Text style={styles.recordsButtonText}>View Blockchain Records</Text>
+              <Ionicons name="chevron-forward" size={24} color="#888" />
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+
         {/* Fitness Goals Section */}
         {userProfile?.fitnessGoals && (
           <View style={styles.section}>
@@ -435,6 +455,24 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#ffffff',
+  },
+  recordsButton: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginTop: 10,
+  },
+  recordsButtonGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 15,
+  },
+  recordsButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#ffffff',
+    flex: 1,
+    marginLeft: 10,
   },
   goalItem: {
     flexDirection: 'row',

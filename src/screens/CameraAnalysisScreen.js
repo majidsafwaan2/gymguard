@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useWorkoutContext } from '../context/WorkoutContext';
-import PoseAnalyzer from '../utils/PoseAnalyzer';
+// import PoseAnalyzer from '../utils/PoseAnalyzer'; // Disabled - TensorFlow not supported in Expo Go
 
 const { width, height } = Dimensions.get('window');
 

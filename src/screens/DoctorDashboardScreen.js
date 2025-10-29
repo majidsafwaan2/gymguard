@@ -207,17 +207,25 @@ const DoctorDashboardScreen = ({ navigation }) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Doctor Dashboard</Text>
-        <TouchableOpacity 
-          style={styles.inboxButton}
-          onPress={() => navigation.navigate('DoctorInbox')}
-        >
-          <Ionicons name="mail-outline" size={24} color="#ffffff" />
-          {pendingRequests.length > 0 && (
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>{pendingRequests.length}</Text>
-            </View>
-          )}
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', gap: 10 }}>
+          <TouchableOpacity 
+            style={styles.inboxButton}
+            onPress={() => navigation.navigate('ViewRecords')}
+          >
+            <Ionicons name="shield-checkmark" size={24} color="#ffffff" />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.inboxButton}
+            onPress={() => navigation.navigate('DoctorInbox')}
+          >
+            <Ionicons name="mail-outline" size={24} color="#ffffff" />
+            {pendingRequests.length > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{pendingRequests.length}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView 

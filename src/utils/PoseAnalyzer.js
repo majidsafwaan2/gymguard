@@ -1,10 +1,5 @@
-import * as tf from '@tensorflow/tfjs';
-import * as poseDetection from '@tensorflow-models/pose-detection';
-
-// Add fetch polyfill for React Native
-if (typeof global.fetch === 'undefined') {
-  global.fetch = require('node-fetch');
-}
+// TensorFlow.js is not supported in Expo Go
+// Using fallback analysis instead
 
 class PoseAnalyzer {
   constructor() {
@@ -15,26 +10,9 @@ class PoseAnalyzer {
   async initialize() {
     try {
       console.log('🤖 Initializing pose detection...');
-      
-      // Skip TensorFlow initialization for now to avoid fetch errors
-      console.log('⚠️ Skipping TensorFlow initialization to avoid fetch errors');
+      console.log('⚠️ TensorFlow.js not supported in Expo Go - using fallback');
       this.isInitialized = false;
       return false;
-      
-      // Initialize TensorFlow.js backend
-      await tf.ready();
-      
-      // Create pose detector
-      this.detector = await poseDetection.createDetector(
-        poseDetection.SupportedModels.MoveNet,
-        {
-          modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
-        }
-      );
-      
-      this.isInitialized = true;
-      console.log('✅ Pose detection initialized successfully');
-      return true;
     } catch (error) {
       console.error('❌ Failed to initialize pose detection:', error);
       return false;

@@ -28,6 +28,8 @@ import DoctorInboxScreen from './src/screens/DoctorInboxScreen';
 import WorkoutAssignmentScreen from './src/screens/WorkoutAssignmentScreen';
 import InjuryTimelineScreen from './src/screens/InjuryTimelineScreen';
 import DoctorAssignedWorkoutsScreen from './src/screens/DoctorAssignedWorkoutsScreen';
+import AssignedWorkoutTrackingScreen from './src/screens/AssignedWorkoutTrackingScreen';
+import ViewRecordsScreen from './src/screens/ViewRecordsScreen';
 import FloatingChatbot from './src/components/FloatingChatbot';
 
 // Import context
@@ -270,6 +272,20 @@ function MainApp() {
         }}
       />
       <Stack.Screen 
+        name="AssignedWorkoutTracking" 
+        component={AssignedWorkoutTrackingScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen 
+        name="ViewRecords" 
+        component={ViewRecordsScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen 
         name="WorkoutDetail" 
         component={WorkoutDetailScreen}
         options={{
@@ -285,6 +301,18 @@ function MainApp() {
       />
     </Stack.Navigator>
   );
+}
+
+// Component to conditionally show chatbot only when logged in
+function ConditionalChatbot() {
+  const { user } = useUser();
+  
+  // Only show chatbot if user is logged in
+  if (!user) {
+    return null;
+  }
+  
+  return <FloatingChatbot />;
 }
 
 function AppNavigator() {
@@ -335,7 +363,7 @@ export default function App() {
             <NavigationContainer>
               <StatusBar style="light" backgroundColor="#1a1a1a" />
               <AppNavigator />
-              <FloatingChatbot />
+              <ConditionalChatbot />
             </NavigationContainer>
           </View>
         </WorkoutProvider>

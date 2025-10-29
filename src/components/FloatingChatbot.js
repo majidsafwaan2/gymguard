@@ -13,17 +13,40 @@ import {
   Platform,
   ActivityIndicator,
 } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import GeminiService from '../services/GeminiService';
 
 const { width, height } = Dimensions.get('window');
 
 const FloatingChatbot = () => {
+  const navigation = useNavigation();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [currentExpert, setCurrentExpert] = useState(null);
+  const [hideForRoute, setHideForRoute] = useState(false);
+  
+  // Track navigation state changes
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('state', () => {
+      const state = navigation.getState();
+      const currentRoute = state?.routes[state?.index];
+      if (currentRoute?.name === 'AssignedWorkoutTracking') {
+        setHideForRoute(true);
+      } else {
+        setHideForRoute(false);
+      }
+    });
+    
+    return unsubscribe;
+  }, [navigation]);
+  
+  // Hide chatbot on workout tracking screen
+  if (hideForRoute) {
+    return null;
+  }
 
   const experts = [
     { 

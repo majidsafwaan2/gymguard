@@ -16,6 +16,7 @@
     ],
     "ios": {
       "supportsTablet": false,
+      "bundleIdentifier": "com.gymguard.app",
       "infoPlist": {
         "NSCameraUsageDescription": "GymGuard needs camera access to analyze your workout form and prevent injuries.",
         "NSMicrophoneUsageDescription": "GymGuard may need microphone access for video recording during form analysis."

@@ -208,9 +208,9 @@ const DoctorAssignedWorkoutsScreen = ({ navigation }) => {
                   <TouchableOpacity 
                     style={styles.startWorkoutButton}
                     onPress={() => {
-                      // Navigate to workout timer or tracking
-                      navigation.navigate('WorkoutTimer', { 
-                        exercises: assignment.exercises 
+                      // Navigate to workout tracking screen
+                      navigation.navigate('AssignedWorkoutTracking', { 
+                        assignmentId: assignment.id
                       });
                     }}
                   >
