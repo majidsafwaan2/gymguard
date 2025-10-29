@@ -1,29 +1,45 @@
-# Blockchain Secure Patient Records - Presentation Flow (12 Elements)
+# Blockchain Secure Patient Records - Presentation Flow (Vertical)
 
 ```mermaid
-flowchart LR
+flowchart TD
     Start([Patient Completes Workout]) --> AI[AI Analyzes Form]
-    AI --> Risk{Injury Risks?}
-    Risk -->|Yes| Encrypt[Encrypt AES-256]
-    Risk -->|No| Encrypt
-    Encrypt --> Store[(Store + Hash)]
-    Store --> BC[Post to Blockchain]
+    AI --> Risk{Injury Risks Detected?}
     
-    Access([Doctor/Patient Access]) --> Auth[Private Key Auth]
-    Auth --> View[View Records]
-    View --> Verify[Verify Integrity]
-    Verify --> Show[Display Secure Data]
-    Show --> End([Complete])
+    Risk -->|Yes| FlagRisks[Flag Critical Issues]
+    Risk -->|No| Basic[Basic Score Record]
     
-    %% Styling
+    FlagRisks --> Encrypt[/Encrypt with AES-256/]
+    Basic --> Encrypt
+    
+    Encrypt --> Hash{{Generate Blockchain Hash}}
+    Hash --> Store[(Store in Firestore)]
+    
+    Store --> BC[Post to Ethereum Goerli]
+    
+    AccessStart([Doctor/Patient Access]) --> Auth{Enter Private Key}
+    Auth -->|Valid| Verify[Verify Data Integrity]
+    Auth -->|Invalid| Deny[X Access Denied]
+    
+    Verify --> Display>Display Secure Records]
+    
+    Display --> End([Complete])
+    
+    %% Styling with varied colors
     classDef main fill:#4A90E2,stroke:#2C5F8D,stroke-width:3px,color:#fff
     classDef decision fill:#F5A623,stroke:#D17E00,stroke-width:3px,color:#fff
     classDef store fill:#50C878,stroke:#2E7D4E,stroke-width:3px,color:#fff
     classDef start fill:#9B59B6,stroke:#6A4C93,stroke-width:3px,color:#fff
+    classDef highlight fill:#E74C3C,stroke:#C0392B,stroke-width:3px,color:#fff
+    classDef process fill:#16A085,stroke:#0E6655,stroke-width:3px,color:#fff
+    classDef verify fill:#8E44AD,stroke:#6C3483,stroke-width:3px,color:#fff
     
-    class AI,Encrypt,BC,Auth,View,Verify,Show main
-    class Risk decision
+    class AI,BC,Display main
+    class Risk,Auth decision
     class Store store
-    class Start,Access,End start
+    class Start,AccessStart,End start
+    class FlagRisks,Basic highlight
+    class Encrypt process
+    class Hash,Verify verify
+    class Deny highlight
 ```
 
