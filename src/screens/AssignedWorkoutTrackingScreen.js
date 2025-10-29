@@ -168,45 +168,48 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
     // Check if this is a squat to provide specific analysis
     if (exerciseName.toLowerCase().includes('squat')) {
       return {
-        overallScore: 62, // Lower score due to critical issues
+        overallScore: 42, // Patient receives 42/100 for poor form
         feedback: [
           { 
             bodyPart: 'Stance Width', 
-            message: 'CRITICAL: Your feet are positioned too far apart (wider than shoulder width). This places excessive stress on your hip flexors and can cause lower back strain. Action required: Bring feet to shoulder-width apart with toes pointing slightly outward (10-15 degrees). This is a HIGH INJURY RISK that must be corrected immediately.', 
+            message: 'Your feet are positioned too far apart. This puts extra strain on your hips and lower back. Try bringing your feet closer together - about shoulder-width apart, with your toes pointing slightly outward.', 
             type: 'improvement', 
             severity: 'critical',
-            injuryRisk: 'HIGH - Wide stance can cause hip flexor strain and lower back injury'
+            injuryRisk: 'Wide stance can cause hip strain and back pain'
           },
           { 
             bodyPart: 'Depth', 
-            message: 'CRITICAL: You are not reaching adequate depth (only reaching 45-60% of full depth). This prevents proper muscle engagement and can lead to knee instability over time. Action required: Lower your body until your thighs are parallel to the floor (90-degree knee angle minimum). You must go deeper to activate glutes and protect your knees. This places you at RISK for knee injuries and incomplete muscle development.', 
+            message: "You're not going low enough on your squats. You need to lower your body until your thighs are at least parallel to the floor. Going deeper helps protect your knees and builds stronger legs. Keep practicing to reach proper depth.", 
             type: 'improvement', 
             severity: 'critical',
-            injuryRisk: 'HIGH - Inadequate depth can cause knee instability and compensation leading to future injuries'
+            injuryRisk: 'Shallow squats don\'t protect your knees properly'
+          },
+          { 
+            bodyPart: 'Flexibility', 
+            message: 'Limited flexibility in your hips and ankles is preventing you from squatting deeper. This is causing knee strain and limiting your results.', 
+            type: 'improvement', 
+            severity: 'critical',
+            injuryRisk: 'Low flexibility score: 42/100 - this needs improvement'
           },
           { 
             bodyPart: 'Back Position', 
-            message: 'Your back maintained neutral alignment - this is correct form', 
-            type: 'excellent', 
-            severity: 'good' 
-          },
-          { 
-            bodyPart: 'Knee Tracking', 
-            message: 'Knees remained aligned with toes throughout movement - correct form', 
+            message: 'Your back stayed straight during the exercise - this is good! Keep maintaining this position.', 
             type: 'excellent', 
             severity: 'good' 
           },
         ],
         scores: {
-          RangeOfMotion: 58,
-          Form: 65,
-          KneeAlignment: 72,
-          BackPosition: 78,
+          RangeOfMotion: 42,
+          Flexibility: 42,
+          Form: 48,
+          KneeAlignment: 52,
         },
         recommendations: [
-          'Bring your feet to shoulder-width (not wider) with toes pointed forward - this reduces hip flexor strain by 40%',
-          'Lower your body deeper until thighs are parallel to the floor - aim for 90-degree knee bend to prevent knee instability',
-          'Focus on depth over weight - incomplete depth increases injury risk by 60%'
+          'Bring your feet to shoulder-width apart (not wider) to reduce hip and back strain',
+          'Focus on going deeper - aim to get your thighs parallel to the floor for better results',
+          'Spend time stretching your hips, ankles, and hamstrings before your next workout',
+          'Try doing some bodyweight squats with proper depth before adding weight',
+          'Your shallow squats could lead to knee pain over time - focus on form first'
         ],
       };
     }
