@@ -1,7 +1,7 @@
 # Blockchain Secure Patient Records - Wide Format Flow
 
 ```mermaid
-flowchart TD
+flowchart LR
     Start([Patient Completes Workout]) --> AI[AI Analyzes Form]
     AI --> Risk{Injury Risks?}
     Risk -->|Yes| FlagRisks[Flag Issues]
