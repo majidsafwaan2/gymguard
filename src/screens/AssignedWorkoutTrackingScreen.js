@@ -172,83 +172,95 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
         feedback: [
           { 
             bodyPart: 'Stance Width', 
-            message: 'Your feet are positioned too far apart. This puts extra strain on your hips and lower back. Try bringing your feet closer together - about shoulder-width apart, with your toes pointing slightly outward.', 
+            message: 'Your feet need to be positioned wider apart. Move your feet to at least shoulder-width distance to provide better stability and reduce knee strain. A wider stance distributes load more effectively.', 
             type: 'improvement', 
             severity: 'critical',
-            injuryRisk: 'Wide stance can cause hip strain and back pain'
+            injuryRisk: 'Narrow stance can cause knee instability and reduce stability'
           },
           { 
             bodyPart: 'Depth', 
-            message: "You're not going low enough on your squats. You need to lower your body until your thighs are at least parallel to the floor. Going deeper helps protect your knees and builds stronger legs. Keep practicing to reach proper depth.", 
+            message: "You're not achieving adequate depth in your squats. Lower your body until your thighs are parallel to the floor (90-degree knee angle minimum). Proper depth is essential for complete muscle activation and joint protection.", 
             type: 'improvement', 
             severity: 'critical',
-            injuryRisk: 'Shallow squats don\'t protect your knees properly'
-          },
-          { 
-            bodyPart: 'Flexibility', 
-            message: 'Limited flexibility in your hips and ankles is preventing you from squatting deeper. This is causing knee strain and limiting your results.', 
-            type: 'improvement', 
-            severity: 'critical',
-            injuryRisk: 'Low flexibility score: 42/100 - this needs improvement'
+            injuryRisk: 'Inadequate depth reduces muscle activation and may lead to knee issues'
           },
           { 
             bodyPart: 'Back Position', 
-            message: 'Your back stayed straight during the exercise - this is good! Keep maintaining this position.', 
-            type: 'excellent', 
-            severity: 'good' 
+            message: 'Maintain a straight, neutral spine throughout the entire movement. Keep your chest up and core engaged to prevent lower back strain.', 
+            type: 'improvement', 
+            severity: 'critical',
+            injuryRisk: 'Rounded back can cause spinal compression and lower back injury'
+          },
+          { 
+            bodyPart: 'Flexibility', 
+            message: 'Limited hip and ankle mobility is restricting your range of motion. Focus on stretching to improve squat depth and reduce compensatory movement patterns.', 
+            type: 'improvement', 
+            severity: 'critical',
+            injuryRisk: 'Limited flexibility score: 42/100 - requires immediate attention'
           },
         ],
         scores: {
           RangeOfMotion: 42,
           Flexibility: 42,
-          Form: 48,
-          KneeAlignment: 52,
+          Form: 42,
+          Stability: 48,
         },
         recommendations: [
-          'Bring your feet to shoulder-width apart (not wider) to reduce hip and back strain',
-          'Focus on going deeper - aim to get your thighs parallel to the floor for better results',
-          'Spend time stretching your hips, ankles, and hamstrings before your next workout',
-          'Try doing some bodyweight squats with proper depth before adding weight',
-          'Your shallow squats could lead to knee pain over time - focus on form first'
+          'Widen your stance to shoulder-width or slightly wider for optimal stability',
+          'Lower your body deeper - aim for thighs parallel to the floor (minimum 90° knee angle)',
+          'Keep your back straight and chest up throughout the entire movement',
+          'Focus on hip and ankle flexibility with stretching before workouts',
+          'Practice bodyweight squats with proper form before adding external load'
         ],
       };
     }
     
-    const analysisTemplates = {
-      'Dumbbell Curl': {
-        overallScore: Math.floor(Math.random() * 41) + 50,
-        feedback: [
-          { bodyPart: 'Range of Motion', message: 'Arm extension incomplete at bottom - missing 30% muscle activation', type: 'improvement', severity: 'warning' },
-          { bodyPart: 'Elbow Stability', message: 'Elbows maintained perfect position relative to torso throughout movement', type: 'excellent', severity: 'good' },
-          { bodyPart: 'Tempo Control', message: 'Controlled descent prevents momentum-driven reps and maximizes time under tension', type: 'excellent', severity: 'good' },
-        ],
-        scores: {
-          RangeOfMotion: Math.floor(Math.random() * 41) + 50,
-          Form: Math.floor(Math.random() * 41) + 50,
-          ElbowStability: Math.floor(Math.random() * 41) + 50,
-          Control: Math.floor(Math.random() * 41) + 50,
-        },
-        recommendations: [
-          'Fully straighten your arm at the bottom (0-degree elbow flexion) to achieve complete bicep stretch and recruit maximum muscle fibers',
-          'Pin your elbows against your sides and maintain this position - any forward movement shifts tension to anterior deltoids',
-          'Extend the eccentric phase to 4 seconds to maximize muscle damage and growth stimulus',
-        ],
-      },
-    };
-
-    return analysisTemplates[exerciseName] || {
-      overallScore: Math.floor(Math.random() * 41) + 50,
+    // Default analysis for all exercises - consistent squat feedback
+    return {
+      overallScore: 42,
       feedback: [
-        { bodyPart: 'Overall', message: 'Maintaining proper biomechanical alignment throughout the exercise', type: 'good', severity: 'good' },
-        { bodyPart: 'Consistency', message: 'Steady execution with minimal deviation between repetitions', type: 'good', severity: 'good' },
+        { 
+          bodyPart: 'Stance Width', 
+          message: 'Your feet need to be positioned wider apart. Move your feet to at least shoulder-width distance to provide better stability and reduce knee strain. A wider stance distributes load more effectively.', 
+          type: 'improvement', 
+          severity: 'critical',
+          injuryRisk: 'Narrow stance can cause knee instability and reduce stability'
+        },
+        { 
+          bodyPart: 'Depth', 
+          message: "You're not achieving adequate depth in your squats. Lower your body until your thighs are parallel to the floor (90-degree knee angle minimum). Proper depth is essential for complete muscle activation and joint protection.", 
+          type: 'improvement', 
+          severity: 'critical',
+          injuryRisk: 'Inadequate depth reduces muscle activation and may lead to knee issues'
+        },
+        { 
+          bodyPart: 'Back Position', 
+          message: 'Maintain a straight, neutral spine throughout the entire movement. Keep your chest up and core engaged to prevent lower back strain.', 
+          type: 'improvement', 
+          severity: 'critical',
+          injuryRisk: 'Rounded back can cause spinal compression and lower back injury'
+        },
+        { 
+          bodyPart: 'Flexibility', 
+          message: 'Limited hip and ankle mobility is restricting your range of motion. Focus on stretching to improve squat depth and reduce compensatory movement patterns.', 
+          type: 'improvement', 
+          severity: 'critical',
+          injuryRisk: 'Limited flexibility score: 42/100 - requires immediate attention'
+        },
       ],
       scores: {
-        RangeOfMotion: Math.floor(Math.random() * 41) + 50,
-        Form: Math.floor(Math.random() * 41) + 50,
-        Technique: Math.floor(Math.random() * 41) + 50,
-        Control: Math.floor(Math.random() * 41) + 50,
+        RangeOfMotion: 42,
+        Flexibility: 42,
+        Form: 42,
+        Stability: 48,
       },
-      recommendations: ['Maintain strict form control and focus on full range of motion for optimal muscle engagement'],
+      recommendations: [
+        'Widen your stance to shoulder-width or slightly wider for optimal stability',
+        'Lower your body deeper - aim for thighs parallel to the floor (minimum 90° knee angle)',
+        'Keep your back straight and chest up throughout the entire movement',
+        'Focus on hip and ankle flexibility with stretching before workouts',
+        'Practice bodyweight squats with proper form before adding external load'
+      ],
     };
   };
 
