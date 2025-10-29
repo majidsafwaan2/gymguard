@@ -164,9 +164,11 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
 
   const generateDetailedAnalysis = () => {
     const exerciseName = getCurrentExerciseDetails()?.name || 'Exercise';
-    const analysisTemplates = {
-        'Squat': {
-        overallScore: Math.floor(Math.random() * 41) + 50,
+    
+    // Check if this is a squat to provide specific analysis
+    if (exerciseName.toLowerCase().includes('squat')) {
+      return {
+        overallScore: 62, // Lower score due to critical issues
         feedback: [
           { 
             bodyPart: 'Stance Width', 
@@ -180,7 +182,7 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
             message: 'CRITICAL: You are not reaching adequate depth (only reaching 45-60% of full depth). This prevents proper muscle engagement and can lead to knee instability over time. Action required: Lower your body until your thighs are parallel to the floor (90-degree knee angle minimum). You must go deeper to activate glutes and protect your knees. This places you at RISK for knee injuries and incomplete muscle development.', 
             type: 'improvement', 
             severity: 'critical',
-            injuryRisk: 'HIGH - Inadequate depth can cause knee instability and compensa'
+            injuryRisk: 'HIGH - Inadequate depth can cause knee instability and compensation leading to future injuries'
           },
           { 
             bodyPart: 'Back Position', 
@@ -196,17 +198,20 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
           },
         ],
         scores: {
-          RangeOfMotion: Math.floor(Math.random() * 41) + 50,
-          Form: Math.floor(Math.random() * 41) + 50,
-          KneeAlignment: Math.floor(Math.random() * 41) + 50,
-          BackPosition: Math.floor(Math.random() * 41) + 50,
+          RangeOfMotion: 58,
+          Form: 65,
+          KneeAlignment: 72,
+          BackPosition: 78,
         },
         recommendations: [
-          'Lower your hips by bending your knees deeper until thighs are parallel to the ground - this activates maximum muscle fibers',
-          'Keep your knees tracking in line with your second toe throughout the movement to prevent medial knee stress',
-          'Maintain a neutral spine by bracing your core and keeping your chest up during the entire squat',
+          'Bring your feet to shoulder-width (not wider) with toes pointed forward - this reduces hip flexor strain by 40%',
+          'Lower your body deeper until thighs are parallel to the floor - aim for 90-degree knee bend to prevent knee instability',
+          'Focus on depth over weight - incomplete depth increases injury risk by 60%'
         ],
-      },
+      };
+    }
+    
+    const analysisTemplates = {
       'Dumbbell Curl': {
         overallScore: Math.floor(Math.random() * 41) + 50,
         feedback: [
@@ -721,17 +726,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: 50,
-    paddingBottom: 5,
-    zIndex: 1000,
-    backgroundColor: 'transparent',
+    paddingBottom: 20,
+    backgroundColor: '#1a1a1a',
   },
   backButton: {
     width: 40,
@@ -748,6 +749,8 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
+    paddingTop: 10,
+    marginTop: 10,
   },
   sectionTitle: {
     color: '#ffffff',
@@ -775,7 +778,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   settingsSection: {
-    marginTop: 80,
+    marginTop: 30,
+    paddingTop: 20,
   },
   settingRow: {
     flexDirection: 'row',
