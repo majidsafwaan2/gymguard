@@ -1,28 +1,22 @@
 # Blockchain Secure Patient Records - Wide Format Flow
 
 ```mermaid
-flowchart TB
-    subgraph Top[" "]
-        direction LR
-        Start([Patient Completes Workout]) --> AI[AI Analyzes Form]
-        AI --> Risk{Injury Risks?}
-        Risk -->|Yes| FlagRisks[Flag Issues]
-        Risk -->|No| Basic[Basic Record]
-        FlagRisks --> Encrypt[/Encrypt AES-256/]
-        Basic --> Encrypt
-        Encrypt --> Hash{{Generate Hash}}
-        Hash --> Store[(Firestore)]
-        Store --> BC[Ethereum Goerli]
-    end
+flowchart TD
+    Start([Patient Completes Workout]) --> AI[AI Analyzes Form]
+    AI --> Risk{Injury Risks?}
+    Risk -->|Yes| FlagRisks[Flag Issues]
+    Risk -->|No| Basic[Basic Record]
+    FlagRisks --> Encrypt[/Encrypt AES-256/]
+    Basic --> Encrypt
+    Encrypt --> Hash{{Generate Hash}}
+    Hash --> Store[(Firestore)]
+    Store --> BC[Ethereum Goerli]
     
-    subgraph Bottom[" "]
-        direction LR
-        AccessStart([Doctor/Patient Access]) --> Auth{Private Key}
-        Auth -->|Valid| Verify[Verify Integrity]
-        Auth -->|Invalid| Deny[X Denied]
-        Verify --> Display>Display Records]
-        Display --> End([Complete])
-    end
+    AccessStart([Doctor/Patient Access]) --> Auth{Private Key}
+    Auth -->|Valid| Verify[Verify Integrity]
+    Auth -->|Invalid| Deny[X Denied]
+    Verify --> Display>Display Records]
+    Display --> End([Complete])
     
     %% Styling with varied colors
     classDef main fill:#4A90E2,stroke:#2C5F8D,stroke-width:3px,color:#fff
