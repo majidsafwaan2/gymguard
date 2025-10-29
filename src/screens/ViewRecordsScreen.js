@@ -296,7 +296,7 @@ export default function ViewRecordsScreen({ navigation, route }) {
               `Body fat percentage: ${mockBodyFat}% (down from ${prevBodyFat}%)`,
               `Muscle mass: ${mockMuscleMass} lbs (up from ${prevMuscle} lbs)`,
               'Core strength improved by 2%',
-              'Flexibility score: 42/100 (concerning)',
+              'Flexibility score: 62/100 (concerning)',
               'Resting heart rate: 65 bpm',
               'Blood pressure: 120/80 mmHg',
             ];
@@ -388,7 +388,7 @@ export default function ViewRecordsScreen({ navigation, route }) {
                       </View>
                       <View style={styles.riskContent}>
                         <Text style={styles.riskText}>
-                          <Text style={styles.riskLabel}>Observation:</Text> Low flexibility score (42/100) indicates inadequate range of motion during prescribed squat exercises.
+                          <Text style={styles.riskLabel}>Observation:</Text> Low flexibility score (62/100) indicates inadequate range of motion during prescribed squat exercises.
                         </Text>
                         <Text style={styles.riskText}>
                           <Text style={styles.riskLabel}>Concern:</Text> Patient demonstrates insufficient depth on squats, failing to reach parallel (90° knee angle). This pattern suggests premature termination of the movement cycle.

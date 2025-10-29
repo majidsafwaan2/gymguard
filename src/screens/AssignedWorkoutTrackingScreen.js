@@ -168,7 +168,7 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
     // Check if this is a squat to provide specific analysis
     if (exerciseName.toLowerCase().includes('squat')) {
       return {
-        overallScore: 42, // Patient receives 42/100 for poor form
+        overallScore: 62, // Patient receives 62/100 for poor form
         feedback: [
           { 
             bodyPart: 'Stance Width', 
@@ -217,7 +217,7 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
     
     // Default analysis for all exercises - consistent squat feedback
     return {
-      overallScore: 42,
+      overallScore: 62,
       feedback: [
         { 
           bodyPart: 'Stance Width', 
