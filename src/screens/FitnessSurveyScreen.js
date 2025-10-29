@@ -8,8 +8,8 @@ import {
   Alert,
   ActivityIndicator,
   TextInput,
+  Image,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '../context/UserContext';
 
@@ -18,114 +18,42 @@ const FitnessSurveyScreen = ({ navigation = null }) => {
   const [answers, setAnswers] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   
-  const { updateUserProfile } = useUser();
+  const { userProfile, updateUserProfile } = useUser();
 
-  // Base questions that apply to everyone
-  const baseQuestions = [
+  // Basic patient information questions
+  const questions = [
     {
       id: 'age',
       question: 'What is your age?',
       type: 'input',
-      unit: 'years'
+      unit: 'years',
+      placeholder: 'Enter your age'
     },
     {
       id: 'gender',
       question: 'What is your gender?',
       type: 'options',
       options: [
-        { id: 'male', label: 'Male' },
-        { id: 'female', label: 'Female' },
-        { id: 'other', label: 'Other' }
+        { id: 'male', label: 'Male', description: 'Male' },
+        { id: 'female', label: 'Female', description: 'Female' },
+        { id: 'other', label: 'Other', description: 'Prefer not to say or other' }
       ]
     },
     {
       id: 'height',
-      question: 'What is your height? (in)',
+      question: 'What is your height?',
       type: 'input',
-      unit: 'in'
+      unit: 'inches',
+      placeholder: 'Enter your height in inches'
     },
     {
       id: 'weight',
-      question: 'What is your current weight? (lb)',
+      question: 'What is your current weight?',
       type: 'input',
-      unit: 'lb'
-    },
-    {
-      id: 'neck',
-      question: 'What is your neck circumference? (in)',
-      type: 'input',
-      unit: 'in'
-    },
-    {
-      id: 'waist',
-      question: 'What is your waist circumference? (in)',
-      type: 'input',
-      unit: 'in'
+      unit: 'lbs',
+      placeholder: 'Enter your weight in pounds'
     },
   ];
-
-  // Hip question only for females (inserted after waist)
-  const hipQuestion = {
-    id: 'hip',
-    question: 'What is your hip circumference? (in)',
-    type: 'input',
-    unit: 'in'
-  };
-
-  // Rest of the questions
-  const remainingQuestions = [
-    {
-      id: 'gymExperience',
-      question: 'Are you new to the gym?',
-      type: 'options',
-      options: [
-        { id: 'yes', label: 'Yes, completely new', description: 'First time in a gym' },
-        { id: 'somewhat', label: 'Somewhat experienced', description: 'Been to gym a few times' },
-        { id: 'experienced', label: 'Experienced', description: 'Regular gym goer' }
-      ]
-    },
-    {
-      id: 'primaryGoal',
-      question: 'What\'s your primary fitness goal?',
-      type: 'options',
-      options: [
-        { id: 'weightLoss', label: 'Weight Loss', description: 'Lose weight and burn fat' },
-        { id: 'muscleGain', label: 'Muscle Gain', description: 'Build muscle and strength' },
-        { id: 'endurance', label: 'Endurance', description: 'Improve cardiovascular fitness' },
-        { id: 'general', label: 'General Fitness', description: 'Stay healthy and active' }
-      ]
-    },
-    {
-      id: 'targetWeight',
-      question: 'What is your target weight? (lb)',
-      type: 'input',
-      unit: 'lb'
-    },
-    {
-      id: 'targetBodyFat',
-      question: 'What is your target body fat percentage?',
-      type: 'input',
-      unit: '%'
-    }
-  ];
-
-  // Dynamically build questions based on gender
-  const questions = React.useMemo(() => {
-    // Find the index where waist question is
-    const waistIndex = baseQuestions.findIndex(q => q.id === 'waist');
-    
-    // If gender is female, insert hip question after waist
-    if (answers.gender === 'female' && waistIndex !== -1) {
-      return [
-        ...baseQuestions.slice(0, waistIndex + 1),
-        hipQuestion,
-        ...remainingQuestions
-      ];
-    }
-    
-    // For males and others, no hip question
-    return [...baseQuestions, ...remainingQuestions];
-  }, [answers.gender]);
 
   const handleAnswer = (questionId, answerId) => {
     setAnswers(prev => ({
@@ -155,122 +83,32 @@ const FitnessSurveyScreen = ({ navigation = null }) => {
     }
   };
 
-  // Calculate Body Fat Percentage using U.S. Navy Method
-  const calculateBodyFatPercentage = (height, neck, waist, hip, gender) => {
-    const heightNum = parseFloat(height);
-    const neckNum = parseFloat(neck);
-    const waistNum = parseFloat(waist);
-    const hipNum = parseFloat(hip);
-    
-    // Validate required measurements
-    if (!heightNum || !neckNum || !waistNum || !gender) {
-      return null;
-    }
-    
-    // For females, hip measurement is required
-    if (gender === 'female' && !hipNum) {
-      return null;
-    }
-    
-    let bodyFat;
-    
-    if (gender === 'male') {
-      // U.S. Navy Method for Males (USC Units - inches)
-      // BFP = 86.010×log₁₀(abdomen-neck) - 70.041×log₁₀(height) + 36.76
-      const abdomenMinusNeck = waistNum - neckNum;
-      
-      if (abdomenMinusNeck <= 0) {
-        return null; // Invalid measurement
-      }
-      
-      bodyFat = 86.010 * Math.log10(abdomenMinusNeck) - 70.041 * Math.log10(heightNum) + 36.76;
-    } else if (gender === 'female') {
-      // U.S. Navy Method for Females (USC Units - inches)
-      // BFP = 163.205×log₁₀(waist+hip-neck) - 97.684×log₁₀(height) - 78.387
-      const waistPlusHipMinusNeck = waistNum + hipNum - neckNum;
-      
-      if (waistPlusHipMinusNeck <= 0) {
-        return null; // Invalid measurement
-      }
-      
-      bodyFat = 163.205 * Math.log10(waistPlusHipMinusNeck) - 97.684 * Math.log10(heightNum) - 78.387;
-    } else {
-      // For 'other' gender, use male formula as default
-      const abdomenMinusNeck = waistNum - neckNum;
-      
-      if (abdomenMinusNeck <= 0) {
-        return null;
-      }
-      
-      bodyFat = 86.010 * Math.log10(abdomenMinusNeck) - 70.041 * Math.log10(heightNum) + 36.76;
-    }
-    
-    // Ensure the result is between 5% and 50%
-    const clampedBFP = Math.max(5, Math.min(50, bodyFat));
-    
-    return Math.round(clampedBFP * 10) / 10; // Round to 1 decimal place
-  };
-
   const handleComplete = async () => {
     try {
       setIsLoading(true);
       
-      // Separate body measurements from other answers
-      const bodyMeasurements = {};
-      const fitnessGoals = {};
-      
-      questions.forEach(q => {
-        if (['age', 'gender', 'height', 'weight', 'neck', 'waist', 'hip', 'targetWeight', 'targetBodyFat'].includes(q.id)) {
-          bodyMeasurements[q.id] = answers[q.id] || '';
-        } else {
-          fitnessGoals[q.id] = answers[q.id] || '';
-        }
-      });
-      
-      console.log('Saving survey data:', { bodyMeasurements, fitnessGoals });
-      
-      // Convert empty strings to numbers or leave as is
-      const processedMeasurements = {};
-      Object.keys(bodyMeasurements).forEach(key => {
-        const value = bodyMeasurements[key];
-        if (key === 'gender') {
-          processedMeasurements[key] = value; // Keep gender as string
-        } else {
-          processedMeasurements[key] = value ? parseFloat(value) || value : '';
-        }
-      });
-      
-      // Calculate body fat percentage using U.S. Navy Method
-      const bodyFatPercentage = calculateBodyFatPercentage(
-        processedMeasurements.height,
-        processedMeasurements.neck,
-        processedMeasurements.waist,
-        processedMeasurements.hip,
-        processedMeasurements.gender
-      );
-      
-      if (bodyFatPercentage !== null) {
-        processedMeasurements.bodyFat = bodyFatPercentage;
-        console.log('Calculated body fat percentage:', bodyFatPercentage + '%');
-      }
-      
-      console.log('Processed measurements:', processedMeasurements);
-      
-      // Save survey answers to user profile
-      await updateUserProfile({
-        ...processedMeasurements,
-        fitnessGoals,
+      // Process personal information
+      const personalInfo = {
+        age: answers.age ? parseFloat(answers.age) : '',
+        gender: answers.gender || '',
+        height: answers.height ? parseFloat(answers.height) : '',
+        weight: answers.weight ? parseFloat(answers.weight) : '',
         surveyCompleted: true
-      });
+      };
       
-      console.log('Survey completed successfully - profile will update and screen will change');
+      console.log('Saving personal information:', personalInfo);
+      
+      // Save personal information to user profile
+      await updateUserProfile(personalInfo);
+      
+      console.log('Personal information saved successfully');
       
       // Wait a moment for the state to update
       await new Promise(resolve => setTimeout(resolve, 500));
       
     } catch (error) {
       console.error('Survey completion error:', error);
-      Alert.alert('Error', `Failed to save your preferences: ${error.message || error.toString()}`);
+      Alert.alert('Error', `Failed to save your information: ${error.message || error.toString()}`);
     } finally {
       setIsLoading(false);
     }
@@ -285,19 +123,22 @@ const FitnessSurveyScreen = ({ navigation = null }) => {
   const progress = ((currentQuestion + 1) / questions.length) * 100;
 
   return (
-    <LinearGradient
-      colors={['#1a1a1a', '#2d2d2d', '#1a1a1a']}
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.logoContainer}>
-            <Ionicons name="fitness" size={50} color="#00d4ff" />
+            <Image 
+              source={require('../../assets/logo.png')} 
+              style={styles.logoImage}
+              resizeMode="contain"
+            />
           </View>
-          <Text style={styles.title}>Let's Get Started!</Text>
+          <Text style={styles.title}>
+            {userProfile?.userType === 'doctor' ? 'Personal Information' : 'Patient Information'}
+          </Text>
           <Text style={styles.subtitle}>
-            Help us personalize your GymGuard experience
+            Please provide your basic information
           </Text>
         </View>
 
@@ -322,7 +163,7 @@ const FitnessSurveyScreen = ({ navigation = null }) => {
                 value={answers[currentQ.id] || ''}
                 onChangeText={(text) => handleInputChange(currentQ.id, text)}
                 keyboardType="numeric"
-                placeholder={`Enter ${currentQ.id} in ${currentQ.unit}`}
+                placeholder={currentQ.placeholder || `Enter ${currentQ.id}`}
                 placeholderTextColor="#666666"
               />
             </View>
@@ -367,7 +208,7 @@ const FitnessSurveyScreen = ({ navigation = null }) => {
               style={styles.previousButton}
               onPress={handlePrevious}
             >
-              <Ionicons name="chevron-back" size={20} color="#ffffff" />
+              <Ionicons name="chevron-back" size={20} color="#333333" />
               <Text style={styles.previousButtonText}>Previous</Text>
             </TouchableOpacity>
           )}
@@ -395,13 +236,14 @@ const FitnessSurveyScreen = ({ navigation = null }) => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
   },
   scrollContent: {
     flexGrow: 1,
@@ -413,23 +255,25 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   logoContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: 'rgba(0, 212, 255, 0.1)',
+    width: 100,
+    height: 100,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
   },
+  logoImage: {
+    width: 100,
+    height: 100,
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#cccccc',
+    color: '#666666',
     textAlign: 'center',
   },
   progressContainer: {
@@ -437,7 +281,7 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 4,
-    backgroundColor: '#333333',
+    backgroundColor: '#e0e0e0',
     borderRadius: 2,
     marginBottom: 10,
   },
@@ -448,7 +292,7 @@ const styles = StyleSheet.create({
   },
   progressText: {
     fontSize: 14,
-    color: '#999999',
+    color: '#666666',
     textAlign: 'center',
   },
   questionContainer: {
@@ -457,7 +301,7 @@ const styles = StyleSheet.create({
   questionText: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     textAlign: 'center',
     marginBottom: 30,
     lineHeight: 28,
@@ -466,23 +310,33 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   input: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 12,
     padding: 20,
     fontSize: 18,
-    color: '#ffffff',
+    color: '#333333',
     borderWidth: 2,
-    borderColor: '#333333',
+    borderColor: '#e0e0e0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   optionsContainer: {
     gap: 15,
   },
   optionCard: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     padding: 20,
     borderWidth: 2,
-    borderColor: 'transparent',
+    borderColor: '#e0e0e0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   optionCardSelected: {
     borderColor: '#00d4ff',
@@ -497,18 +351,18 @@ const styles = StyleSheet.create({
   optionLabel: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
   },
   optionLabelSelected: {
     color: '#00d4ff',
   },
   optionDescription: {
     fontSize: 14,
-    color: '#cccccc',
+    color: '#666666',
     lineHeight: 20,
   },
   optionDescriptionSelected: {
-    color: '#ffffff',
+    color: '#333333',
   },
   navigationContainer: {
     flexDirection: 'row',
@@ -524,7 +378,7 @@ const styles = StyleSheet.create({
   },
   previousButtonText: {
     fontSize: 16,
-    color: '#ffffff',
+    color: '#333333',
     marginLeft: 5,
   },
   nextButton: {
@@ -538,7 +392,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   nextButtonDisabled: {
-    backgroundColor: '#666666',
+    backgroundColor: '#cccccc',
   },
   nextButtonText: {
     fontSize: 16,

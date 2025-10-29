@@ -96,7 +96,7 @@ const DoctorAssignedWorkoutsScreen = ({ navigation }) => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color="#ffffff" />
+          <Ionicons name="arrow-back" size={24} color="#333333" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>My Assigned Workouts</Text>
         <View style={{ width: 40 }} />
@@ -136,7 +136,7 @@ const DoctorAssignedWorkoutsScreen = ({ navigation }) => {
                     Assigned on {formatDate(assignment.assignedAt)}
                   </Text>
                   <View style={styles.exerciseCount}>
-                    <Ionicons name="barbell-outline" size={16} color="#cccccc" />
+                    <Ionicons name="barbell-outline" size={16} color="#666666" />
                     <Text style={styles.exerciseCountText}>
                       {assignment.exercises.length} exercise{assignment.exercises.length !== 1 ? 's' : ''}
                     </Text>
@@ -230,16 +230,16 @@ const DoctorAssignedWorkoutsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
     justifyContent: 'center',
     alignItems: 'center',
   },
   loadingText: {
-    color: '#cccccc',
+    color: '#666666',
     fontSize: 16,
     marginTop: 10,
   },
@@ -250,6 +250,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 60,
     paddingBottom: 20,
+    backgroundColor: '#ffffff',
   },
   backButton: {
     width: 40,
@@ -260,7 +261,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
   },
   content: {
     flex: 1,
@@ -274,7 +275,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginTop: 20,
     marginBottom: 10,
   },
@@ -285,10 +286,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
   },
   assignmentCard: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     marginBottom: 15,
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   assignmentHeader: {
     flexDirection: 'row',
@@ -307,7 +313,7 @@ const styles = StyleSheet.create({
   doctorName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginLeft: 8,
   },
   assignmentDate: {
@@ -328,10 +334,10 @@ const styles = StyleSheet.create({
     padding: 15,
     paddingTop: 0,
     borderTopWidth: 1,
-    borderTopColor: '#333333',
+    borderTopColor: '#e0e0e0',
   },
   exerciseItem: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
     borderRadius: 12,
     padding: 12,
     marginBottom: 12,
@@ -350,7 +356,7 @@ const styles = StyleSheet.create({
   exerciseName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 4,
   },
   exerciseCategory: {

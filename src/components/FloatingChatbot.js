@@ -184,7 +184,7 @@ const FloatingChatbot = () => {
             <View style={styles.chatHeader}>
               <Text style={styles.headerTitle}>Gym Buddy</Text>
               <TouchableOpacity onPress={() => setIsOpen(false)}>
-                <Ionicons name="close" size={24} color="#ffffff" />
+                <Ionicons name="close" size={24} color="#333333" />
               </TouchableOpacity>
             </View>
 
@@ -224,7 +224,7 @@ const FloatingChatbot = () => {
                     style={styles.backButton}
                     onPress={() => setCurrentExpert(null)}
                   >
-                    <Ionicons name="arrow-back" size={20} color="#ffffff" />
+                    <Ionicons name="arrow-back" size={20} color="#333333" />
                   </TouchableOpacity>
                   <Image 
                     source={{ uri: currentExpert.avatar }} 
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   chatContainer: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#ffffff',
     height: height * 0.55,
     width: width * 0.9,
     borderRadius: 25,
@@ -323,10 +323,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#333333',
+    borderBottomColor: '#e0e0e0',
   },
   headerTitle: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 20,
     fontWeight: 'bold',
   },
@@ -335,14 +335,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   selectorTitle: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 8,
     textAlign: 'center',
   },
   selectorSubtitle: {
-    color: '#cccccc',
+    color: '#666666',
     fontSize: 14,
     marginBottom: 20,
     textAlign: 'center',
@@ -352,11 +352,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   expertCard: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#f5f5f5',
     borderRadius: 15,
     marginBottom: 15,
     width: '100%',
     minHeight: 80,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   expertCardContent: {
     padding: 20,
@@ -373,17 +378,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   expertCardName: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 4,
   },
   expertCardSpecialty: {
-    color: '#cccccc',
+    color: '#666666',
     fontSize: 12,
   },
   selectButton: {
-    backgroundColor: '#333333',
+    backgroundColor: '#e0e0e0',
     width: 30,
     height: 30,
     borderRadius: 15,
@@ -396,7 +401,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#333333',
+    borderBottomColor: '#e0e0e0',
   },
   backButton: {
     marginRight: 15,
@@ -412,12 +417,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   currentExpertName: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 16,
     fontWeight: 'bold',
   },
   currentExpertSpecialty: {
-    color: '#cccccc',
+    color: '#666666',
     fontSize: 12,
   },
   messagesContainer: {
@@ -449,7 +454,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   botBubble: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#f5f5f5',
   },
   messageText: {
     fontSize: 14,
@@ -459,14 +464,14 @@ const styles = StyleSheet.create({
     color: '#ffffff',
   },
   botText: {
-    color: '#ffffff',
+    color: '#333333',
   },
   loadingContainer: {
     alignItems: 'center',
     paddingVertical: 10,
   },
   loadingText: {
-    color: '#cccccc',
+    color: '#666666',
     fontSize: 14,
     fontStyle: 'italic',
   },
@@ -477,9 +482,9 @@ const styles = StyleSheet.create({
     right: 0,
     paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#ffffff',
     borderTopWidth: 1,
-    borderTopColor: '#333333',
+    borderTopColor: '#e0e0e0',
   },
   inputRow: {
     flexDirection: 'row',
@@ -487,11 +492,11 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#f5f5f5',
     borderRadius: 20,
     paddingHorizontal: 15,
     paddingVertical: 10,
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 14,
     maxHeight: 100,
     marginRight: 10,

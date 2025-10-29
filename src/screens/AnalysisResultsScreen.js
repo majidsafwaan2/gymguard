@@ -7,22 +7,70 @@ import {
   TouchableOpacity,
   Dimensions,
   Linking,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useWorkoutContext } from '../context/WorkoutContext';
+import { useUser } from '../context/UserContext';
+import { 
+  collection, 
+  addDoc,
+} from 'firebase/firestore';
+import { db } from '../config/firebase';
 
 const { width } = Dimensions.get('window');
 
 export default function AnalysisResultsScreen({ navigation, route }) {
   const { selectedWorkout, addAnalysisResult } = useWorkoutContext();
+  const { user, userProfile } = useUser();
   const { result } = route.params || {};
 
   React.useEffect(() => {
     if (result) {
       addAnalysisResult(result);
+      saveFormScoreToFirestore();
     }
   }, [result]);
+
+  const saveFormScoreToFirestore = async () => {
+    if (!result || !user?.uid || !selectedWorkout) return;
+
+    try {
+      // Convert feedback array to string if it's an array of objects
+      let feedbackString = '';
+      if (Array.isArray(result.feedback)) {
+        feedbackString = result.feedback
+          .map(item => {
+            if (typeof item === 'object' && item.message) {
+              return `${item.bodyPart || ''}: ${item.message}`;
+            }
+            return String(item);
+          })
+          .join(' • ');
+      } else if (typeof result.feedback === 'string') {
+        feedbackString = result.feedback;
+      } else if (typeof result.feedback === 'object' && result.feedback.message) {
+        feedbackString = result.feedback.message;
+      }
+
+      await addDoc(collection(db, 'formScores'), {
+        userId: user.uid,
+        userName: userProfile?.fullName || 'User',
+        score: result.score,
+        exerciseType: selectedWorkout.category || selectedWorkout.targetArea || 'General',
+        workoutName: selectedWorkout.name,
+        feedback: feedbackString,
+        aiModel: result.aiModel || 'Llama 3.2 Vision',
+        confidence: result.confidence || null,
+        createdAt: new Date().toISOString(),
+      });
+      console.log('✅ Form score saved to Firestore');
+    } catch (error) {
+      console.error('❌ Error saving form score:', error);
+      // Don't show alert to user, just log the error
+    }
+  };
 
   if (!result) {
     return (
@@ -261,6 +309,7 @@ const styles = StyleSheet.create({
   },
   scoreSection: {
     alignItems: 'center',
+    marginTop: 10,
     marginBottom: 30,
   },
   scoreContainer: {

@@ -152,7 +152,7 @@ const WorkoutAssignmentScreen = ({ navigation, route }) => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color="#ffffff" />
+          <Ionicons name="arrow-back" size={24} color="#333333" />
         </TouchableOpacity>
         <View style={styles.headerInfo}>
           <Text style={styles.headerTitle}>Assign Workouts</Text>
@@ -255,16 +255,16 @@ const WorkoutAssignmentScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
     justifyContent: 'center',
     alignItems: 'center',
   },
   loadingText: {
-    color: '#cccccc',
+    color: '#666666',
     fontSize: 16,
     marginTop: 10,
   },
@@ -275,6 +275,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 60,
     paddingBottom: 20,
+    backgroundColor: '#ffffff',
   },
   backButton: {
     width: 40,
@@ -289,7 +290,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
   },
   headerSubtitle: {
     fontSize: 14,
@@ -302,15 +303,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 15,
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     marginHorizontal: 20,
     borderRadius: 12,
     marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   summaryText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#ffffff',
+    color: '#333333',
   },
   assignButton: {
     flexDirection: 'row',
@@ -339,9 +345,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderWidth: 2,
     borderColor: 'transparent',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   filterButtonActive: {
     backgroundColor: 'rgba(0, 212, 255, 0.1)',
@@ -360,10 +371,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   exerciseCard: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     padding: 15,
     marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   exerciseHeader: {
     flexDirection: 'row',
@@ -385,7 +401,7 @@ const styles = StyleSheet.create({
   exerciseName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 2,
   },
   exerciseCategory: {
@@ -414,17 +430,19 @@ const styles = StyleSheet.create({
   commentLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 8,
   },
   commentInput: {
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#ffffff',
     borderRadius: 10,
     padding: 12,
     fontSize: 14,
-    color: '#ffffff',
+    color: '#333333',
     minHeight: 60,
     textAlignVertical: 'top',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
   },
 });
 

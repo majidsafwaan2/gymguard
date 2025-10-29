@@ -8,6 +8,7 @@ import {
   RefreshControl,
   ActivityIndicator,
   Alert,
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '../context/UserContext';
@@ -25,10 +26,14 @@ import {
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
+const { width } = Dimensions.get('window');
+
 const DoctorDashboardScreen = ({ navigation }) => {
   const { userProfile } = useUser();
   const [patients, setPatients] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]);
+  const [painForms, setPainForms] = useState([]);
+  const [recentActivity, setRecentActivity] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -39,7 +44,12 @@ const DoctorDashboardScreen = ({ navigation }) => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      await Promise.all([fetchPatients(), fetchPendingRequests()]);
+      await Promise.all([
+        fetchPatients(), 
+        fetchPendingRequests(),
+        fetchPainForms(),
+        fetchRecentActivity()
+      ]);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
       Alert.alert('Error', 'Failed to load dashboard data');
@@ -108,6 +118,84 @@ const DoctorDashboardScreen = ({ navigation }) => {
       setPendingRequests(requestsData);
     } catch (error) {
       console.error('Error fetching pending requests:', error);
+    }
+  };
+
+  const fetchPainForms = async () => {
+    if (!userProfile?.uid) return;
+    
+    try {
+      const formsQuery = query(
+        collection(db, 'painForms'),
+        where('doctorId', '==', userProfile.uid),
+        where('status', '==', 'unread'),
+        orderBy('date', 'desc')
+      );
+      
+      const formsSnapshot = await getDocs(formsQuery);
+      const formsData = formsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      
+      setPainForms(formsData);
+    } catch (error) {
+      console.error('Error fetching pain forms:', error);
+    }
+  };
+
+  const fetchRecentActivity = async () => {
+    if (!userProfile?.uid) return;
+    
+    try {
+      const activities = [];
+      
+      // Fetch recent injury pictures
+      const picturesQuery = query(
+        collection(db, 'injuryPictures'),
+        where('doctorId', '==', userProfile.uid),
+        orderBy('uploadedAt', 'desc')
+      );
+      
+      const picturesSnapshot = await getDocs(picturesQuery);
+      picturesSnapshot.docs.slice(0, 5).forEach(doc => {
+        const data = doc.data();
+        activities.push({
+          id: doc.id,
+          type: 'picture',
+          patientName: data.patientName,
+          date: data.uploadedAt,
+          icon: 'images',
+          color: '#00d4ff',
+        });
+      });
+
+      // Fetch recent pain forms
+      const recentFormsQuery = query(
+        collection(db, 'painForms'),
+        where('doctorId', '==', userProfile.uid),
+        orderBy('date', 'desc')
+      );
+      
+      const recentFormsSnapshot = await getDocs(recentFormsQuery);
+      recentFormsSnapshot.docs.slice(0, 5).forEach(doc => {
+        const data = doc.data();
+        activities.push({
+          id: doc.id,
+          type: 'pain_form',
+          patientName: data.patientName,
+          date: data.date,
+          painLevel: data.painLevel,
+          icon: 'warning',
+          color: data.painLevel >= 7 ? '#F44336' : '#FFC107',
+        });
+      });
+
+      // Sort by date and limit to 8 most recent
+      activities.sort((a, b) => new Date(b.date) - new Date(a.date));
+      setRecentActivity(activities.slice(0, 8));
+    } catch (error) {
+      console.error('Error fetching recent activity:', error);
     }
   };
 
@@ -185,6 +273,12 @@ const DoctorDashboardScreen = ({ navigation }) => {
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+    
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
@@ -192,6 +286,10 @@ const DoctorDashboardScreen = ({ navigation }) => {
     if (score >= 80) return '#4CAF50';
     if (score >= 60) return '#FFC107';
     return '#F44336';
+  };
+
+  const getHighPainCount = () => {
+    return painForms.filter(form => form.painLevel >= 7).length;
   };
 
   if (loading) {
@@ -206,19 +304,22 @@ const DoctorDashboardScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Doctor Dashboard</Text>
+        <View>
+          <Text style={styles.headerGreeting}>Welcome back,</Text>
+          <Text style={styles.headerTitle}>Dr. {userProfile?.fullName?.split(' ')[0] || 'Doctor'}</Text>
+        </View>
         <View style={{ flexDirection: 'row', gap: 10 }}>
           <TouchableOpacity 
-            style={styles.inboxButton}
+            style={styles.headerIconButton}
             onPress={() => navigation.navigate('ViewRecords')}
           >
-            <Ionicons name="shield-checkmark" size={24} color="#ffffff" />
+            <Ionicons name="shield-checkmark" size={22} color="#333333" />
           </TouchableOpacity>
           <TouchableOpacity 
-            style={styles.inboxButton}
+            style={styles.headerIconButton}
             onPress={() => navigation.navigate('DoctorInbox')}
           >
-            <Ionicons name="mail-outline" size={24} color="#ffffff" />
+            <Ionicons name="mail-outline" size={22} color="#333333" />
             {pendingRequests.length > 0 && (
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>{pendingRequests.length}</Text>
@@ -240,17 +341,40 @@ const DoctorDashboardScreen = ({ navigation }) => {
           />
         }
       >
-        {/* Stats Overview */}
-        <View style={styles.statsContainer}>
-          <View style={styles.statCard}>
-            <Ionicons name="people" size={24} color="#00d4ff" />
-            <Text style={styles.statValue}>{patients.length}</Text>
-            <Text style={styles.statLabel}>Total Patients</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Ionicons name="notifications" size={24} color="#FFC107" />
-            <Text style={styles.statValue}>{pendingRequests.length}</Text>
-            <Text style={styles.statLabel}>Pending</Text>
+        {/* Stats Grid */}
+        <View style={styles.statsGrid}>
+          <TouchableOpacity 
+            style={[styles.statCardLarge, { backgroundColor: '#00d4ff' }]}
+            onPress={() => navigation.navigate('Patients')}
+          >
+            <View style={styles.statCardLargeContent}>
+              <Ionicons name="people" size={32} color="#ffffff" />
+              <View style={styles.statCardLargeInfo}>
+                <Text style={styles.statCardLargeValue}>{patients.length}</Text>
+                <Text style={styles.statCardLargeLabel}>Active Patients</Text>
+              </View>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.7)" />
+          </TouchableOpacity>
+
+          <View style={styles.statsRow}>
+            <TouchableOpacity 
+              style={[styles.statCardSmall, { backgroundColor: '#FFC107' }]}
+              onPress={() => navigation.navigate('DoctorInbox')}
+            >
+              <Ionicons name="mail" size={24} color="#ffffff" />
+              <Text style={styles.statCardSmallValue}>{pendingRequests.length}</Text>
+              <Text style={styles.statCardSmallLabel}>Pending</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[styles.statCardSmall, { backgroundColor: '#F44336' }]}
+              onPress={() => navigation.navigate('DoctorPainForms')}
+            >
+              <Ionicons name="warning" size={24} color="#ffffff" />
+              <Text style={styles.statCardSmallValue}>{getHighPainCount()}</Text>
+              <Text style={styles.statCardSmallLabel}>High Pain</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -293,64 +417,81 @@ const DoctorDashboardScreen = ({ navigation }) => {
           </View>
         )}
 
-        {/* Patients List */}
+        {/* Quick Actions */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>My Patients</Text>
-          {patients.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Ionicons name="people-outline" size={48} color="#666666" />
-              <Text style={styles.emptyStateTitle}>No Patients Yet</Text>
-              <Text style={styles.emptyStateText}>
-                Patients who add your email during signup will appear here once you accept their request.
-              </Text>
+          <Text style={styles.sectionTitle}>Quick Actions</Text>
+          <View style={styles.quickActionsGrid}>
+            <TouchableOpacity 
+              style={styles.quickActionCard}
+              onPress={() => navigation.navigate('Patients')}
+            >
+              <View style={[styles.quickActionIcon, { backgroundColor: 'rgba(0, 212, 255, 0.1)' }]}>
+                <Ionicons name="people" size={24} color="#00d4ff" />
+              </View>
+              <Text style={styles.quickActionText}>View All Patients</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.quickActionCard}
+              onPress={() => navigation.navigate('DoctorPainForms')}
+            >
+              <View style={[styles.quickActionIcon, { backgroundColor: 'rgba(255, 193, 7, 0.1)' }]}>
+                <Ionicons name="document-text" size={24} color="#FFC107" />
+              </View>
+              <Text style={styles.quickActionText}>Pain Forms</Text>
+              {painForms.length > 0 && (
+                <View style={styles.quickActionBadge}>
+                  <Text style={styles.quickActionBadgeText}>{painForms.length}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.quickActionCard}
+              onPress={() => navigation.navigate('ViewRecords')}
+            >
+              <View style={[styles.quickActionIcon, { backgroundColor: 'rgba(76, 175, 80, 0.1)' }]}>
+                <Ionicons name="shield-checkmark" size={24} color="#4CAF50" />
+              </View>
+              <Text style={styles.quickActionText}>Records</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Recent Activity */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Recent Activity</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('DoctorInbox')}>
+              <Text style={styles.seeAllText}>See All</Text>
+            </TouchableOpacity>
+          </View>
+          
+          {recentActivity.length === 0 ? (
+            <View style={styles.emptyActivityState}>
+              <Ionicons name="pulse-outline" size={40} color="#666666" />
+              <Text style={styles.emptyActivityText}>No recent activity</Text>
             </View>
           ) : (
-            patients.map((patient) => (
-              <TouchableOpacity
-                key={patient.id}
-                style={styles.patientCard}
-                onPress={() => navigation.navigate('PatientDetails', { patientId: patient.id })}
-              >
-                <View style={styles.patientHeader}>
-                  <Ionicons name="person-circle" size={50} color="#00d4ff" />
-                  <View style={styles.patientInfo}>
-                    <Text style={styles.patientName}>{patient.fullName}</Text>
-                    <Text style={styles.patientEmail}>{patient.email}</Text>
+            <View style={styles.activityList}>
+              {recentActivity.map((activity) => (
+                <View key={activity.id} style={styles.activityItem}>
+                  <View style={[styles.activityIcon, { backgroundColor: `${activity.color}20` }]}>
+                    <Ionicons name={activity.icon} size={20} color={activity.color} />
                   </View>
-                  {patient.latestFormScore !== undefined && (
-                    <View style={[styles.scoreChip, { backgroundColor: getScoreColor(patient.latestFormScore) }]}>
-                      <Text style={styles.scoreText}>{patient.latestFormScore}</Text>
-                    </View>
-                  )}
-                </View>
-                
-                <View style={styles.patientStats}>
-                  <View style={styles.patientStat}>
-                    <Ionicons name="fitness-outline" size={16} color="#cccccc" />
-                    <Text style={styles.patientStatText}>
-                      Last activity: {formatDate(patient.latestScoreDate)}
+                  <View style={styles.activityContent}>
+                    <Text style={styles.activityTitle}>
+                      {activity.type === 'picture' ? 'New Progress Photo' : 'Pain Form Submitted'}
+                    </Text>
+                    <Text style={styles.activitySubtitle}>
+                      {activity.patientName}
+                      {activity.painLevel && ` • Pain: ${activity.painLevel}/10`}
                     </Text>
                   </View>
+                  <Text style={styles.activityTime}>{formatDate(activity.date)}</Text>
                 </View>
-
-                <View style={styles.patientActions}>
-                  <TouchableOpacity 
-                    style={styles.patientActionButton}
-                    onPress={() => navigation.navigate('WorkoutAssignment', { patientId: patient.id })}
-                  >
-                    <Ionicons name="add-circle-outline" size={18} color="#00d4ff" />
-                    <Text style={styles.patientActionText}>Assign Workout</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity 
-                    style={styles.patientActionButton}
-                    onPress={() => navigation.navigate('InjuryTimeline', { patientId: patient.id })}
-                  >
-                    <Ionicons name="images-outline" size={18} color="#00d4ff" />
-                    <Text style={styles.patientActionText}>View Progress</Text>
-                  </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
-            ))
+              ))}
+            </View>
           )}
         </View>
       </ScrollView>
@@ -361,16 +502,16 @@ const DoctorDashboardScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
     justifyContent: 'center',
     alignItems: 'center',
   },
   loadingText: {
-    color: '#cccccc',
+    color: '#666666',
     fontSize: 16,
     marginTop: 10,
   },
@@ -380,16 +521,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingTop: 60,
-    paddingBottom: 20,
+    paddingBottom: 25,
+    backgroundColor: '#ffffff',
+  },
+  headerGreeting: {
+    fontSize: 14,
+    color: '#666666',
+    marginBottom: 4,
   },
   headerTitle: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
   },
-  inboxButton: {
+  headerIconButton: {
     position: 'relative',
-    padding: 8,
+    width: 44,
+    height: 44,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   badge: {
     position: 'absolute',
@@ -412,47 +564,87 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
   },
-  statsContainer: {
+  statsGrid: {
+    marginTop: 25,
+    marginBottom: 25,
+  },
+  statCardLarge: {
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 15,
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 30,
+  },
+  statCardLargeContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 15,
   },
-  statCard: {
-    flex: 1,
-    backgroundColor: '#2d2d2d',
-    borderRadius: 15,
-    padding: 20,
-    alignItems: 'center',
+  statCardLargeInfo: {
+    gap: 4,
   },
-  statValue: {
-    fontSize: 32,
+  statCardLargeValue: {
+    fontSize: 36,
     fontWeight: 'bold',
     color: '#ffffff',
-    marginTop: 10,
-    marginBottom: 5,
   },
-  statLabel: {
+  statCardLargeLabel: {
     fontSize: 14,
-    color: '#cccccc',
-    textAlign: 'center',
+    color: 'rgba(255, 255, 255, 0.8)',
+  },
+  statsRow: {
+    flexDirection: 'row',
+    gap: 15,
+  },
+  statCardSmall: {
+    flex: 1,
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    gap: 8,
+  },
+  statCardSmallValue: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+  statCardSmallLabel: {
+    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.9)',
+    fontWeight: '500',
   },
   section: {
     marginBottom: 30,
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
-    marginBottom: 15,
+    color: '#333333',
+  },
+  seeAllText: {
+    fontSize: 14,
+    color: '#00d4ff',
+    fontWeight: '600',
   },
   requestCard: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     padding: 15,
     marginBottom: 15,
     borderLeftWidth: 4,
     borderLeftColor: '#FFC107',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   requestInfo: {
     marginBottom: 15,
@@ -468,12 +660,12 @@ const styles = StyleSheet.create({
   requestName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 4,
   },
   requestEmail: {
     fontSize: 14,
-    color: '#cccccc',
+    color: '#666666',
     marginBottom: 4,
   },
   requestDate: {
@@ -505,10 +697,15 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   patientCard: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     padding: 15,
     marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   patientHeader: {
     flexDirection: 'row',
@@ -522,12 +719,12 @@ const styles = StyleSheet.create({
   patientName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 4,
   },
   patientEmail: {
     fontSize: 14,
-    color: '#cccccc',
+    color: '#666666',
   },
   scoreChip: {
     paddingHorizontal: 12,
@@ -583,15 +780,112 @@ const styles = StyleSheet.create({
   emptyStateTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginTop: 15,
     marginBottom: 8,
   },
   emptyStateText: {
     fontSize: 14,
-    color: '#cccccc',
+    color: '#666666',
     textAlign: 'center',
     lineHeight: 20,
+  },
+  quickActionsGrid: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  quickActionCard: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    borderRadius: 15,
+    padding: 18,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    position: 'relative',
+  },
+  quickActionIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  quickActionText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#333333',
+    textAlign: 'center',
+  },
+  quickActionBadge: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: '#F44336',
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 6,
+  },
+  quickActionBadgeText: {
+    color: '#ffffff',
+    fontSize: 11,
+    fontWeight: 'bold',
+  },
+  activityList: {
+    gap: 10,
+  },
+  activityItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 15,
+    gap: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  activityIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  activityContent: {
+    flex: 1,
+  },
+  activityTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#333333',
+    marginBottom: 4,
+  },
+  activitySubtitle: {
+    fontSize: 13,
+    color: '#999999',
+  },
+  activityTime: {
+    fontSize: 12,
+    color: '#666666',
+  },
+  emptyActivityState: {
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  emptyActivityText: {
+    fontSize: 14,
+    color: '#999999',
+    marginTop: 10,
   },
 });
 

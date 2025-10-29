@@ -201,7 +201,7 @@ const CreatePostModal = ({ visible, onClose }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
   },
   header: {
     flexDirection: 'row',
@@ -211,7 +211,8 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#333333',
+    borderBottomColor: '#e0e0e0',
+    backgroundColor: '#ffffff',
   },
   cancelButton: {
     padding: 5,
@@ -223,7 +224,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
   },
   postButton: {
     backgroundColor: '#00d4ff',
@@ -234,7 +235,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   postButtonDisabled: {
-    backgroundColor: '#666666',
+    backgroundColor: '#cccccc',
   },
   postButtonText: {
     fontSize: 16,
@@ -250,7 +251,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#333333',
+    borderBottomColor: '#e0e0e0',
   },
   userAvatar: {
     width: 50,
@@ -264,22 +265,22 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 2,
   },
   userEmail: {
     fontSize: 14,
-    color: '#999999',
+    color: '#666666',
   },
   postTypeContainer: {
     paddingVertical: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#333333',
+    borderBottomColor: '#e0e0e0',
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 15,
   },
   postTypeScroll: {
@@ -292,9 +293,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#333333',
+    borderColor: '#e0e0e0',
     marginHorizontal: 5,
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   postTypeButtonSelected: {
     backgroundColor: 'rgba(0, 212, 255, 0.1)',
@@ -307,20 +313,22 @@ const styles = StyleSheet.create({
   postContentContainer: {
     paddingVertical: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#333333',
+    borderBottomColor: '#e0e0e0',
   },
   postInput: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 12,
     padding: 15,
     fontSize: 16,
-    color: '#ffffff',
+    color: '#333333',
     minHeight: 120,
     textAlignVertical: 'top',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
   },
   characterCount: {
     fontSize: 12,
-    color: '#999999',
+    color: '#666666',
     textAlign: 'right',
     marginTop: 5,
   },
@@ -330,12 +338,12 @@ const styles = StyleSheet.create({
   guidelinesTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 10,
   },
   guidelinesText: {
     fontSize: 14,
-    color: '#cccccc',
+    color: '#666666',
     lineHeight: 20,
   },
 });
