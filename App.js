@@ -222,11 +222,25 @@ function MainApp() {
   const { userProfile } = useUser();
   const isDoctor = userProfile?.userType === 'doctor';
   
+  // Debug logging
+  console.log('MainApp rendering - userType:', userProfile?.userType, 'isDoctor:', isDoctor);
+  
+  // If userProfile is not loaded yet, show loading
+  if (!userProfile || !userProfile.userType) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#00d4ff" />
+        <Text style={styles.loadingText}>Loading profile...</Text>
+      </View>
+    );
+  }
+  
   return (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
       }}
+      key={userProfile.userType} // Force remount when userType changes
     >
       <Stack.Screen 
         name="MainTabs" 
@@ -327,6 +341,9 @@ function ConditionalChatbot() {
 
 function AppNavigator() {
   const { user, userProfile, loading } = useUser();
+
+  // Debug logging
+  console.log('AppNavigator - loading:', loading, 'user:', !!user, 'userProfile:', userProfile?.userType, 'surveyCompleted:', userProfile?.surveyCompleted);
 
   if (loading) {
     return (

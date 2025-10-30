@@ -268,6 +268,23 @@ const HomeScreen = ({ navigation }) => {
             </View>
             <Ionicons name="chevron-forward" size={24} color="#333333" />
           </TouchableOpacity>
+
+          {/* Pain Form Report Button */}
+          <TouchableOpacity 
+            style={styles.painFormCard}
+            onPress={() => navigation.navigate('SendPainForm')}
+          >
+            <View style={styles.painFormIcon}>
+              <Ionicons name="fitness" size={32} color="#ff6b6b" />
+            </View>
+            <View style={styles.painFormInfo}>
+              <Text style={styles.painFormTitle}>Report Pain</Text>
+              <Text style={styles.painFormSubtitle}>
+                Send pain assessment to your physical therapist
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color="#333333" />
+          </TouchableOpacity>
         </View>
 
         {/* Today's Workout */}
@@ -334,29 +351,6 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Recent Achievements</Text>
           {recentAchievements.map(renderAchievement)}
-        </View>
-
-        {/* Progress Summary */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Progress Summary</Text>
-          <View style={styles.progressCard}>
-            <View style={styles.progressItem}>
-              <Text style={styles.progressLabel}>Weight Progress</Text>
-              <Text style={styles.progressValue}>{userStats.currentWeight} lbs</Text>
-              <Text style={styles.progressGoal}>Goal: {userStats.goalWeight} lbs</Text>
-              <View style={styles.progressBar}>
-                <View style={[styles.progressFill, { width: '85%' }]} />
-              </View>
-            </View>
-            <View style={styles.progressItem}>
-              <Text style={styles.progressLabel}>Calories Burned</Text>
-              <Text style={styles.progressValue}>{userStats.caloriesBurned}</Text>
-              <Text style={styles.progressGoal}>Today</Text>
-              <View style={styles.progressBar}>
-                <View style={[styles.progressFill, { width: '60%' }]} />
-              </View>
-            </View>
-          </View>
         </View>
       </ScrollView>
       
@@ -486,6 +480,43 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   doctorWorkoutSubtitle: {
+    fontSize: 14,
+    color: '#666666',
+  },
+  painFormCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 15,
+    padding: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 107, 107, 0.3)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  painFormIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 107, 107, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 15,
+  },
+  painFormInfo: {
+    flex: 1,
+  },
+  painFormTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333333',
+    marginBottom: 4,
+  },
+  painFormSubtitle: {
     fontSize: 14,
     color: '#666666',
   },
@@ -682,45 +713,6 @@ const styles = StyleSheet.create({
   achievementDate: {
     fontSize: 12,
     color: '#999999',
-  },
-  progressCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 15,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  progressItem: {
-    marginBottom: 20,
-  },
-  progressLabel: {
-    fontSize: 14,
-    color: '#666666',
-    marginBottom: 5,
-  },
-  progressValue: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 2,
-  },
-  progressGoal: {
-    fontSize: 12,
-    color: '#999999',
-    marginBottom: 10,
-  },
-  progressBar: {
-    height: 6,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 3,
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#00d4ff',
-    borderRadius: 3,
   },
   sectionHeader: {
     flexDirection: 'row',

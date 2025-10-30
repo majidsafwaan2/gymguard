@@ -18,13 +18,32 @@ export const UserProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user);
-        // Fetch user profile from Firestore
+        // Fetch user profile from Firestore with retry logic
         try {
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
-          if (userDoc.exists()) {
-            const profileData = userDoc.data();
-            console.log('Fetched user profile:', profileData);
+          let retries = 0;
+          const maxRetries = 5;
+          let userDoc = null;
+          
+          // Retry fetching the profile if it doesn't exist yet (handles race condition during signup)
+          while (retries < maxRetries) {
+            userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists()) {
+              break;
+            }
+            console.log(`Profile not found yet, retrying... (${retries + 1}/${maxRetries})`);
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+            retries++;
+          }
+          
+          if (userDoc && userDoc.exists()) {
+            const profileData = {
+              ...userDoc.data(),
+              uid: user.uid // Ensure UID is always included and matches Firebase Auth UID
+            };
+            console.log('Fetched user profile with UID:', profileData);
             setUserProfile(profileData);
+          } else {
+            console.error('User profile not found after retries');
           }
         } catch (error) {
           console.error('Error fetching user profile:', error);
@@ -43,9 +62,17 @@ export const UserProvider = ({ children }) => {
   const refreshUserProfile = async () => {
     if (!user || !user.uid) return;
     try {
+      console.log('Refreshing user profile for:', user.uid);
       const userDoc = await getDoc(doc(db, 'users', user.uid));
       if (userDoc.exists()) {
-        setUserProfile(userDoc.data());
+        const profileData = {
+          ...userDoc.data(),
+          uid: user.uid // Ensure UID is always included and matches Firebase Auth UID
+        };
+        console.log('Refreshed user profile with UID:', profileData);
+        setUserProfile(profileData);
+      } else {
+        console.warn('User profile document does not exist');
       }
     } catch (error) {
       console.error('Error refreshing user profile:', error);
@@ -77,8 +104,8 @@ export const UserProvider = ({ children }) => {
       
       console.log('Profile updated successfully');
       
-      // Update local state
-      setUserProfile(prev => ({ ...prev, ...updates }));
+      // Update local state, ensuring UID is preserved
+      setUserProfile(prev => ({ ...prev, ...updates, uid: user.uid }));
       
     } catch (error) {
       console.error('Update profile error:', error.message || error);

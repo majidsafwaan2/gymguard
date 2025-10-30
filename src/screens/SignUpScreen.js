@@ -19,8 +19,11 @@ import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
 import { verifyDoctorCredentials, US_STATES } from '../data/demoMedicalLicenses';
+import { useUser } from '../context/UserContext';
 
 const SignUpScreen = ({ navigation }) => {
+  const { refreshUserProfile } = useUser();
+  
   // Common fields
   const [userType, setUserType] = useState('patient'); // 'patient' or 'doctor'
   const [fullName, setFullName] = useState('');
@@ -122,6 +125,11 @@ const SignUpScreen = ({ navigation }) => {
         }
         
         doctorId = doctorSnapshot.docs[0].id;
+        const doctorData = doctorSnapshot.docs[0].data();
+        console.log('✅ Found doctor with ID (Firestore Doc ID):', doctorId);
+        console.log('Doctor data:', doctorData);
+        console.log('Doctor UID field from data:', doctorData.uid);
+        console.log('These should match: Firestore Doc ID and UID field should both be the same');
       }
       
       // Create Firebase Auth account
@@ -155,6 +163,7 @@ const SignUpScreen = ({ navigation }) => {
         userData.dateOfBirth = dateOfBirth;
         userData.verified = true;
         userData.patients = [];
+        userData.surveyCompleted = false;
       }
       
       // Create user document in Firestore
@@ -162,17 +171,31 @@ const SignUpScreen = ({ navigation }) => {
       
       // If patient with doctor, create a patient request
       if (userType === 'patient' && doctorId) {
-        await addDoc(collection(db, 'patientRequests'), {
+        console.log('Creating patient request for doctorId:', doctorId);
+        const patientRequestData = {
           patientId: user.uid,
           patientName: fullName.trim(),
           patientEmail: user.email.toLowerCase(),
           doctorId: doctorId,
           status: 'pending',
           createdAt: new Date().toISOString(),
-        });
+        };
+        console.log('Patient request data:', patientRequestData);
+        
+        const requestRef = await addDoc(collection(db, 'patientRequests'), patientRequestData);
+        console.log('Patient request created with ID:', requestRef.id);
+      } else if (userType === 'patient' && !doctorId) {
+        console.log('Patient signed up without a doctor');
       }
       
       console.log('Signed up successfully as', userType);
+      console.log('User document created in Firestore with userType:', userType);
+      
+      // Wait a bit longer to ensure Firestore write is propagated
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      await refreshUserProfile();
+      
+      console.log('Profile refresh complete, navigation will be handled by App.js');
       // Navigation will be handled by the auth state change in App.js
     } catch (error) {
       console.error('Sign up error:', error);
