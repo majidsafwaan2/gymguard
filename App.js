@@ -3,8 +3,18 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Text, Image, Platform, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, Image, Platform, ActivityIndicator, LogBox } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+
+// Disable specific error/warning messages
+LogBox.ignoreLogs([
+  'PoseAnalyzer',
+  'Property \'PoseAnalyzer\' doesn\'t exist',
+  'Error initializing pose analyzer',
+]);
+
+// Optionally ignore all LogBox warnings (not recommended for debugging)
+// LogBox.ignoreAllLogs();
 
 // Import screens
 import SplashScreen from './src/screens/SplashScreen';

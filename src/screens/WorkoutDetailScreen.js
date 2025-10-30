@@ -46,10 +46,7 @@ export default function WorkoutDetailScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.container}>
-      <LinearGradient
-        colors={['#2d2d2d', '#1a1a1a']}
-        style={styles.header}
-      >
+      <View style={styles.header}>
         <View style={styles.headerContent}>
           <Text style={styles.workoutEmoji}>{selectedWorkout.thumbnail}</Text>
           <View style={styles.titleContainer}>
@@ -74,7 +71,7 @@ export default function WorkoutDetailScreen({ navigation }) {
             ))}
           </View>
         </View>
-      </LinearGradient>
+      </View>
 
       <View style={styles.content}>
         <View style={styles.section}>
@@ -110,26 +107,20 @@ export default function WorkoutDetailScreen({ navigation }) {
             style={styles.videoButton}
             onPress={handleWatchVideo}
           >
-            <LinearGradient
-              colors={['#666666', '#444444']}
-              style={styles.buttonGradient}
-            >
+            <View style={styles.buttonGradient}>
               <Ionicons name="play-circle" size={24} color="#ffffff" />
               <Text style={styles.buttonText}>Watch Example</Text>
-            </LinearGradient>
+            </View>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.analyzeButton}
             onPress={handleAnalyzeForm}
           >
-            <LinearGradient
-              colors={['#00d4ff', '#0099cc']}
-              style={styles.buttonGradient}
-            >
+            <View style={styles.buttonGradient}>
               <Ionicons name="camera" size={24} color="#ffffff" />
               <Text style={styles.buttonText}>Analyze My Form</Text>
-            </LinearGradient>
+            </View>
           </TouchableOpacity>
         </View>
       </View>
@@ -140,11 +131,19 @@ export default function WorkoutDetailScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
   },
   header: {
+    backgroundColor: '#ffffff',
     padding: 20,
     paddingTop: 10,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   headerContent: {
     flexDirection: 'row',
@@ -161,7 +160,7 @@ const styles = StyleSheet.create({
   workoutName: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 5,
   },
   difficultyContainer: {
@@ -179,7 +178,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    color: '#cccccc',
+    color: '#666666',
     lineHeight: 24,
     marginBottom: 20,
   },
@@ -189,7 +188,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 15,
   },
   muscleGroups: {
@@ -198,7 +197,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   muscleGroup: {
-    backgroundColor: 'rgba(0, 212, 255, 0.2)',
+    backgroundColor: 'rgba(0, 212, 255, 0.1)',
+    borderWidth: 1,
+    borderColor: '#00d4ff',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 20,
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   tipText: {
-    color: '#cccccc',
+    color: '#333333',
     fontSize: 15,
     marginLeft: 10,
     flex: 1,
@@ -234,7 +235,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   mistakeText: {
-    color: '#cccccc',
+    color: '#333333',
     fontSize: 15,
     marginLeft: 10,
     flex: 1,
@@ -245,7 +246,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   safetyText: {
-    color: '#cccccc',
+    color: '#333333',
     fontSize: 15,
     marginLeft: 10,
     flex: 1,
@@ -258,10 +259,22 @@ const styles = StyleSheet.create({
   videoButton: {
     borderRadius: 12,
     overflow: 'hidden',
+    backgroundColor: '#666666',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   analyzeButton: {
     borderRadius: 12,
     overflow: 'hidden',
+    backgroundColor: '#00d4ff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   buttonGradient: {
     flexDirection: 'row',
@@ -277,7 +290,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   errorText: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 18,
     textAlign: 'center',
     marginTop: 50,

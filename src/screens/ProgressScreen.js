@@ -197,7 +197,7 @@ const ProgressScreen = ({ navigation }) => {
         <Text style={styles.headerTitle}>Form Progress</Text>
         <TouchableOpacity 
           style={styles.addButton}
-          onPress={() => navigation.navigate('WorkoutList')}
+          onPress={() => navigation.navigate('Workouts', { screen: 'WorkoutList' })}
         >
           <Ionicons name="add" size={24} color="#ffffff" />
         </TouchableOpacity>
@@ -223,7 +223,7 @@ const ProgressScreen = ({ navigation }) => {
             </Text>
             <TouchableOpacity 
               style={styles.startWorkoutButton}
-              onPress={() => navigation.navigate('WorkoutList')}
+              onPress={() => navigation.navigate('Workouts', { screen: 'WorkoutList' })}
             >
               <Ionicons name="fitness" size={20} color="#ffffff" />
               <Text style={styles.startWorkoutButtonText}>Start a Workout</Text>
@@ -360,7 +360,7 @@ const ProgressScreen = ({ navigation }) => {
               </Text>
               <TouchableOpacity 
                 style={styles.ctaButton}
-                onPress={() => navigation.navigate('WorkoutList')}
+                onPress={() => navigation.navigate('Workouts', { screen: 'WorkoutList' })}
               >
                 <Text style={styles.ctaButtonText}>Start New Workout</Text>
               </TouchableOpacity>
