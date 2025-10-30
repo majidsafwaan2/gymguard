@@ -299,6 +299,8 @@ const SignUpScreen = ({ navigation }) => {
                   secureTextEntry={!showPassword}
                   autoCapitalize="none"
                   autoCorrect={false}
+                  autoComplete="off"
+                  textContentType="none"
                 />
                 <TouchableOpacity
                   style={styles.eyeIcon}
@@ -323,6 +325,8 @@ const SignUpScreen = ({ navigation }) => {
                   secureTextEntry={!showConfirmPassword}
                   autoCapitalize="none"
                   autoCorrect={false}
+                  autoComplete="off"
+                  textContentType="none"
                 />
                 <TouchableOpacity
                   style={styles.eyeIcon}
