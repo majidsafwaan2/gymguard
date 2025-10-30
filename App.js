@@ -16,7 +16,7 @@ import WorkoutDetailScreen from './src/screens/WorkoutDetailScreen';
 import CameraAnalysisScreen from './src/screens/CameraAnalysisScreen';
 import AnalysisResultsScreen from './src/screens/AnalysisResultsScreen';
 import ProgressScreen from './src/screens/ProgressScreen';
-import GymBuddyScreen from './src/screens/GymBuddyScreen';
+import PTBuddyScreen from './src/screens/PTBuddyScreen';
 import PainTrackingScreen from './src/screens/PainTrackingScreen';
 import WorkoutPlansScreen from './src/screens/WorkoutPlansScreen';
 import SocialScreen from './src/screens/SocialScreen';
@@ -24,9 +24,12 @@ import WorkoutTimerScreen from './src/screens/WorkoutTimerScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import UserProfileScreen from './src/screens/UserProfileScreen';
 import DoctorDashboardScreen from './src/screens/DoctorDashboardScreen';
+import DoctorPatientsScreen from './src/screens/DoctorPatientsScreen';
 import DoctorInboxScreen from './src/screens/DoctorInboxScreen';
+import DoctorPainFormsScreen from './src/screens/DoctorPainFormsScreen';
+import SendPainFormScreen from './src/screens/SendPainFormScreen';
 import WorkoutAssignmentScreen from './src/screens/WorkoutAssignmentScreen';
-import InjuryTimelineScreen from './src/screens/InjuryTimelineScreen';
+import DoctorProgressScreen from './src/screens/DoctorProgressScreen';
 import DoctorAssignedWorkoutsScreen from './src/screens/DoctorAssignedWorkoutsScreen';
 import AssignedWorkoutTrackingScreen from './src/screens/AssignedWorkoutTrackingScreen';
 import ViewRecordsScreen from './src/screens/ViewRecordsScreen';
@@ -46,9 +49,9 @@ function WorkoutStack() {
     <Stack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#1a1a1a',
+          backgroundColor: '#ffffff',
         },
-        headerTintColor: '#ffffff',
+        headerTintColor: '#333333',
         headerTitleStyle: {
           fontWeight: 'bold',
         },
@@ -75,9 +78,9 @@ function WorkoutStack() {
         options={{ title: 'Analysis Results' }}
       />
       <Stack.Screen 
-        name="GymBuddy" 
-        component={GymBuddyScreen}
-        options={{ title: 'AI Physical Therapist' }}
+        name="PTBuddy" 
+        component={PTBuddyScreen}
+        options={{ title: 'Dr. Recovery' }}
       />
       <Stack.Screen 
         name="PainTracking" 
@@ -143,10 +146,10 @@ function PatientTabs() {
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#00d4ff',
-        tabBarInactiveTintColor: '#666666',
+        tabBarInactiveTintColor: '#999999',
         tabBarStyle: {
-          backgroundColor: '#1a1a1a',
-          borderTopColor: '#333333',
+          backgroundColor: '#ffffff',
+          borderTopColor: '#e0e0e0',
           paddingTop: Platform.OS === 'ios' ? 5 : 3,
           paddingBottom: Platform.OS === 'ios' ? 5 : 3,
           height: Platform.OS === 'ios' ? 60 : 50,
@@ -177,8 +180,6 @@ function DoctorTabs() {
             iconName = focused ? 'grid' : 'grid-outline';
           } else if (route.name === 'Patients') {
             iconName = focused ? 'people' : 'people-outline';
-          } else if (route.name === 'Community') {
-            iconName = focused ? 'chatbubbles' : 'chatbubbles-outline';
           } else if (route.name === 'Profile') {
             iconName = focused ? 'person' : 'person-outline';
           }
@@ -186,10 +187,10 @@ function DoctorTabs() {
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#00d4ff',
-        tabBarInactiveTintColor: '#666666',
+        tabBarInactiveTintColor: '#999999',
         tabBarStyle: {
-          backgroundColor: '#1a1a1a',
-          borderTopColor: '#333333',
+          backgroundColor: '#ffffff',
+          borderTopColor: '#e0e0e0',
           paddingTop: Platform.OS === 'ios' ? 5 : 3,
           paddingBottom: Platform.OS === 'ios' ? 5 : 3,
           height: Platform.OS === 'ios' ? 60 : 50,
@@ -204,13 +205,8 @@ function DoctorTabs() {
       />
       <Tab.Screen 
         name="Patients" 
-        component={DoctorDashboardScreen}
+        component={DoctorPatientsScreen}
         options={{ title: 'Patients' }}
-      />
-      <Tab.Screen 
-        name="Community" 
-        component={SocialScreen}
-        options={{ title: 'Community' }}
       />
       <Tab.Screen 
         name="Profile" 
@@ -251,6 +247,20 @@ function MainApp() {
         }}
       />
       <Stack.Screen 
+        name="DoctorPainForms" 
+        component={DoctorPainFormsScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen 
+        name="SendPainForm" 
+        component={SendPainFormScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen 
         name="WorkoutAssignment" 
         component={WorkoutAssignmentScreen}
         options={{
@@ -258,8 +268,8 @@ function MainApp() {
         }}
       />
       <Stack.Screen 
-        name="InjuryTimeline" 
-        component={InjuryTimelineScreen}
+        name="DoctorProgress" 
+        component={DoctorProgressScreen}
         options={{
           headerShown: false,
         }}
@@ -332,12 +342,12 @@ function AppNavigator() {
     return <AuthStackNavigator />;
   }
 
-  // If user is authenticated but hasn't completed survey (patients only), show survey
-  if (user && userProfile?.userType === 'patient' && !userProfile?.surveyCompleted) {
+  // If user is authenticated but hasn't completed survey, show survey (both patients and doctors)
+  if (user && !userProfile?.surveyCompleted) {
     return <FitnessSurveyScreen />;
   }
 
-  // If user is authenticated and completed survey (or is a doctor), show main app
+  // If user is authenticated and completed survey, show main app
   return <MainApp />;
 }
 
@@ -361,7 +371,7 @@ export default function App() {
         <WorkoutProvider>
           <View style={styles.container}>
             <NavigationContainer>
-              <StatusBar style="light" backgroundColor="#1a1a1a" />
+              <StatusBar style="dark" backgroundColor="#ffffff" />
               <AppNavigator />
               <ConditionalChatbot />
             </NavigationContainer>
@@ -375,18 +385,18 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#ffffff',
     paddingTop: Platform.OS === 'ios' ? 50 : 0,
     paddingBottom: Platform.OS === 'ios' ? 40 : 0,
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#ffffff',
     justifyContent: 'center',
     alignItems: 'center',
   },
   loadingText: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 16,
     marginTop: 10,
   },

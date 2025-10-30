@@ -10,8 +10,8 @@ import {
   Platform,
   ActivityIndicator,
   SafeAreaView,
+  Image,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebase';
@@ -43,10 +43,7 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient
-      colors={['#1a1a1a', '#2d2d2d', '#1a1a1a']}
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -56,16 +53,20 @@ const LoginScreen = ({ navigation }) => {
           {/* Logo and Title */}
           <View style={styles.header}>
             <View style={styles.logoContainer}>
-              <Ionicons name="medical" size={60} color="#00d4ff" />
+              <Image 
+                source={require('../../assets/logo.png')} 
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
             </View>
             <Text style={styles.title}>Welcome Back</Text>
-            <Text style={styles.subtitle}>Sign in to continue your therapy journey</Text>
+            <Text style={styles.subtitle}>Sign in to continue your fitness journey</Text>
           </View>
 
           {/* Login Form */}
           <View style={styles.form}>
             <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color="#666666" style={styles.inputIcon} />
+              <Ionicons name="mail-outline" size={20} color="#333333" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder="Email"
@@ -79,7 +80,7 @@ const LoginScreen = ({ navigation }) => {
             </View>
 
             <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={20} color="#666666" style={styles.inputIcon} />
+              <Ionicons name="lock-closed-outline" size={20} color="#333333" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder="Password"
@@ -132,13 +133,14 @@ const LoginScreen = ({ navigation }) => {
         </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
-    </LinearGradient>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
   },
   safeArea: {
     flex: 1,
@@ -156,23 +158,25 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   logoContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: 'rgba(0, 212, 255, 0.1)',
+    width: 120,
+    height: 120,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
   },
+  logoImage: {
+    width: 120,
+    height: 120,
+  },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#cccccc',
+    color: '#666666',
     textAlign: 'center',
   },
   form: {
@@ -181,11 +185,13 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 12,
     marginBottom: 20,
     paddingHorizontal: 15,
     height: 50,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
   },
   inputIcon: {
     marginRight: 12,
@@ -193,7 +199,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    color: '#ffffff',
+    color: '#333333',
   },
   eyeIcon: {
     padding: 5,
@@ -229,7 +235,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 16,
-    color: '#cccccc',
+    color: '#666666',
   },
   signUpLink: {
     fontSize: 16,

@@ -12,8 +12,8 @@ import {
   ScrollView,
   SafeAreaView,
   Modal,
+  Image,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
@@ -183,10 +183,7 @@ const SignUpScreen = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient
-      colors={['#1a1a1a', '#2d2d2d', '#1a1a1a']}
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -197,10 +194,14 @@ const SignUpScreen = ({ navigation }) => {
             {/* Header */}
             <View style={styles.header}>
               <View style={styles.logoContainer}>
-                <Ionicons name="medical" size={60} color="#00d4ff" />
+                <Image 
+                  source={require('../../assets/logo.png')} 
+                  style={styles.logoImage}
+                  resizeMode="contain"
+                />
               </View>
               <Text style={styles.title}>Join Theravive</Text>
-              <Text style={styles.subtitle}>Your physical therapy companion</Text>
+              <Text style={styles.subtitle}>Your fitness companion</Text>
             </View>
 
             {/* User Type Selector */}
@@ -238,7 +239,7 @@ const SignUpScreen = ({ navigation }) => {
             <View style={styles.form}>
               {/* Common Fields */}
               <View style={styles.inputContainer}>
-                <Ionicons name="person-outline" size={20} color="#666666" style={styles.inputIcon} />
+                <Ionicons name="person-outline" size={20} color="#333333" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Full Name"
@@ -251,7 +252,7 @@ const SignUpScreen = ({ navigation }) => {
               </View>
 
               <View style={styles.inputContainer}>
-                <Ionicons name="mail-outline" size={20} color="#666666" style={styles.inputIcon} />
+                <Ionicons name="mail-outline" size={20} color="#333333" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Email"
@@ -265,7 +266,7 @@ const SignUpScreen = ({ navigation }) => {
               </View>
 
               <View style={styles.inputContainer}>
-                <Ionicons name="lock-closed-outline" size={20} color="#666666" style={styles.inputIcon} />
+                <Ionicons name="lock-closed-outline" size={20} color="#333333" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Password"
@@ -289,7 +290,7 @@ const SignUpScreen = ({ navigation }) => {
               </View>
 
               <View style={styles.inputContainer}>
-                <Ionicons name="lock-closed-outline" size={20} color="#666666" style={styles.inputIcon} />
+                <Ionicons name="lock-closed-outline" size={20} color="#333333" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Confirm Password"
@@ -315,7 +316,7 @@ const SignUpScreen = ({ navigation }) => {
               {/* Patient-specific fields */}
               {userType === 'patient' && (
                 <View style={styles.inputContainer}>
-                  <Ionicons name="medkit-outline" size={20} color="#666666" style={styles.inputIcon} />
+                  <Ionicons name="medkit-outline" size={20} color="#333333" style={styles.inputIcon} />
                   <TextInput
                     style={styles.input}
                     placeholder="Doctor's Email (Optional)"
@@ -333,7 +334,7 @@ const SignUpScreen = ({ navigation }) => {
               {userType === 'doctor' && (
                 <>
                   <View style={styles.inputContainer}>
-                    <Ionicons name="card-outline" size={20} color="#666666" style={styles.inputIcon} />
+                    <Ionicons name="card-outline" size={20} color="#333333" style={styles.inputIcon} />
                     <TextInput
                       style={styles.input}
                       placeholder="License Number"
@@ -349,15 +350,15 @@ const SignUpScreen = ({ navigation }) => {
                     style={styles.inputContainer}
                     onPress={() => setShowStatePicker(true)}
                   >
-                    <Ionicons name="location-outline" size={20} color="#666666" style={styles.inputIcon} />
+                    <Ionicons name="location-outline" size={20} color="#333333" style={styles.inputIcon} />
                     <Text style={[styles.input, !stateOfIssuance && styles.placeholderStyle]}>
                       {stateOfIssuance || 'State of Issuance'}
                     </Text>
-                    <Ionicons name="chevron-down" size={20} color="#666666" />
+                    <Ionicons name="chevron-down" size={20} color="#333333" />
                   </TouchableOpacity>
 
                   <View style={styles.inputContainer}>
-                    <Ionicons name="calendar-outline" size={20} color="#666666" style={styles.inputIcon} />
+                    <Ionicons name="calendar-outline" size={20} color="#333333" style={styles.inputIcon} />
                     <TextInput
                       style={styles.input}
                       placeholder="Date of Birth (YYYY-MM-DD)"
@@ -396,7 +397,7 @@ const SignUpScreen = ({ navigation }) => {
                   <View style={styles.modalHeader}>
                     <Text style={styles.modalTitle}>Select State</Text>
                     <TouchableOpacity onPress={() => setShowStatePicker(false)}>
-                      <Ionicons name="close" size={24} color="#ffffff" />
+                      <Ionicons name="close" size={24} color="#333333" />
                     </TouchableOpacity>
                   </View>
                   <ScrollView style={styles.stateList}>
@@ -438,13 +439,14 @@ const SignUpScreen = ({ navigation }) => {
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
-    </LinearGradient>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
   },
   safeArea: {
     flex: 1,
@@ -466,23 +468,25 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   logoContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: 'rgba(0, 212, 255, 0.1)',
+    width: 120,
+    height: 120,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
   },
+  logoImage: {
+    width: 120,
+    height: 120,
+  },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#cccccc',
+    color: '#666666',
     textAlign: 'center',
   },
   userTypeContainer: {
@@ -495,16 +499,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 12,
     paddingVertical: 15,
     borderWidth: 2,
-    borderColor: 'transparent',
+    borderColor: '#e0e0e0',
     gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   userTypeButtonActive: {
     borderColor: '#00d4ff',
-    backgroundColor: 'rgba(0, 212, 255, 0.1)',
+    backgroundColor: 'rgba(0, 212, 255, 0.05)',
   },
   userTypeText: {
     fontSize: 16,
@@ -520,11 +529,13 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 12,
     marginBottom: 15,
     paddingHorizontal: 15,
     height: 50,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
   },
   inputIcon: {
     marginRight: 12,
@@ -532,10 +543,10 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    color: '#ffffff',
+    color: '#333333',
   },
   placeholderStyle: {
-    color: '#666666',
+    color: '#999999',
   },
   eyeIcon: {
     padding: 5,
@@ -558,11 +569,11 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: '70%',
@@ -573,12 +584,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#444444',
+    borderBottomColor: '#e0e0e0',
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
   },
   stateList: {
     maxHeight: 400,
@@ -586,11 +597,11 @@ const styles = StyleSheet.create({
   stateItem: {
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#444444',
+    borderBottomColor: '#e0e0e0',
   },
   stateItemText: {
     fontSize: 16,
-    color: '#ffffff',
+    color: '#333333',
   },
   termsContainer: {
     marginBottom: 30,
@@ -612,7 +623,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 16,
-    color: '#cccccc',
+    color: '#666666',
   },
   signInLink: {
     fontSize: 16,

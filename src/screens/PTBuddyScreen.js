@@ -214,7 +214,7 @@ const PTBuddyScreen = ({ navigation }) => {
         >
           <Ionicons name="arrow-back" size={24} color="#ffffff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>AI Physical Therapist</Text>
+        <Text style={styles.headerTitle}>Dr. Recovery</Text>
         <TouchableOpacity style={styles.settingsButton}>
           <Ionicons name="settings-outline" size={24} color="#ffffff" />
         </TouchableOpacity>

@@ -146,7 +146,7 @@ const HomeScreen = ({ navigation }) => {
             </TouchableOpacity>
           ) : (
             <TouchableOpacity style={styles.postOptions}>
-              <Ionicons name="ellipsis-horizontal" size={20} color="#666666" />
+              <Ionicons name="ellipsis-horizontal" size={20} color="#333333" />
             </TouchableOpacity>
           )}
         </View>
@@ -172,11 +172,11 @@ const HomeScreen = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.postAction}>
-            <Ionicons name="chatbubble-outline" size={20} color="#666666" />
+            <Ionicons name="chatbubble-outline" size={20} color="#333333" />
             <Text style={styles.postActionText}>{post.comments || 0}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.postAction}>
-            <Ionicons name="share-outline" size={20} color="#666666" />
+            <Ionicons name="share-outline" size={20} color="#333333" />
           </TouchableOpacity>
         </View>
       </View>
@@ -266,7 +266,7 @@ const HomeScreen = ({ navigation }) => {
                 Personalized workouts from your physical therapist
               </Text>
             </View>
-            <Ionicons name="chevron-forward" size={24} color="#cccccc" />
+            <Ionicons name="chevron-forward" size={24} color="#333333" />
           </TouchableOpacity>
         </View>
 
@@ -371,7 +371,7 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
   },
   header: {
     flexDirection: 'row',
@@ -380,19 +380,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 30,
     paddingBottom: 20,
+    backgroundColor: '#ffffff',
   },
   headerLeft: {
     flex: 1,
   },
   greeting: {
     fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.8)',
+    color: '#666666',
     marginBottom: 2,
   },
   userName: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
   },
   profileButton: {
     padding: 4,
@@ -409,26 +410,32 @@ const styles = StyleSheet.create({
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 25,
     marginBottom: 30,
   },
   statCard: {
     flex: 1,
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     padding: 15,
     alignItems: 'center',
     marginHorizontal: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   statValue: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginTop: 8,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: '#cccccc',
+    color: '#666666',
     textAlign: 'center',
   },
   section: {
@@ -437,7 +444,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 15,
   },
   sectionHeader: {
@@ -447,13 +454,18 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   doctorWorkoutCard: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     padding: 15,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'rgba(0, 212, 255, 0.3)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   doctorWorkoutIcon: {
     width: 60,
@@ -470,12 +482,12 @@ const styles = StyleSheet.create({
   doctorWorkoutTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 4,
   },
   doctorWorkoutSubtitle: {
     fontSize: 14,
-    color: '#cccccc',
+    color: '#666666',
   },
   quickActionsScroll: {
     marginHorizontal: -5,
@@ -504,10 +516,15 @@ const styles = StyleSheet.create({
     lineHeight: 14,
   },
   postCard: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     padding: 15,
     marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   postHeader: {
     flexDirection: 'row',
@@ -531,7 +548,7 @@ const styles = StyleSheet.create({
   postUserName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginRight: 8,
   },
   friendBadge: {
@@ -554,7 +571,7 @@ const styles = StyleSheet.create({
   },
   postContent: {
     fontSize: 15,
-    color: '#ffffff',
+    color: '#333333',
     lineHeight: 20,
     marginBottom: 12,
   },
@@ -569,7 +586,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: '#333333',
+    borderTopColor: '#e0e0e0',
   },
   postAction: {
     flexDirection: 'row',
@@ -634,10 +651,15 @@ const styles = StyleSheet.create({
   achievementCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     padding: 15,
     marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   achievementIcon: {
     fontSize: 32,
@@ -649,12 +671,12 @@ const styles = StyleSheet.create({
   achievementTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 2,
   },
   achievementDescription: {
     fontSize: 14,
-    color: '#cccccc',
+    color: '#666666',
     marginBottom: 2,
   },
   achievementDate: {
@@ -662,22 +684,27 @@ const styles = StyleSheet.create({
     color: '#999999',
   },
   progressCard: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   progressItem: {
     marginBottom: 20,
   },
   progressLabel: {
     fontSize: 14,
-    color: '#cccccc',
+    color: '#666666',
     marginBottom: 5,
   },
   progressValue: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 2,
   },
   progressGoal: {
@@ -687,7 +714,7 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 6,
-    backgroundColor: '#333333',
+    backgroundColor: '#e0e0e0',
     borderRadius: 3,
   },
   progressFill: {
@@ -714,7 +741,7 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
   loadingText: {
-    color: '#cccccc',
+    color: '#666666',
     fontSize: 16,
     marginTop: 10,
   },
@@ -726,13 +753,13 @@ const styles = StyleSheet.create({
   emptyStateTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginTop: 15,
     marginBottom: 8,
   },
   emptyStateText: {
     fontSize: 14,
-    color: '#cccccc',
+    color: '#666666',
     textAlign: 'center',
     marginBottom: 20,
     lineHeight: 20,

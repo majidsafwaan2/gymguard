@@ -6,66 +6,14 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  TextInput,
   Alert,
-  ActivityIndicator,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '../context/UserContext';
 
 const UserProfileScreen = ({ navigation }) => {
   const { user, userProfile, updateUserProfile, signOut } = useUser();
-  const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Initialize state with user profile data
-  const [measurements, setMeasurements] = useState({
-    age: '',
-    gender: '',
-    height: '',
-    weight: '',
-    neck: '',
-    waist: '',
-    hip: '',
-    bodyFat: '',
-    targetWeight: '',
-    targetBodyFat: '',
-  });
-
-  // Update measurements when userProfile changes
-  useEffect(() => {
-    if (userProfile) {
-      setMeasurements({
-        age: userProfile.age || '',
-        gender: userProfile.gender || '',
-        height: userProfile.height || '',
-        weight: userProfile.weight || '',
-        neck: userProfile.neck || '',
-        waist: userProfile.waist || '',
-        hip: userProfile.hip || '',
-        bodyFat: userProfile.bodyFat || '',
-        targetWeight: userProfile.targetWeight || '',
-        targetBodyFat: userProfile.targetBodyFat || '',
-      });
-    }
-  }, [userProfile]);
-
-  const handleSave = async () => {
-    try {
-      setIsLoading(true);
-      console.log('Saving measurements:', measurements);
-      await updateUserProfile(measurements);
-      setIsEditing(false);
-      Alert.alert('Success', 'Your measurements have been saved!');
-    } catch (error) {
-      console.error('Save error:', error);
-      Alert.alert('Error', `Failed to save measurements: ${error.message || 'Unknown error'}`);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleSignOut = () => {
     Alert.alert(
@@ -166,18 +114,19 @@ const UserProfileScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={['#1a1a1a', '#2d2d2d']}
-        style={styles.headerGradient}
-      >
+      <View style={styles.headerGradient}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={24} color="#ffffff" />
-          </TouchableOpacity>
+          {navigation.canGoBack() ? (
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Ionicons name="arrow-back" size={24} color="#333333" />
+            </TouchableOpacity>
+          ) : (
+            <View style={{ width: 24 }} />
+          )}
           <Text style={styles.headerTitle}>Profile</Text>
           <TouchableOpacity onPress={handleSignOut}>
-            <Ionicons name="log-out-outline" size={24} color="#ffffff" />
+            <Ionicons name="log-out-outline" size={24} color="#333333" />
           </TouchableOpacity>
         </View>
 
@@ -193,134 +142,74 @@ const UserProfileScreen = ({ navigation }) => {
               style={styles.avatar}
             />
             <View style={styles.avatarEditIcon}>
-              <Ionicons name="camera" size={16} color="#ffffff" />
+              <Ionicons name="camera" size={16} color="#333333" />
             </View>
           </TouchableOpacity>
           <Text style={styles.userName}>{userProfile?.username || userProfile?.displayName || 'User'}</Text>
           <Text style={styles.userEmail}>{user?.email}</Text>
         </View>
-      </LinearGradient>
+      </View>
 
       <ScrollView style={styles.content}>
-        {/* Body Measurements Section */}
+        {/* Personal/Patient Information Section */}
         <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Body Measurements</Text>
-            <TouchableOpacity onPress={() => setIsEditing(!isEditing)}>
-              <Ionicons
-                name={isEditing ? 'close-outline' : 'pencil-outline'}
-                size={24}
-                color="#00d4ff"
-              />
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.sectionTitle}>
+            {userProfile?.userType === 'doctor' ? 'Personal Information' : 'Patient Information'}
+          </Text>
+          
+          {userProfile?.age && (
+            <View style={styles.infoItem}>
+              <Text style={styles.infoLabel}>Age</Text>
+              <Text style={styles.infoValue}>{userProfile.age} years</Text>
+            </View>
+          )}
+          
+          {userProfile?.gender && (
+            <View style={styles.infoItem}>
+              <Text style={styles.infoLabel}>Gender</Text>
+              <Text style={styles.infoValue}>{userProfile.gender}</Text>
+            </View>
+          )}
+          
+          {userProfile?.height && (
+            <View style={styles.infoItem}>
+              <Text style={styles.infoLabel}>Height</Text>
+              <Text style={styles.infoValue}>{userProfile.height} inches</Text>
+            </View>
+          )}
+          
+          {userProfile?.weight && (
+            <View style={styles.infoItem}>
+              <Text style={styles.infoLabel}>Weight</Text>
+              <Text style={styles.infoValue}>{userProfile.weight} lbs</Text>
+            </View>
+          )}
 
-          {Object.entries(measurements).map(([key, value]) => {
-            // Format label nicely
-            const formatLabel = (label) => {
-              return label.charAt(0).toUpperCase() + label.slice(1).replace(/([A-Z])/g, ' $1');
-            };
-            
-            return (
-              <View key={key} style={styles.measurementItem}>
-                <Text style={styles.measurementLabel}>
-                  {formatLabel(key)}
-                </Text>
-                {isEditing ? (
-                  <TextInput
-                    style={styles.measurementInput}
-                    value={value.toString()}
-                    onChangeText={(text) =>
-                      setMeasurements({ ...measurements, [key]: text })
-                    }
-                    keyboardType={key === 'gender' ? 'default' : 'numeric'}
-                    placeholder={key === 'gender' ? 'male/female/other' : 'Enter value'}
-                    placeholderTextColor="#666666"
-                  />
-                ) : (
-                  <View style={styles.measurementValue}>
-                    <Text style={styles.measurementValueText}>
-                      {value ? (key === 'bodyFat' || key === 'targetBodyFat' ? `${value}%` : value) : 'Not set'}
-                    </Text>
-                    {key !== 'gender' && key !== 'bodyFat' && key !== 'targetBodyFat' && (
-                      <Text style={styles.measurementUnit}>
-                        {['height', 'neck', 'waist', 'hip'].includes(key) ? 'in' : ['weight', 'targetWeight'].includes(key) ? 'lb' : ''}
-                      </Text>
-                    )}
-                  </View>
-                )}
-              </View>
-            );
-          })}
-
-          {isEditing && (
-            <TouchableOpacity
-              style={styles.saveButton}
-              onPress={handleSave}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator color="#ffffff" />
-              ) : (
-                <Text style={styles.saveButtonText}>Save Changes</Text>
-              )}
-            </TouchableOpacity>
+          {!userProfile?.age && !userProfile?.gender && !userProfile?.height && !userProfile?.weight && (
+            <Text style={styles.emptyText}>
+              {userProfile?.userType === 'doctor' ? 'No personal information available' : 'No patient information available'}
+            </Text>
           )}
         </View>
 
-        {/* Blockchain Records Section */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Medical Records</Text>
-          </View>
-          <TouchableOpacity
-            style={styles.recordsButton}
-            onPress={() => navigation.navigate('ViewRecords')}
-          >
-            <LinearGradient
-              colors={['#2d2d2d', '#1a1a1a']}
-              style={styles.recordsButtonGradient}
-            >
-              <Ionicons name="shield-checkmark" size={24} color="#00d4ff" />
-              <Text style={styles.recordsButtonText}>View Blockchain Records</Text>
-              <Ionicons name="chevron-forward" size={24} color="#888" />
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-
-        {/* Fitness Goals Section */}
-        {userProfile?.fitnessGoals && (
+        {/* Stats Section - Only show for patients */}
+        {userProfile?.userType === 'patient' && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Fitness Goals</Text>
-            {Object.entries(userProfile.fitnessGoals).map(([key, value]) => (
-              <View key={key} style={styles.goalItem}>
-                <Text style={styles.goalLabel}>
-                  {key
-                    .replace(/([A-Z])/g, ' $1')
-                    .replace(/^./, (str) => str.toUpperCase())}
-                </Text>
-                <Text style={styles.goalValue}>{value}</Text>
+            <Text style={styles.sectionTitle}>Statistics</Text>
+            <View style={styles.statsGrid}>
+              <View style={styles.statCard}>
+                <Ionicons name="flame" size={32} color="#00d4ff" />
+                <Text style={styles.statValue}>7</Text>
+                <Text style={styles.statLabel}>Day Streak</Text>
               </View>
-            ))}
+              <View style={styles.statCard}>
+                <Ionicons name="fitness" size={32} color="#00d4ff" />
+                <Text style={styles.statValue}>127</Text>
+                <Text style={styles.statLabel}>Total Workouts</Text>
+              </View>
+            </View>
           </View>
         )}
-
-        {/* Stats Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Statistics</Text>
-          <View style={styles.statsGrid}>
-            <View style={styles.statCard}>
-              <Ionicons name="flame" size={32} color="#00d4ff" />
-              <Text style={styles.statValue}>7</Text>
-              <Text style={styles.statLabel}>Day Streak</Text>
-            </View>
-            <View style={styles.statCard}>
-              <Ionicons name="fitness" size={32} color="#00d4ff" />
-              <Text style={styles.statValue}>127</Text>
-              <Text style={styles.statLabel}>Total Workouts</Text>
-            </View>
-          </View>
-        </View>
       </ScrollView>
     </View>
   );
@@ -329,11 +218,14 @@ const UserProfileScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
   },
   headerGradient: {
     paddingTop: 50,
     paddingBottom: 30,
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
   },
   header: {
     flexDirection: 'row',
@@ -345,7 +237,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
   },
   userInfo: {
     alignItems: 'center',
@@ -360,30 +252,30 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     borderWidth: 3,
-    borderColor: '#00d4ff',
+    borderColor: '#333333',
   },
   avatarEditIcon: {
     position: 'absolute',
     bottom: 5,
     right: 5,
-    backgroundColor: '#00d4ff',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     width: 30,
     height: 30,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#1a1a1a',
+    borderColor: '#333333',
   },
   userName: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 5,
   },
   userEmail: {
     fontSize: 14,
-    color: '#cccccc',
+    color: '#666666',
   },
   content: {
     flex: 1,
@@ -391,10 +283,15 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   section: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     padding: 20,
     marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -405,93 +302,32 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
+    marginBottom: 15,
   },
-  measurementItem: {
+  infoItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#333333',
+    borderBottomColor: '#e0e0e0',
   },
-  measurementLabel: {
+  infoLabel: {
     fontSize: 16,
-    color: '#cccccc',
-    flex: 1,
+    color: '#666666',
   },
-  measurementInput: {
-    fontSize: 16,
-    color: '#ffffff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#00d4ff',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    minWidth: 100,
-    textAlign: 'right',
-  },
-  measurementValue: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  measurementValueText: {
+  infoValue: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#ffffff',
-    marginRight: 5,
-  },
-  measurementUnit: {
-    fontSize: 12,
-    color: '#999999',
-  },
-  saveButton: {
-    backgroundColor: '#00d4ff',
-    borderRadius: 12,
-    paddingVertical: 15,
-    alignItems: 'center',
-    marginTop: 15,
-  },
-  saveButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#ffffff',
-  },
-  recordsButton: {
-    borderRadius: 12,
-    overflow: 'hidden',
-    marginTop: 10,
-  },
-  recordsButtonGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 15,
-  },
-  recordsButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#ffffff',
-    flex: 1,
-    marginLeft: 10,
-  },
-  goalItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#333333',
-  },
-  goalLabel: {
-    fontSize: 16,
-    color: '#cccccc',
-    flex: 1,
-  },
-  goalValue: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#00d4ff',
+    color: '#333333',
     textTransform: 'capitalize',
+  },
+  emptyText: {
+    fontSize: 14,
+    color: '#999999',
+    textAlign: 'center',
+    paddingVertical: 20,
   },
   statsGrid: {
     flexDirection: 'row',
@@ -501,7 +337,7 @@ const styles = StyleSheet.create({
   statCard: {
     alignItems: 'center',
     padding: 20,
-    backgroundColor: 'rgba(0, 212, 255, 0.1)',
+    backgroundColor: '#f5f5f5',
     borderRadius: 15,
     flex: 1,
     marginHorizontal: 5,
@@ -509,13 +345,13 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginTop: 10,
     marginBottom: 5,
   },
   statLabel: {
     fontSize: 12,
-    color: '#cccccc',
+    color: '#666666',
   },
 });
 

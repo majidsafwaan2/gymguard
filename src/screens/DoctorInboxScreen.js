@@ -133,7 +133,7 @@ const DoctorInboxScreen = ({ navigation }) => {
     if (notification.type === 'patient_request' && notification.status === 'pending') {
       navigation.navigate('DoctorDashboard');
     } else if (notification.type === 'injury_picture') {
-      navigation.navigate('InjuryTimeline', { 
+      navigation.navigate('DoctorProgress', { 
         patientId: notification.data.patientId 
       });
     }
@@ -188,7 +188,7 @@ const DoctorInboxScreen = ({ navigation }) => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color="#ffffff" />
+          <Ionicons name="arrow-back" size={24} color="#333333" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Notifications</Text>
         <View style={{ width: 40 }} />
@@ -280,7 +280,7 @@ const DoctorInboxScreen = ({ navigation }) => {
                   </View>
                 </View>
 
-                <Ionicons name="chevron-forward" size={20} color="#666666" />
+                <Ionicons name="chevron-forward" size={20} color="#333333" />
               </TouchableOpacity>
             );
           })
@@ -293,16 +293,16 @@ const DoctorInboxScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
     justifyContent: 'center',
     alignItems: 'center',
   },
   loadingText: {
-    color: '#cccccc',
+    color: '#666666',
     fontSize: 16,
     marginTop: 10,
   },
@@ -313,6 +313,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 60,
     paddingBottom: 20,
+    backgroundColor: '#ffffff',
   },
   backButton: {
     width: 40,
@@ -323,7 +324,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
   },
   filtersContainer: {
     flexDirection: 'row',
@@ -335,9 +336,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderWidth: 1,
     borderColor: 'transparent',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   filterButtonActive: {
     backgroundColor: 'rgba(0, 212, 255, 0.1)',
@@ -358,10 +364,15 @@ const styles = StyleSheet.create({
   notificationCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     padding: 15,
     marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   notificationCardUnread: {
     borderLeftWidth: 4,
@@ -386,7 +397,7 @@ const styles = StyleSheet.create({
   notificationTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     flex: 1,
   },
   unreadDot: {
@@ -429,7 +440,7 @@ const styles = StyleSheet.create({
   emptyStateTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginTop: 20,
     marginBottom: 10,
   },

@@ -230,7 +230,7 @@ const SocialScreen = ({ navigation }) => {
           <Text style={styles.postTime}>{post.time}</Text>
         </View>
         <TouchableOpacity style={styles.postOptions}>
-          <Ionicons name="ellipsis-horizontal" size={20} color="#666666" />
+          <Ionicons name="ellipsis-horizontal" size={20} color="#333333" />
         </TouchableOpacity>
       </View>
       
@@ -242,15 +242,15 @@ const SocialScreen = ({ navigation }) => {
       
       <View style={styles.postActions}>
         <TouchableOpacity style={styles.postAction}>
-          <Ionicons name="heart-outline" size={20} color="#666666" />
+          <Ionicons name="heart-outline" size={20} color="#333333" />
           <Text style={styles.postActionText}>{post.likes}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.postAction}>
-          <Ionicons name="chatbubble-outline" size={20} color="#666666" />
+          <Ionicons name="chatbubble-outline" size={20} color="#333333" />
           <Text style={styles.postActionText}>{post.comments}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.postAction}>
-          <Ionicons name="share-outline" size={20} color="#666666" />
+          <Ionicons name="share-outline" size={20} color="#333333" />
         </TouchableOpacity>
       </View>
     </View>
@@ -274,11 +274,11 @@ const SocialScreen = ({ navigation }) => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color="#ffffff" />
+          <Ionicons name="arrow-back" size={24} color="#333333" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Community</Text>
         <TouchableOpacity style={styles.settingsButton}>
-          <Ionicons name="notifications-outline" size={24} color="#ffffff" />
+          <Ionicons name="notifications-outline" size={24} color="#333333" />
         </TouchableOpacity>
       </View>
 
@@ -331,7 +331,7 @@ const SocialScreen = ({ navigation }) => {
               style={styles.createPostButton}
               onPress={() => setShowCreatePost(true)}
             >
-              <Ionicons name="add-circle" size={24} color="#667eea" />
+              <Ionicons name="add-circle" size={24} color="#00d4ff" />
               <Text style={styles.createPostText}>Share your progress</Text>
             </TouchableOpacity>
             {communityPosts.map(renderCommunityPost)}
@@ -392,7 +392,7 @@ const SocialScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
   },
   header: {
     flexDirection: 'row',
@@ -401,6 +401,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 50,
     paddingBottom: 20,
+    backgroundColor: '#ffffff',
   },
   backButton: {
     padding: 8,
@@ -408,18 +409,23 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
   },
   settingsButton: {
     padding: 8,
   },
   tabSelector: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: '#ffffff',
     borderRadius: 25,
     padding: 4,
     marginHorizontal: 20,
     marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   tabButton: {
     flex: 1,
@@ -428,14 +434,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   activeTabButton: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#00d4ff',
   },
   tabButtonText: {
     fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.8)',
+    color: '#666666',
   },
   activeTabButtonText: {
-    color: '#667eea',
+    color: '#ffffff',
     fontWeight: 'bold',
   },
   content: {
@@ -443,11 +449,12 @@ const styles = StyleSheet.create({
   },
   tabContent: {
     paddingHorizontal: 20,
+    paddingTop: 20,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 15,
   },
   challengeCard: {
@@ -455,6 +462,11 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginBottom: 15,
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   challengeImage: {
     width: '100%',
@@ -528,7 +540,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   joinButton: {
-    backgroundColor: '#667eea',
+    backgroundColor: '#00d4ff',
     paddingVertical: 8,
     borderRadius: 20,
     alignItems: 'center',
@@ -541,10 +553,15 @@ const styles = StyleSheet.create({
   leaderboardItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     padding: 15,
     marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   rankContainer: {
     width: 30,
@@ -553,7 +570,7 @@ const styles = StyleSheet.create({
   rankNumber: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#667eea',
+    color: '#00d4ff',
   },
   userAvatar: {
     width: 50,
@@ -580,21 +597,31 @@ const styles = StyleSheet.create({
   createPostButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     padding: 15,
     marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   createPostText: {
     fontSize: 16,
-    color: '#667eea',
+    color: '#00d4ff',
     marginLeft: 10,
   },
   postCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     padding: 15,
     marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   postHeader: {
     flexDirection: 'row',
@@ -707,7 +734,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 20,
-    backgroundColor: '#667eea',
+    backgroundColor: '#00d4ff',
   },
   shareButtonText: {
     fontSize: 16,

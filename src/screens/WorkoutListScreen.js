@@ -51,7 +51,7 @@ export default function WorkoutListScreen({ navigation }) {
       }}
     >
       <LinearGradient
-        colors={['#2d2d2d', '#1a1a1a']}
+        colors={['#ffffff', '#f9f9f9']}
         style={styles.cardGradient}
       >
         <View style={styles.cardHeader}>
@@ -87,7 +87,7 @@ export default function WorkoutListScreen({ navigation }) {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color="#666666" style={styles.searchIcon} />
+          <Ionicons name="search" size={20} color="#333333" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search exercises..."
@@ -98,7 +98,11 @@ export default function WorkoutListScreen({ navigation }) {
         </View>
         
         <View style={styles.filterContainer}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.filterScrollContent}
+          >
             {difficulties.map((difficulty) => (
               <TouchableOpacity
                 key={difficulty}
@@ -142,33 +146,40 @@ export default function WorkoutListScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
   },
   content: {
     flex: 1,
   },
   workoutsSection: {
     paddingHorizontal: 20,
+    paddingTop: 20,
     paddingBottom: 20,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 15,
   },
   header: {
     paddingTop: 20,
     paddingHorizontal: 20,
     paddingBottom: 20,
+    backgroundColor: '#ffffff',
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#f5f5f5',
     borderRadius: 12,
     paddingHorizontal: 15,
     marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   searchIcon: {
     marginRight: 10,
@@ -176,24 +187,33 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     height: 45,
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 16,
   },
   filterContainer: {
     marginBottom: 10,
   },
+  filterScrollContent: {
+    paddingVertical: 5,
+    paddingHorizontal: 2,
+  },
   filterButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     marginRight: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   filterButtonActive: {
     backgroundColor: '#00d4ff',
   },
   filterButtonText: {
-    color: '#cccccc',
+    color: '#666666',
     fontSize: 14,
     fontWeight: '500',
   },
@@ -216,6 +236,11 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     overflow: 'hidden',
     marginRight: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   cardGradient: {
     padding: 15,
@@ -234,7 +259,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
   },
   difficultyText: {
     fontSize: 12,
@@ -243,7 +268,7 @@ const styles = StyleSheet.create({
   workoutName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 10,
   },
   muscleGroupContainer: {

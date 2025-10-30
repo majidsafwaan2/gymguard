@@ -7,11 +7,15 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Dimensions,
+  Alert,
+  TextInput,
 } from 'react-native';
+import Slider from '@react-native-community/slider';
 import { Ionicons } from '@expo/vector-icons';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { LinearGradient } from 'expo-linear-gradient';
 import { workoutDatabase } from '../data/workoutDatabase';
+import { useUser } from '../context/UserContext';
 import {
   doc,
   getDoc,
@@ -25,6 +29,7 @@ const { width, height } = Dimensions.get('window');
 
 export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
   const { assignmentId } = route.params;
+  const { user, userProfile } = useUser();
   const [assignment, setAssignment] = useState(null);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [currentSet, setCurrentSet] = useState(1);
@@ -43,6 +48,20 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
   const [showScoreScreen, setShowScoreScreen] = useState(false);
   const [workoutComplete, setWorkoutComplete] = useState(false);
   const [poseKeypoints, setPoseKeypoints] = useState(null);
+  const [showPainForm, setShowPainForm] = useState(false);
+  
+  // Pain form state
+  const [painLevel, setPainLevel] = useState(5);
+  const [location, setLocation] = useState('');
+  const [painType, setPainType] = useState('Sharp');
+  const [notes, setNotes] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const painTypes = ['Sharp', 'Dull', 'Aching', 'Burning', 'Throbbing', 'Stabbing'];
+  const commonLocations = [
+    'Lower Back', 'Upper Back', 'Neck', 'Shoulder', 'Elbow', 
+    'Wrist', 'Hip', 'Knee', 'Ankle', 'Foot'
+  ];
   
   const cameraRef = useRef(null);
   const poseAnalyzerRef = useRef(null);
@@ -287,7 +306,19 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
   };
 
   const finishWorkout = async () => {
+    // Show pain form after workout completion
+    setShowPainForm(true);
+  };
+
+  const handleSubmitPainForm = async () => {
+    if (!location.trim()) {
+      Alert.alert('Error', 'Please specify pain location');
+      return;
+    }
+
     try {
+      setIsSubmitting(true);
+      
       const overallScore = Math.round(
         allSetScores.reduce((sum, set) => sum + set.analysis.overallScore, 0) / 
         allSetScores.length
@@ -330,7 +361,91 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
         completedAt: new Date().toISOString(),
         overallScore,
         setAnalyses: allSetScores,
-        scoreReport, // Detailed report for doctor
+        scoreReport,
+      });
+
+      await addDoc(collection(db, 'workoutHistory'), {
+        patientId: assignment?.patientId,
+        doctorId: assignment?.doctorId,
+        assignmentId: assignmentId,
+        completedAt: new Date().toISOString(),
+        overallScore,
+        exercises: assignment?.exercises,
+        setAnalyses: allSetScores,
+      });
+
+      // Add pain form to Firestore
+      await addDoc(collection(db, 'painForms'), {
+        patientId: user.uid,
+        patientName: userProfile.fullName || 'Patient',
+        patientEmail: userProfile.email,
+        doctorId: userProfile.doctorId,
+        painLevel: painLevel,
+        location: location.trim(),
+        painType: painType,
+        notes: notes.trim(),
+        date: new Date().toISOString(),
+        status: 'unread',
+        relatedWorkoutId: assignmentId,
+      });
+
+      Alert.alert('Success', 'Workout completed and pain report sent to your doctor!', [
+        {
+          text: 'OK',
+          onPress: () => navigation.goBack()
+        }
+      ]);
+    } catch (error) {
+      console.error('Error completing workout:', error);
+      Alert.alert('Error', 'Failed to complete workout');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSkipPainForm = async () => {
+    try {
+      const overallScore = Math.round(
+        allSetScores.reduce((sum, set) => sum + set.analysis.overallScore, 0) / 
+        allSetScores.length
+      );
+
+      const injuryRisks = [];
+      allSetScores.forEach(set => {
+        set.analysis.feedback.forEach(fb => {
+          if (fb.injuryRisk) {
+            injuryRisks.push(`${fb.bodyPart}: ${fb.injuryRisk}`);
+          }
+        });
+      });
+
+      const scoreReport = {
+        overallScore,
+        totalSets: allSetScores.length,
+        completedAt: new Date().toISOString(),
+        individualScores: allSetScores.map(set => ({
+          exerciseName: set.exerciseName,
+          setNumber: set.setNumber,
+          overallScore: set.analysis.overallScore,
+          detailedScores: set.analysis.scores,
+          criticalIssues: set.analysis.feedback.filter(fb => fb.severity === 'critical'),
+          injuryRisks: set.analysis.feedback.filter(fb => fb.injuryRisk).map(fb => ({
+            bodyPart: fb.bodyPart,
+            risk: fb.injuryRisk
+          }))
+        })),
+        injuryRisksDetected: injuryRisks,
+        recommendations: allSetScores.flatMap(set => 
+          set.analysis.recommendations || []
+        )
+      };
+
+      await updateDoc(doc(db, 'workoutAssignments', assignmentId), {
+        status: 'completed',
+        completedAt: new Date().toISOString(),
+        overallScore,
+        setAnalyses: allSetScores,
+        scoreReport,
       });
 
       await addDoc(collection(db, 'workoutHistory'), {
@@ -381,6 +496,20 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
     return 'Poor';
   };
 
+  const getPainLevelColor = (level) => {
+    if (level <= 3) return '#4CAF50';
+    if (level <= 6) return '#FFC107';
+    return '#F44336';
+  };
+
+  const getPainLevelEmoji = (level) => {
+    if (level <= 2) return '😊';
+    if (level <= 4) return '🙂';
+    if (level <= 6) return '😐';
+    if (level <= 8) return '😟';
+    return '😣';
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -398,7 +527,7 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
       <ScrollView style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => showSettings ? setShowSettings(false) : navigation.goBack()}>
-            <Ionicons name="arrow-back" size={24} color="#ffffff" />
+            <Ionicons name="arrow-back" size={24} color="#333333" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Workout Settings</Text>
           <View style={{ width: 24 }} />
@@ -495,13 +624,168 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
     );
   }
 
-  // Workout complete screen
+  // Workout complete screen with pain form
   if (workoutComplete) {
     const overallScore = Math.round(
       allSetScores.reduce((sum, set) => sum + set.analysis.overallScore, 0) / 
       allSetScores.length
     );
 
+    // Show pain form after workout
+    if (showPainForm) {
+      return (
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Ionicons name="arrow-back" size={24} color="#333333" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>Post-Workout Pain Report</Text>
+            <View style={{ width: 40 }} />
+          </View>
+
+          <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+            <View style={styles.painFormIntro}>
+              <Ionicons name="fitness" size={48} color="#00d4ff" />
+              <Text style={styles.painFormIntroTitle}>Great job completing your workout!</Text>
+              <Text style={styles.painFormIntroSubtitle}>
+                Please report any pain or discomfort to help your doctor track your progress
+              </Text>
+            </View>
+
+            {/* Pain Level Slider */}
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>How much does it hurt? {painLevel}/10</Text>
+              <Text style={styles.formSubLabel}>Slide to rate your pain level from 1 (minimal) to 10 (severe)</Text>
+              
+              <View style={styles.sliderContainer}>
+                <Slider
+                  style={styles.slider}
+                  minimumValue={1}
+                  maximumValue={10}
+                  step={1}
+                  value={painLevel}
+                  onValueChange={(value) => setPainLevel(Math.round(value))}
+                  minimumTrackTintColor={getPainLevelColor(painLevel)}
+                  maximumTrackTintColor="#333333"
+                  thumbTintColor={getPainLevelColor(painLevel)}
+                />
+                <View style={styles.sliderLabels}>
+                  <Text style={styles.sliderLabelText}>1</Text>
+                  <Text style={[styles.sliderLabelValue, { color: getPainLevelColor(painLevel) }]}>
+                    {painLevel}
+                  </Text>
+                  <Text style={styles.sliderLabelText}>10</Text>
+                </View>
+              </View>
+              
+              <Text style={styles.painLevelEmoji}>{getPainLevelEmoji(painLevel)}</Text>
+              <Text style={styles.painLevelDescription}>
+                {painLevel <= 3 && 'Mild pain - Doesn\'t interfere with activities'}
+                {painLevel > 3 && painLevel <= 6 && 'Moderate pain - Makes some activities difficult'}
+                {painLevel > 6 && painLevel <= 8 && 'Severe pain - Significantly limits activities'}
+                {painLevel > 8 && 'Extreme pain - Unable to perform activities'}
+              </Text>
+            </View>
+
+            {/* Location */}
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>Where does it hurt?</Text>
+              <TextInput
+                style={styles.input}
+                value={location}
+                onChangeText={setLocation}
+                placeholder="e.g., Lower Back, Knee, Shoulder"
+                placeholderTextColor="#666666"
+              />
+              <View style={styles.quickSelectContainer}>
+                {commonLocations.map((loc) => (
+                  <TouchableOpacity
+                    key={loc}
+                    style={[
+                      styles.quickSelectButton,
+                      location === loc && styles.quickSelectButtonActive
+                    ]}
+                    onPress={() => setLocation(loc)}
+                  >
+                    <Text style={[
+                      styles.quickSelectText,
+                      location === loc && styles.quickSelectTextActive
+                    ]}>
+                      {loc}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            {/* Pain Type */}
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>What type of pain?</Text>
+              <View style={styles.painTypeSelector}>
+                {painTypes.map((type) => (
+                  <TouchableOpacity
+                    key={type}
+                    style={[
+                      styles.painTypeButton,
+                      painType === type && styles.painTypeButtonActive
+                    ]}
+                    onPress={() => setPainType(type)}
+                  >
+                    <Text style={[
+                      styles.painTypeText,
+                      painType === type && styles.painTypeTextActive
+                    ]}>
+                      {type}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            {/* Notes */}
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>Additional Details (Optional)</Text>
+              <TextInput
+                style={[styles.input, styles.textArea]}
+                value={notes}
+                onChangeText={setNotes}
+                placeholder="Describe any additional symptoms, what activities make it worse, etc."
+                placeholderTextColor="#666666"
+                multiline
+                numberOfLines={4}
+              />
+            </View>
+
+            <TouchableOpacity
+              style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
+              onPress={handleSubmitPainForm}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <ActivityIndicator color="#ffffff" />
+              ) : (
+                <>
+                  <Ionicons name="send" size={20} color="#ffffff" />
+                  <Text style={styles.submitButtonText}>Submit & Complete Workout</Text>
+                </>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.skipButton}
+              onPress={handleSkipPainForm}
+            >
+              <Text style={styles.skipButtonText}>Skip - No Pain to Report</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </View>
+      );
+    }
+
+    // Show workout completion screen
     return (
       <View style={styles.container}>
         {/* Back Button Header */}
@@ -510,11 +794,11 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
-            <Ionicons name="arrow-back" size={24} color="#ffffff" />
+            <Ionicons name="arrow-back" size={24} color="#333333" />
           </TouchableOpacity>
         </View>
 
-        <LinearGradient colors={['#1a1a1a', '#2d2d2d']} style={styles.completeHeader}>
+        <View style={styles.completeHeader}>
           <Text style={styles.completeTitle}>Workout Complete!</Text>
           <View style={[styles.scoreCircle, { borderColor: getScoreColor(overallScore) }]}>
             <Text style={[styles.scoreText, { color: getScoreColor(overallScore) }]}>
@@ -522,7 +806,7 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
             </Text>
           </View>
           <Text style={styles.completeSubtitle}>Overall Score: {getScoreLabel(overallScore)}</Text>
-        </LinearGradient>
+        </View>
 
         <ScrollView style={styles.summarySection}>
           <Text style={styles.summaryTitle}>Workout Summary</Text>
@@ -566,11 +850,11 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
-            <Ionicons name="arrow-back" size={24} color="#ffffff" />
+            <Ionicons name="arrow-back" size={24} color="#333333" />
           </TouchableOpacity>
         </View>
 
-        <LinearGradient colors={['#1a1a1a', '#2d2d2d']} style={styles.scoreHeader}>
+        <View style={styles.scoreHeader}>
           <Text style={styles.scoreTitle}>Set Complete!</Text>
           <View style={[styles.scoreCircle, { borderColor: getScoreColor(currentSetAnalysis.overallScore) }]}>
             <Text style={[styles.scoreText, { color: getScoreColor(currentSetAnalysis.overallScore) }]}>
@@ -578,7 +862,7 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
             </Text>
           </View>
           <Text style={styles.scoreLabel}>{getScoreLabel(currentSetAnalysis.overallScore)}</Text>
-        </LinearGradient>
+        </View>
 
         {/* Rest Timer - Positioned above score breakdown */}
         {isResting && (
@@ -647,6 +931,26 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
               ))}
             </View>
           )}
+
+          {/* Continue Button */}
+          <View style={styles.continueButtonContainer}>
+            <TouchableOpacity
+              style={styles.continueButton}
+              onPress={() => {
+                setIsResting(false);
+                setRestTimer(0);
+                proceedToNextSet();
+              }}
+            >
+              <Text style={styles.continueButtonText}>
+                {currentSet >= setsPerExercise && currentExerciseIndex >= (assignment?.exercises.length - 1)
+                  ? 'Finish Workout'
+                  : currentSet >= setsPerExercise
+                  ? 'Next Exercise'
+                  : 'Skip Rest & Continue'}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </View>
     );
@@ -728,16 +1032,16 @@ export default function AssignedWorkoutTrackingScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
   },
   loadingText: {
-    color: '#ffffff',
+    color: '#333333',
     marginTop: 10,
   },
   header: {
@@ -747,7 +1051,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 50,
     paddingBottom: 20,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#ffffff',
   },
   backButton: {
     width: 40,
@@ -755,10 +1059,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: '#f0f0f0',
   },
   headerTitle: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -768,27 +1072,32 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   sectionTitle: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 15,
   },
   exercisePreviewCard: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     padding: 15,
     borderRadius: 10,
     marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   lastPreviewCard: {
     marginBottom: 30,
   },
   exercisePreviewName: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 16,
     fontWeight: '600',
   },
   exercisePreviewMuscle: {
-    color: '#888',
+    color: '#666666',
     fontSize: 14,
     marginTop: 4,
   },
@@ -805,7 +1114,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#333',
   },
   settingLabel: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 16,
   },
   valueInput: {
@@ -842,10 +1151,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 10,
     paddingBottom: 20,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#ffffff',
   },
   progressText: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 16,
     marginBottom: 5,
   },
@@ -855,20 +1164,25 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   exerciseCard: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     padding: 20,
     marginHorizontal: 20,
     borderRadius: 15,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   exerciseName: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
   },
   muscleText: {
-    color: '#888',
+    color: '#666666',
     fontSize: 16,
   },
   camera: {
@@ -939,16 +1253,17 @@ const styles = StyleSheet.create({
   },
   scoreContainer: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
   },
   scoreHeader: {
     alignItems: 'center',
     padding: 30,
     paddingTop: 70,
     marginTop: 20,
+    backgroundColor: '#ffffff',
   },
   scoreTitle: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
@@ -967,7 +1282,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   scoreLabel: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 20,
     fontWeight: 'bold',
   },
@@ -976,13 +1291,18 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   scoreBreakdown: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     padding: 20,
     borderRadius: 15,
     marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   scoreBreakdownTitle: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 15,
@@ -995,14 +1315,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   scoreItemLabel: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 14,
     flex: 1,
   },
   scoreBar: {
     flex: 1,
     height: 6,
-    backgroundColor: '#333',
+    backgroundColor: '#e0e0e0',
     borderRadius: 3,
     marginHorizontal: 10,
     overflow: 'hidden',
@@ -1018,10 +1338,15 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   feedbackSection: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     padding: 20,
     borderRadius: 15,
     marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   feedbackItem: {
     flexDirection: 'row',
@@ -1046,10 +1371,15 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   recommendationsSection: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     padding: 20,
     borderRadius: 15,
     marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   recommendationItem: {
     flexDirection: 'row',
@@ -1064,10 +1394,30 @@ const styles = StyleSheet.create({
     width: 24,
   },
   recommendationText: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 14,
     flex: 1,
     lineHeight: 20,
+  },
+  continueButtonContainer: {
+    padding: 20,
+    paddingBottom: 30,
+  },
+  continueButton: {
+    backgroundColor: '#00d4ff',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  continueButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   restTimerSection: {
     backgroundColor: 'rgba(0, 212, 255, 0.15)',
@@ -1161,15 +1511,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 40,
     paddingTop: 80,
+    backgroundColor: '#ffffff',
   },
   completeTitle: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 32,
     fontWeight: 'bold',
     marginBottom: 30,
   },
   completeSubtitle: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 18,
     marginTop: 10,
   },
@@ -1178,13 +1529,13 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   summaryTitle: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 15,
   },
   summaryText: {
-    color: '#cccccc',
+    color: '#666666',
     fontSize: 16,
     lineHeight: 24,
   },
@@ -1218,5 +1569,186 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginLeft: 10,
+  },
+  // Pain Form Styles
+  painFormIntro: {
+    alignItems: 'center',
+    padding: 30,
+    paddingTop: 20,
+    marginBottom: 20,
+  },
+  painFormIntroTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#333333',
+    marginTop: 15,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  painFormIntroSubtitle: {
+    fontSize: 16,
+    color: '#666666',
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  formGroup: {
+    marginBottom: 30,
+  },
+  formLabel: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333333',
+    marginBottom: 5,
+  },
+  formSubLabel: {
+    fontSize: 14,
+    color: '#666666',
+    marginBottom: 15,
+  },
+  sliderContainer: {
+    backgroundColor: '#ffffff',
+    borderRadius: 15,
+    padding: 20,
+    paddingTop: 15,
+    marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  slider: {
+    width: '100%',
+    height: 40,
+  },
+  sliderLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  sliderLabelText: {
+    fontSize: 14,
+    color: '#666666',
+    fontWeight: '600',
+  },
+  sliderLabelValue: {
+    fontSize: 28,
+    fontWeight: 'bold',
+  },
+  painLevelEmoji: {
+    fontSize: 48,
+    textAlign: 'center',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  painLevelDescription: {
+    fontSize: 14,
+    color: '#666666',
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  input: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 15,
+    fontSize: 16,
+    color: '#333333',
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  textArea: {
+    height: 120,
+    textAlignVertical: 'top',
+  },
+  quickSelectContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 12,
+  },
+  quickSelectButton: {
+    backgroundColor: '#f5f5f5',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  quickSelectButtonActive: {
+    backgroundColor: 'rgba(0, 212, 255, 0.2)',
+    borderColor: '#00d4ff',
+  },
+  quickSelectText: {
+    color: '#666666',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  quickSelectTextActive: {
+    color: '#00d4ff',
+  },
+  painTypeSelector: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  painTypeButton: {
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 20,
+    backgroundColor: '#f5f5f5',
+    borderWidth: 2,
+    borderColor: '#e0e0e0',
+  },
+  painTypeButtonActive: {
+    backgroundColor: 'rgba(0, 212, 255, 0.1)',
+    borderColor: '#00d4ff',
+  },
+  painTypeText: {
+    fontSize: 15,
+    color: '#999999',
+    fontWeight: '600',
+  },
+  painTypeTextActive: {
+    color: '#00d4ff',
+  },
+  submitButton: {
+    backgroundColor: '#00d4ff',
+    borderRadius: 15,
+    height: 56,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 10,
+    marginBottom: 15,
+  },
+  submitButtonDisabled: {
+    backgroundColor: '#666666',
+  },
+  submitButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#ffffff',
+  },
+  skipButton: {
+    backgroundColor: 'transparent',
+    borderRadius: 15,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 30,
+    borderWidth: 2,
+    borderColor: '#666666',
+  },
+  skipButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#666666',
   },
 });
