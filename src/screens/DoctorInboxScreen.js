@@ -39,6 +39,7 @@ const DoctorInboxScreen = ({ navigation }) => {
       const notificationsData = [];
 
       // Fetch patient requests
+      console.log('DoctorInbox: Fetching patient requests for doctor ID:', userProfile.uid);
       const requestsQuery = query(
         collection(db, 'patientRequests'),
         where('doctorId', '==', userProfile.uid),
@@ -46,8 +47,11 @@ const DoctorInboxScreen = ({ navigation }) => {
       );
       
       const requestsSnapshot = await getDocs(requestsQuery);
+      console.log('DoctorInbox: Found', requestsSnapshot.docs.length, 'patient requests');
+      
       requestsSnapshot.docs.forEach(doc => {
         const data = doc.data();
+        console.log('DoctorInbox: Patient request:', data);
         notificationsData.push({
           id: doc.id,
           type: 'patient_request',

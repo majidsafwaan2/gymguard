@@ -53,19 +53,19 @@ const FloatingChatbot = () => {
       name: 'Coach Mike', 
       specialty: 'Strength Training', 
       avatar: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=50&h=50&fit=crop&crop=face",
-      prompt: "Hey! I'm Coach Mike, your strength training expert! I can help you with proper form, progressive overload, and building muscle. What's your strength training goal?"
+      prompt: "Hey! I'm Coach Mike. Ask me about form, progressive overload, or building muscle. What's your goal?"
     },
     { 
       name: 'Dr. Sarah', 
       specialty: 'Nutrition & Recovery', 
       avatar: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=50&h=50&fit=crop&crop=face",
-      prompt: "Hi! I'm Dr. Sarah, your nutrition and recovery specialist! I can help you with meal planning, supplements, sleep optimization, and injury prevention. How can I help you recover better?"
+      prompt: "Hi! I'm Dr. Sarah. I can help with nutrition, supplements, sleep, and recovery. What do you need?"
     },
     { 
       name: 'Trainer Alex', 
       specialty: 'Cardio & HIIT', 
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face",
-      prompt: "What's up! I'm Alex, your cardio and HIIT coach! I can help you with fat loss, endurance training, and high-intensity workouts. Ready to get your heart pumping?"
+      prompt: "What's up! I'm Alex. Let's talk cardio, HIIT, and endurance. Ready to work?"
     }
   ];
 

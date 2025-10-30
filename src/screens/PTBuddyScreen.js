@@ -19,7 +19,7 @@ const PTBuddyScreen = ({ navigation }) => {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Hello! I'm your AI Physical Therapist! 🏥 I can help you with rehabilitation exercises, pain management, mobility improvement, and answer questions about your recovery. How can I assist you today?",
+      text: "Hi! I'm your AI PT. Ask me about exercises, pain, or recovery. 🏥",
       isUser: false,
       timestamp: new Date(),
     }
@@ -102,53 +102,44 @@ const PTBuddyScreen = ({ navigation }) => {
     const responses = {
       "Dr. James": {
         exercises: [
-          "For orthopedic recovery, focus on controlled movements that don't cause sharp pain. Start with 2-3 sets of 10-15 reps, prioritizing quality over quantity. 🏥",
-          "Range of motion exercises should be done slowly and deliberately. Don't push through sharp pain, but mild discomfort is normal during recovery.",
-          "Strengthen the muscles around your injury site to provide better support. This helps prevent re-injury and speeds up recovery."
+          "Focus on controlled movements without sharp pain. Start with 2-3 sets of 10-15 reps. 🏥",
+          "Strengthen muscles around the injury site to prevent re-injury."
         ],
         pain: [
-          "Ice for acute pain (first 48-72 hours), heat for chronic stiffness. 15-20 minutes at a time, with breaks in between.",
-          "Pain that increases during or after exercise needs attention. Use the pain scale - keep activities between 0-3 out of 10.",
-          "Take prescribed anti-inflammatories with food. They reduce swelling and make exercises more comfortable."
+          "Ice for acute pain (48-72 hrs), heat for stiffness. 15-20 min at a time.",
+          "Keep exercise pain between 0-3 out of 10. If it increases, stop and rest."
         ],
         recovery: [
-          "Rest is crucial, but complete inactivity can delay healing. Gentle movement promotes blood flow and prevents stiffness.",
-          "Follow your prescribed exercise schedule consistently. Skipping sessions or overdoing it both slow recovery.",
-          "Expect gradual improvement. Healing takes time - weeks for soft tissue, months for bones and tendons."
+          "Rest is key, but gentle movement prevents stiffness and aids healing.",
+          "Healing takes time: weeks for soft tissue, months for bones."
         ]
       },
       "Dr. Maria": {
         rehab: [
-          "Sport-specific rehab builds on basic strength. Start with fundamental movements before progressing to athletic drills.",
-          "Balance and proprioception training prevents re-injury. Single-leg exercises and stability work are essential.",
-          "Return to sport gradually. Use the 10% rule - increase intensity/volume by no more than 10% per week."
+          "Build basic strength first, then add sport-specific movements.",
+          "Return gradually: increase intensity by max 10% per week."
         ],
         exercises: [
-          "Eccentric exercises (controlling the lowering phase) rebuild tendon strength effectively. 3 seconds down, 1 second up.",
-          "Plyometric training should only begin after pain-free strength is restored. Start with low-impact before progressing.",
-          "Core stability is fundamental to all movement. Include planks, bird-dogs, and dead bugs in your routine."
+          "Eccentric exercises rebuild tendons: 3 seconds down, 1 second up.",
+          "Core work is essential: planks, bird-dogs, dead bugs."
         ],
         prevention: [
-          "Warm up properly before activity. 5-10 minutes of light cardio and dynamic stretching prepares your body.",
-          "Listen to early warning signs. Persistent soreness, reduced range of motion, or subtle pain shouldn't be ignored.",
-          "Cross-training reduces overuse injuries by varying movement patterns and stress distribution."
+          "Warm up 5-10 min with light cardio and dynamic stretches.",
+          "Don't ignore early warning signs like soreness or reduced motion."
         ]
       },
       "Dr. Kevin": {
         mobility: [
-          "Gentle stretching improves flexibility. Hold each stretch 30-60 seconds, breathing deeply. Never bounce.",
-          "Yoga and tai chi enhance mind-body connection while building functional strength and balance.",
-          "Daily movement is better than occasional intensive stretching. Even 5 minutes makes a difference."
+          "Hold stretches 30-60 sec, breathe deeply. Never bounce.",
+          "Daily 5-min movement beats occasional long sessions."
         ],
         posture: [
-          "Ergonomics matter! Ensure your workspace supports neutral spine alignment to prevent chronic pain.",
-          "Postural exercises strengthen muscles that fight gravity. Wall angels, chin tucks, and scapular squeezes help.",
-          "Take frequent breaks from static positions. Move every 30 minutes to prevent muscle tightness."
+          "Set up your workspace to support neutral spine alignment.",
+          "Take breaks every 30 min to prevent tightness."
         ],
         breathing: [
-          "Diaphragmatic breathing reduces tension and improves core stability. Practice: breathe in for 4, hold for 4, out for 6.",
-          "Breath control during exercises maintains stability. Exhale during exertion, inhale during release.",
-          "Stress affects physical recovery. Mindfulness and breathing exercises support both mental and physical healing."
+          "Try box breathing: in for 4, hold 4, out for 6.",
+          "Breathing exercises reduce stress and aid recovery."
         ]
       }
     };

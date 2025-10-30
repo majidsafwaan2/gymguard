@@ -757,7 +757,6 @@ export default function CameraAnalysisScreen({ navigation }) {
         {isAnalyzing && (
           <View style={styles.analysisOverlay}>
             <View style={styles.analysisBox}>
-              <Text style={styles.analysisIcon}>🤖</Text>
               <Text style={styles.analysisText}>Analyzing Your Form...</Text>
               <Text style={styles.analysisSubtext}>Processing your workout video</Text>
               <View style={styles.loadingBar}>
@@ -826,12 +825,17 @@ const styles = StyleSheet.create({
   backButton: {
     paddingHorizontal: 15,
     paddingVertical: 8,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderRadius: 20,
     marginRight: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
   },
   backButtonText: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 16,
     fontWeight: '600',
   },
@@ -842,11 +846,17 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 18,
     fontWeight: 'bold',
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   instruction: {
-    color: '#cccccc',
+    color: '#ffffff',
     fontSize: 14,
     marginTop: 2,
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   cameraStatus: {
     color: '#ff9800',
@@ -882,9 +892,12 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   formInstruction: {
-    color: '#cccccc',
+    color: '#ffffff',
     fontSize: 16,
     textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   recordingIndicator: {
     backgroundColor: 'rgba(244, 67, 54, 0.8)',
@@ -961,23 +974,24 @@ const styles = StyleSheet.create({
     zIndex: 20,
   },
   analysisBox: {
-    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    backgroundColor: '#ffffff',
     padding: 40,
     borderRadius: 20,
     alignItems: 'center',
-  },
-  analysisIcon: {
-    fontSize: 50,
-    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
   },
   analysisText: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
   },
   analysisSubtext: {
-    color: '#cccccc',
+    color: '#666666',
     fontSize: 14,
     marginTop: 8,
     textAlign: 'center',

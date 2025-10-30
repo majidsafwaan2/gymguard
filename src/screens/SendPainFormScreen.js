@@ -142,7 +142,7 @@ const SendPainFormScreen = ({ navigation }) => {
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
-            <Ionicons name="arrow-back" size={24} color="#ffffff" />
+            <Ionicons name="arrow-back" size={24} color="#333333" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Send Pain Form</Text>
           <View style={{ width: 40 }} />
@@ -165,7 +165,7 @@ const SendPainFormScreen = ({ navigation }) => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color="#ffffff" />
+          <Ionicons name="arrow-back" size={24} color="#333333" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Send Pain Form</Text>
         <View style={{ width: 40 }} />
@@ -317,16 +317,16 @@ const SendPainFormScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
     justifyContent: 'center',
     alignItems: 'center',
   },
   loadingText: {
-    color: '#cccccc',
+    color: '#666666',
     fontSize: 16,
     marginTop: 10,
   },
@@ -337,6 +337,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 60,
     paddingBottom: 20,
+    backgroundColor: '#ffffff',
   },
   backButton: {
     width: 40,
@@ -347,19 +348,25 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
   },
   content: {
     flex: 1,
     paddingHorizontal: 20,
   },
   doctorCard: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     padding: 20,
+    marginTop: 20,
     marginBottom: 30,
     borderLeftWidth: 4,
     borderLeftColor: '#00d4ff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   doctorCardHeader: {
     flexDirection: 'row',
@@ -369,13 +376,13 @@ const styles = StyleSheet.create({
   },
   doctorCardTitle: {
     fontSize: 14,
-    color: '#cccccc',
+    color: '#666666',
     fontWeight: '600',
   },
   doctorName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 4,
   },
   doctorEmail: {
@@ -388,20 +395,25 @@ const styles = StyleSheet.create({
   formLabel: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 5,
   },
   formSubLabel: {
     fontSize: 14,
-    color: '#999999',
+    color: '#666666',
     marginBottom: 15,
   },
   sliderContainer: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     padding: 20,
     paddingTop: 15,
     marginBottom: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   slider: {
     width: '100%',
@@ -415,7 +427,7 @@ const styles = StyleSheet.create({
   },
   sliderLabelText: {
     fontSize: 14,
-    color: '#666666',
+    color: '#999999',
     fontWeight: '600',
   },
   sliderLabelValue: {
@@ -430,18 +442,23 @@ const styles = StyleSheet.create({
   },
   painLevelDescription: {
     fontSize: 14,
-    color: '#cccccc',
+    color: '#666666',
     textAlign: 'center',
     fontStyle: 'italic',
   },
   input: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderRadius: 12,
     padding: 15,
     fontSize: 16,
-    color: '#ffffff',
+    color: '#333333',
     borderWidth: 1,
-    borderColor: '#333333',
+    borderColor: '#e0e0e0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
   },
   textArea: {
     height: 120,
@@ -454,19 +471,24 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   quickSelectButton: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#333333',
+    borderColor: '#e0e0e0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
   },
   quickSelectButtonActive: {
-    backgroundColor: 'rgba(0, 212, 255, 0.2)',
+    backgroundColor: 'rgba(0, 212, 255, 0.1)',
     borderColor: '#00d4ff',
   },
   quickSelectText: {
-    color: '#999999',
+    color: '#666666',
     fontSize: 14,
     fontWeight: '500',
   },
@@ -482,9 +504,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 12,
     borderRadius: 20,
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     borderWidth: 2,
-    borderColor: '#333333',
+    borderColor: '#e0e0e0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
   },
   painTypeButtonActive: {
     backgroundColor: 'rgba(0, 212, 255, 0.1)',
@@ -492,7 +519,7 @@ const styles = StyleSheet.create({
   },
   painTypeText: {
     fontSize: 15,
-    color: '#666666',
+    color: '#333333',
     fontWeight: '600',
   },
   painTypeTextActive: {
@@ -528,7 +555,7 @@ const styles = StyleSheet.create({
   infoText: {
     flex: 1,
     fontSize: 14,
-    color: '#cccccc',
+    color: '#666666',
     lineHeight: 20,
   },
   noDoctorContainer: {
@@ -540,13 +567,13 @@ const styles = StyleSheet.create({
   noDoctorTitle: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginTop: 20,
     marginBottom: 10,
   },
   noDoctorText: {
     fontSize: 16,
-    color: '#cccccc',
+    color: '#666666',
     textAlign: 'center',
     lineHeight: 24,
   },

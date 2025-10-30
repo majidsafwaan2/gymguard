@@ -116,15 +116,12 @@ export default function AnalysisResultsScreen({ navigation, route }) {
 
   return (
     <ScrollView style={styles.container}>
-      <LinearGradient
-        colors={['#1a1a1a', '#2d2d2d']}
-        style={styles.header}
-      >
+      <View style={styles.header}>
         <View style={styles.headerContent}>
           <Text style={styles.exerciseName}>{selectedWorkout?.name}</Text>
           <Text style={styles.analysisTitle}>Form Analysis Results</Text>
         </View>
-      </LinearGradient>
+      </View>
 
       <View style={styles.content}>
         {/* Score Section */}
@@ -142,7 +139,7 @@ export default function AnalysisResultsScreen({ navigation, route }) {
 
         {/* Detailed Feedback Section */}
         <View style={styles.feedbackSection}>
-          <Text style={styles.sectionTitle}>🤖 AI Form Analysis</Text>
+          <Text style={styles.sectionTitle}>AI Form Analysis</Text>
           <Text style={styles.aiSubtitle}>
             Powered by {result.aiModel || 'Llama 3.2 Vision'} 
             {result.confidence && ` • Confidence: ${Math.round(result.confidence * 100)}%`}
@@ -186,7 +183,7 @@ export default function AnalysisResultsScreen({ navigation, route }) {
         {/* Recommendations Section */}
         {result.recommendations && (
           <View style={styles.recommendationsSection}>
-            <Text style={styles.sectionTitle}>📋 Personalized Recommendations</Text>
+            <Text style={styles.sectionTitle}>Personalized Recommendations</Text>
             {result.recommendations.map((rec, index) => (
               <View key={index} style={styles.recommendationItem}>
                 <Text style={styles.recommendationNumber}>{index + 1}</Text>
@@ -285,11 +282,19 @@ export default function AnalysisResultsScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#f5f5f5',
   },
   header: {
     padding: 20,
     paddingTop: 10,
+    backgroundColor: '#ffffff',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   headerContent: {
     alignItems: 'center',
@@ -297,12 +302,12 @@ const styles = StyleSheet.create({
   exerciseName: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 5,
   },
   analysisTitle: {
     fontSize: 16,
-    color: '#cccccc',
+    color: '#666666',
   },
   content: {
     padding: 20,
@@ -331,12 +336,12 @@ const styles = StyleSheet.create({
   scoreLabel: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 8,
   },
   scoreMessage: {
     fontSize: 16,
-    color: '#cccccc',
+    color: '#666666',
     textAlign: 'center',
     lineHeight: 24,
   },
@@ -346,7 +351,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 5,
   },
   aiSubtitle: {
@@ -357,11 +362,16 @@ const styles = StyleSheet.create({
   },
   feedbackItem: {
     marginBottom: 15,
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     padding: 15,
     borderRadius: 12,
     borderLeftWidth: 4,
     borderLeftColor: '#4CAF50',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   feedbackItemgood: {
     borderLeftColor: '#4CAF50',
@@ -386,12 +396,12 @@ const styles = StyleSheet.create({
   feedbackBodyPart: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: '#333333',
     marginBottom: 5,
   },
   feedbackMessage: {
     fontSize: 15,
-    color: '#cccccc',
+    color: '#666666',
     lineHeight: 22,
     marginBottom: 8,
   },
@@ -410,7 +420,7 @@ const styles = StyleSheet.create({
   },
   correctionText: {
     fontSize: 14,
-    color: '#ffffff',
+    color: '#333333',
     lineHeight: 20,
   },
   recommendationsSection: {
@@ -420,9 +430,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: 12,
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     padding: 15,
     borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   recommendationNumber: {
     width: 24,
@@ -439,26 +454,31 @@ const styles = StyleSheet.create({
   recommendationText: {
     flex: 1,
     fontSize: 15,
-    color: '#cccccc',
+    color: '#666666',
     lineHeight: 22,
   },
   keypointsSection: {
     marginBottom: 25,
   },
   keypointsContainer: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     padding: 15,
     borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   keypointsText: {
     fontSize: 15,
-    color: '#ffffff',
+    color: '#333333',
     fontWeight: '500',
     marginBottom: 5,
   },
   keypointsSubtext: {
     fontSize: 13,
-    color: '#cccccc',
+    color: '#666666',
   },
   actionSection: {
     marginBottom: 25,
@@ -485,9 +505,14 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   tipsContainer: {
-    backgroundColor: '#2d2d2d',
+    backgroundColor: '#ffffff',
     padding: 15,
     borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   tipItem: {
     flexDirection: 'row',
@@ -497,12 +522,12 @@ const styles = StyleSheet.create({
   tipText: {
     flex: 1,
     fontSize: 14,
-    color: '#cccccc',
+    color: '#666666',
     marginLeft: 10,
     lineHeight: 20,
   },
   errorText: {
-    color: '#ffffff',
+    color: '#333333',
     fontSize: 18,
     textAlign: 'center',
     marginTop: 50,

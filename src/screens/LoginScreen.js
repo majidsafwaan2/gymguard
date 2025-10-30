@@ -90,6 +90,8 @@ const LoginScreen = ({ navigation }) => {
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
                 autoCorrect={false}
+                autoComplete="off"
+                textContentType="none"
               />
               <TouchableOpacity
                 style={styles.eyeIcon}

@@ -100,9 +100,15 @@ const DoctorDashboardScreen = ({ navigation }) => {
   };
 
   const fetchPendingRequests = async () => {
-    if (!userProfile?.uid) return;
+    if (!userProfile?.uid) {
+      console.warn('⚠️ Cannot fetch requests: userProfile.uid is missing');
+      return;
+    }
     
     try {
+      console.log('📥 Fetching patient requests for doctor UID:', userProfile.uid);
+      console.log('Doctor profile:', { uid: userProfile.uid, email: userProfile.email, userType: userProfile.userType });
+      
       const requestsQuery = query(
         collection(db, 'patientRequests'),
         where('doctorId', '==', userProfile.uid),
@@ -110,10 +116,18 @@ const DoctorDashboardScreen = ({ navigation }) => {
       );
       
       const requestsSnapshot = await getDocs(requestsQuery);
-      const requestsData = requestsSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      console.log('✅ Found', requestsSnapshot.docs.length, 'pending patient requests');
+      
+      if (requestsSnapshot.docs.length === 0) {
+        console.log('💡 No requests found. Expected doctorId:', userProfile.uid);
+      }
+      
+      const requestsData = requestsSnapshot.docs.map(doc => {
+        const data = { id: doc.id, ...doc.data() };
+        console.log('Patient request:', data);
+        console.log('Comparing: Request doctorId =', data.doctorId, '| Doctor UID =', userProfile.uid, '| Match:', data.doctorId === userProfile.uid);
+        return data;
+      });
       
       setPendingRequests(requestsData);
     } catch (error) {
