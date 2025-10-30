@@ -182,7 +182,7 @@ const FloatingChatbot = () => {
           <View style={styles.chatContainer}>
             {/* Header */}
             <View style={styles.chatHeader}>
-              <Text style={styles.headerTitle}>Gym Buddy</Text>
+              <Text style={styles.headerTitle}>Recovery Support</Text>
               <TouchableOpacity onPress={() => setIsOpen(false)}>
                 <Ionicons name="close" size={24} color="#333333" />
               </TouchableOpacity>

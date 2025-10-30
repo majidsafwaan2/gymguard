@@ -9,6 +9,8 @@ import {
   Dimensions,
   Animated,
   TextInput,
+  StatusBar,
+  SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -162,7 +164,10 @@ export default function ViewRecordsScreen({ navigation, route }) {
   // Authentication screen for doctors
   if (userProfile?.userType === 'doctor' && showAuthScreen) {
     return (
-      <View style={styles.container}>
+      <View style={styles.fullScreenDark}>
+        <StatusBar barStyle="light-content" backgroundColor="#1a1a1a" />
+        <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
@@ -213,13 +218,18 @@ export default function ViewRecordsScreen({ navigation, route }) {
             </Text>
           </View>
         </ScrollView>
+        </View>
+        </SafeAreaView>
       </View>
     );
   }
 
   if (loading || showBlockchainAnimation) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={styles.fullScreenDark}>
+        <StatusBar barStyle="light-content" backgroundColor="#1a1a1a" />
+        <SafeAreaView style={styles.safeArea}>
+        <View style={styles.loadingContainer}>
         <View style={styles.blockchainAnimation}>
           <Ionicons name="lock-closed" size={64} color="#00d4ff" />
           <ActivityIndicator size="large" color="#00d4ff" style={{ marginVertical: 20 }} />
@@ -227,12 +237,17 @@ export default function ViewRecordsScreen({ navigation, route }) {
           <Text style={styles.blockchainSubtext}>Network: Ethereum Goerli Testnet</Text>
           <Text style={styles.blockchainSubtext}>Verifying cryptographic hash...</Text>
         </View>
+        </View>
+        </SafeAreaView>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.fullScreenDark}>
+      <StatusBar barStyle="light-content" backgroundColor="#1a1a1a" />
+      <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -435,11 +450,21 @@ export default function ViewRecordsScreen({ navigation, route }) {
           })
         )}
       </ScrollView>
+      </View>
+      </SafeAreaView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  fullScreenDark: {
+    flex: 1,
+    backgroundColor: '#1a1a1a',
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#1a1a1a',
+  },
   container: {
     flex: 1,
     backgroundColor: '#1a1a1a',

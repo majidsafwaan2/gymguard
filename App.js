@@ -16,7 +16,7 @@ import WorkoutDetailScreen from './src/screens/WorkoutDetailScreen';
 import CameraAnalysisScreen from './src/screens/CameraAnalysisScreen';
 import AnalysisResultsScreen from './src/screens/AnalysisResultsScreen';
 import ProgressScreen from './src/screens/ProgressScreen';
-import GymBuddyScreen from './src/screens/GymBuddyScreen';
+import PTBuddyScreen from './src/screens/PTBuddyScreen';
 import PainTrackingScreen from './src/screens/PainTrackingScreen';
 import WorkoutPlansScreen from './src/screens/WorkoutPlansScreen';
 import SocialScreen from './src/screens/SocialScreen';
@@ -29,7 +29,7 @@ import DoctorInboxScreen from './src/screens/DoctorInboxScreen';
 import DoctorPainFormsScreen from './src/screens/DoctorPainFormsScreen';
 import SendPainFormScreen from './src/screens/SendPainFormScreen';
 import WorkoutAssignmentScreen from './src/screens/WorkoutAssignmentScreen';
-import InjuryTimelineScreen from './src/screens/InjuryTimelineScreen';
+import DoctorProgressScreen from './src/screens/DoctorProgressScreen';
 import DoctorAssignedWorkoutsScreen from './src/screens/DoctorAssignedWorkoutsScreen';
 import AssignedWorkoutTrackingScreen from './src/screens/AssignedWorkoutTrackingScreen';
 import ViewRecordsScreen from './src/screens/ViewRecordsScreen';
@@ -78,9 +78,9 @@ function WorkoutStack() {
         options={{ title: 'Analysis Results' }}
       />
       <Stack.Screen 
-        name="GymBuddy" 
-        component={GymBuddyScreen}
-        options={{ title: 'AI Physical Therapist' }}
+        name="PTBuddy" 
+        component={PTBuddyScreen}
+        options={{ title: 'Dr. Recovery' }}
       />
       <Stack.Screen 
         name="PainTracking" 
@@ -268,8 +268,8 @@ function MainApp() {
         }}
       />
       <Stack.Screen 
-        name="InjuryTimeline" 
-        component={InjuryTimelineScreen}
+        name="DoctorProgress" 
+        component={DoctorProgressScreen}
         options={{
           headerShown: false,
         }}

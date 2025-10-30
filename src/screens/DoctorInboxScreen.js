@@ -133,7 +133,7 @@ const DoctorInboxScreen = ({ navigation }) => {
     if (notification.type === 'patient_request' && notification.status === 'pending') {
       navigation.navigate('DoctorDashboard');
     } else if (notification.type === 'injury_picture') {
-      navigation.navigate('InjuryTimeline', { 
+      navigation.navigate('DoctorProgress', { 
         patientId: notification.data.patientId 
       });
     }

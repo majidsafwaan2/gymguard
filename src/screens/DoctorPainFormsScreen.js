@@ -275,7 +275,7 @@ const DoctorPainFormsScreen = ({ navigation }) => {
               style={styles.actionButton}
               onPress={() => {
                 setSelectedForm(null);
-                navigation.navigate('InjuryTimeline', { patientId: selectedForm.patientId });
+                navigation.navigate('DoctorProgress', { patientId: selectedForm.patientId });
               }}
             >
               <Ionicons name="trending-up" size={20} color="#00d4ff" />
@@ -305,7 +305,7 @@ const DoctorPainFormsScreen = ({ navigation }) => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color="#ffffff" />
+          <Ionicons name="arrow-back" size={24} color="#333333" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Pain Forms</Text>
         <View style={{ width: 40 }} />

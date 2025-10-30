@@ -266,7 +266,7 @@ const DoctorPatientsScreen = ({ navigation }) => {
 
                 <TouchableOpacity 
                   style={styles.quickActionButton}
-                  onPress={() => navigation.navigate('InjuryTimeline', { patientId: patient.id })}
+                  onPress={() => navigation.navigate('DoctorProgress', { patientId: patient.id })}
                 >
                   <Ionicons name="trending-up" size={20} color="#00d4ff" />
                   <Text style={styles.quickActionText}>Progress</Text>
