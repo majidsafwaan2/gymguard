@@ -2,43 +2,35 @@
 
 ```mermaid
 flowchart LR
-    Login([Login]) --> PatientHome
-    Login --> DoctorHome
+    Login([Login]) --> Patient[Patient Homepage]
+    Login --> Doctor[Doctor Homepage]
     
-    PatientHome[Patient Homepage] --> Setting[Setting]
-    PatientHome --> Exercise[Exercise]
-    Exercise --> AIPose["AI-Pose Module<br/>MediaPipe + Angle Tracking"]
+    Patient --> Exercise[Exercise]
+    Exercise --> AIPose["AI-Pose<br/>MediaPipe + Angles"]
     
-    AIPose -.->|Session Data/Metrics| CloudDB[(Cloud Database)]
-    Exercise -.->|Session Data/Metrics| CloudDB
+    AIPose --> Cloud[(Cloud Database)]
+    Exercise --> Cloud
     
-    CloudDB --> AIModel[AI-Evaluation Model]
-    AIModel ==>|Model Outputs<br/>Landmarks/Angles| AIPose
+    Cloud --> ViewResults[View Results]
     
-    CloudDB --> ViewResults[View Test Results]
-    
-    DoctorHome[Doctor Homepage] --> PatientList["Patient List<br/>Patient #1, n, #N"]
-    PatientList --> ViewResults
+    Doctor --> ViewResults
     ViewResults --> Assignment[Assignment]
-    Assignment --> ProvideFeedback[Provide Feedback]
+    Assignment --> Feedback[Provide Feedback]
     
-    ProvideFeedback -->|Send Assignment| CloudDB
-    ProvideFeedback -->|Send Feedback| CloudDB
+    Feedback --> Cloud
+    Cloud --> Patient
     
-    CloudDB -.->|Feedback Summary| DocFeedback[Doctor Feedback]
-    DocFeedback --> PatientHome
+    Assignment --> Exercise
     
-    Assignment -->|Assignment| Exercise
-    
-    %% Styling - Node backgrounds (soft panels)
+    %% Styling
     classDef patientNode fill:#B0E0E6,stroke:#4682B4,stroke-width:3px,color:#000
     classDef doctorNode fill:#FFC0CB,stroke:#CD5C5C,stroke-width:3px,color:#000
     classDef cloudNode fill:#F5F5DC,stroke:#8B7355,stroke-width:3px,color:#000
     classDef start fill:#9B59B6,stroke:#6A4C93,stroke-width:3px,color:#fff
     
-    class PatientHome,Setting,Exercise,AIPose,DocFeedback patientNode
-    class DoctorHome,PatientList,ViewResults,Assignment,ProvideFeedback doctorNode
-    class CloudDB,AIModel cloudNode
+    class Patient,Exercise,AIPose patientNode
+    class Doctor,ViewResults,Assignment,Feedback doctorNode
+    class Cloud cloudNode
     class Login start
 ```
 
