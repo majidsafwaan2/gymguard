@@ -1,83 +1,45 @@
 # Theravive System Architecture Flowchart
 
 ```mermaid
-flowchart TD
-    Login([Login])
-    
-    Login --> PatientHome
+flowchart LR
+    Login([Login]) --> PatientHome
     Login --> DoctorHome
     
-    subgraph PatientSwimlane[" "]
-        direction TB
-        style PatientSwimlane fill:#00CED1,stroke:#008B8B,stroke-width:3px
-        
-        PatientHome[Patient Homepage]
-        Setting[Setting]
-        Exercise[Exercise]
-        AIPose["AI-Pose Module<br/>MediaPipe + Angle Tracking"]
-        DocFeedback[Doctor Feedback]
-        
-        PatientHome --> Setting
-        PatientHome --> Exercise
-        Exercise -->|Session Data/Metrics| AIPose
-        AIPose -->|Session Data/Metrics| CloudDB
-        DocFeedback --> PatientHome
-    end
+    PatientHome[Patient Homepage] --> Setting[Setting]
+    PatientHome --> Exercise[Exercise]
+    Exercise --> AIPose["AI-Pose Module<br/>MediaPipe + Angle Tracking"]
     
-    subgraph DoctorSwimlane[" "]
-        direction TB
-        style DoctorSwimlane fill:#FFB6C1,stroke:#DC143C,stroke-width:3px
-        
-        DoctorHome[Doctor Homepage]
-        PatientList["Patient List<br/>• Patient #1<br/>• Patient n<br/>• Patient #N"]
-        ViewResults[View Test Results]
-        Assignment[Assignment]
-        ProvideFeedback[Provide Feedback]
-        
-        DoctorHome --> PatientList
-        PatientList --> ViewResults
-        ViewResults --> Assignment
-        Assignment --> ProvideFeedback
-    end
+    AIPose -.->|Session Data/Metrics| CloudDB[(Cloud Database)]
+    Exercise -.->|Session Data/Metrics| CloudDB
     
-    subgraph CloudCluster["Cloud Database"]
-        direction TB
-        style CloudCluster fill:#E6E6FA,stroke:#9370DB,stroke-width:3px
-        
-        CloudDB[(Cloud Database)]
-        AIModel[AI-Evaluation Model]
-        
-        CloudDB --> AIModel
-    end
+    CloudDB --> AIModel[AI-Evaluation Model]
+    AIModel ==>|Model Outputs<br/>Landmarks/Angles| AIPose
     
-    %% Patient to Cloud - Blue links (Session Data/Metrics)
-    Exercise -.->|"Session Data/Metrics"| CloudDB
-    AIPose -.->|"Session Data/Metrics"| CloudDB
+    CloudDB --> ViewResults[View Test Results]
     
-    %% AI Model Outputs - Orange links (Landmarks/Angles)
-    AIModel ==>|"Model Outputs<br/>Landmarks/Angles"| AIPose
+    DoctorHome[Doctor Homepage] --> PatientList["Patient List<br/>Patient #1, n, #N"]
+    PatientList --> ViewResults
+    ViewResults --> Assignment[Assignment]
+    Assignment --> ProvideFeedback[Provide Feedback]
     
-    %% Cloud to Doctor - Doctor reads results
-    CloudDB -->|"Read Results"| ViewResults
+    ProvideFeedback -->|Send Assignment| CloudDB
+    ProvideFeedback -->|Send Feedback| CloudDB
     
-    %% Doctor to Cloud - Send Assignment and Feedback
-    ProvideFeedback -->|"Send Assignment"| CloudDB
-    ProvideFeedback -->|"Send Feedback"| CloudDB
+    CloudDB -.->|Feedback Summary| DocFeedback[Doctor Feedback]
+    DocFeedback --> PatientHome
     
-    %% Cloud to Patient - Green links (Feedback Summary)
-    CloudDB -.->|"Feedback Summary"| DocFeedback
-    
-    %% Cross-lane: Assignment to Patient Exercise
-    Assignment -->|"Assignment"| Exercise
+    Assignment -->|Assignment| Exercise
     
     %% Styling - Node backgrounds (soft panels)
-    classDef patientNode fill:#B0E0E6,stroke:#4682B4,stroke-width:2px,color:#000
-    classDef doctorNode fill:#FFC0CB,stroke:#CD5C5C,stroke-width:2px,color:#000
-    classDef cloudNode fill:#F5F5DC,stroke:#8B7355,stroke-width:2px,color:#000
+    classDef patientNode fill:#B0E0E6,stroke:#4682B4,stroke-width:3px,color:#000
+    classDef doctorNode fill:#FFC0CB,stroke:#CD5C5C,stroke-width:3px,color:#000
+    classDef cloudNode fill:#F5F5DC,stroke:#8B7355,stroke-width:3px,color:#000
+    classDef start fill:#9B59B6,stroke:#6A4C93,stroke-width:3px,color:#fff
     
     class PatientHome,Setting,Exercise,AIPose,DocFeedback patientNode
     class DoctorHome,PatientList,ViewResults,Assignment,ProvideFeedback doctorNode
     class CloudDB,AIModel cloudNode
+    class Login start
 ```
 
 ## Link Color Legend
